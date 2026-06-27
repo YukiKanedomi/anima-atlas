@@ -29,6 +29,18 @@
           "status": "draft"
         }
       ]
+    },
+    {
+      "id": "ch-orbit",
+      "title": "振れ回りと軌道",
+      "sections": [
+        {
+          "id": "whirl-direction",
+          "title": "前向き？後ろ向き？——振れ回りの向き",
+          "file": "sections/whirl-direction.md",
+          "status": "draft"
+        }
+      ]
     }
   ]
 }

@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import FunctionPlot from "./FunctionPlot";
 import WhirlOrbit from "./WhirlOrbit";
+import Orbit from "./Orbit";
 import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
@@ -55,6 +56,21 @@ export const blocks: BlockDef[] = [
       zeta: 0.1,
       rDefault: 0.6,
       caption: "再生しながら r を 1 より上へ動かしてみてください。",
+    },
+  },
+  {
+    name: "orbit",
+    title: "振れ回り軌道（一般版）",
+    status: "stable",
+    summary:
+      "前向き成分Fと後ろ向き成分Bの和で軌道を表す汎用版。円・楕円・直線・前後の向き、不安定の発散も。",
+    component: Orbit,
+    sample: {
+      title: "ためし：F と B で軌道の形と向きが決まる",
+      forwardDefault: 0.9,
+      backwardDefault: 0.3,
+      showGrowth: true,
+      caption: "F>B で前向き楕円、F<B で後ろ向き、F=B で直線。成長率を上げると発散（不安定）。",
     },
   },
   {
