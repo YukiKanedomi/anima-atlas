@@ -81,6 +81,11 @@
 ### 用語ポップ（`[[記号]]` ／ `components/TermPop.tsx`）
 - 本文に点線下線の語を置き、タップ/ホバーで定義を出す（details-on-demand）。定義の正典は `symbols.json`。
 
+### トップの探検地図（`pages/Home.tsx`）
+- `outline.json` 駆動。章ピンを蛇行する経路上に等間隔（弧長）で配置＝**章が増えると自動で増える**。ピン→その章の先頭節へ。
+- アニメ用クラス（`index.css`）：`.aa-route`（経路が描かれる・`pathLength=1`で正規化）、`.aa-pin-wrap`（順に立ち上がる・`animation-delay`でstagger）、`.aa-pin`（ホバーで浮く・`transform-box:fill-box`）。
+- 配色は紺トークン＋頂上の旗だけ臙脂。等高線＝`--line`、道＝`--soft2`の太線＋`--accent`の細い描画線。**新規の装飾アニメもこの3クラスの作法に倣う**。
+
 ---
 
 ## 5. ブロック図（figure）の共通レイアウト
