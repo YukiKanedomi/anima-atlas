@@ -47,6 +47,18 @@
           "status": "draft"
         }
       ]
+    },
+    {
+      "id": "ch-gyro",
+      "title": "ジャイロ効果とCampbell線図",
+      "sections": [
+        {
+          "id": "campbell",
+          "title": "回転数で危険速度が変わる——Campbell線図",
+          "file": "sections/campbell.md",
+          "status": "draft"
+        }
+      ]
     }
   ]
 }

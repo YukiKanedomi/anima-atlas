@@ -3,6 +3,7 @@ import FunctionPlot from "./FunctionPlot";
 import WhirlOrbit from "./WhirlOrbit";
 import Orbit from "./Orbit";
 import Waveform from "./Waveform";
+import Campbell from "./Campbell";
 import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
@@ -87,6 +88,19 @@ export const blocks: BlockDef[] = [
       traces: [{ label: "変位", expr: "exp(-zeta*t) * cos(6*t)", color: "accent" }],
       sliders: [{ key: "zeta", label: "減衰の強さ", min: 0, max: 1.2, step: 0.01, default: 0.35 }],
       caption: "減衰が強いほど早く収まる。ζ=0 で永遠に続く正弦波。",
+    },
+  },
+  {
+    name: "campbell",
+    title: "Campbell線図（危険速度マップ）",
+    status: "stable",
+    summary: "回転数で固有振動数が前向き/後ろ向きに分離。1×励起線との交点＝危険速度。γと運転点を操作。",
+    component: Campbell,
+    sample: {
+      title: "ためし：γ を上げると枝が開き、危険速度が動く",
+      gammaDefault: 0.6,
+      opDefault: 1.5,
+      caption: "γ（円板の扁平さ）を 1 に近づけると前向き危険速度が右へ逃げ、1 を超えると消える。",
     },
   },
   {
