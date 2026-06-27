@@ -35,7 +35,52 @@ h3 {
   font-family: "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
 }
 
-/* スライダーの最低限のスタイル（紺アクセント） */
-input[type="range"] {
-  accent-color: var(--accent);
+/* ===== スライダー（塗り進む紺トラック＋上品なつまみ） ===== */
+/* 塗りの％は Slider 側で background をインライン指定。トラック擬似要素は透過。 */
+.aa-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--soft2);
+  outline: none;
+  cursor: pointer;
+}
+.aa-range::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: transparent;
+}
+.aa-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -5px;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 2px solid var(--accent);
+  box-shadow: 0 1px 3px rgba(20, 30, 50, 0.25);
+  transition: transform 0.1s ease;
+}
+.aa-range::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+.aa-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(31, 58, 95, 0.18);
+}
+.aa-range::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: transparent;
+}
+.aa-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--accent);
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(20, 30, 50, 0.25);
 }

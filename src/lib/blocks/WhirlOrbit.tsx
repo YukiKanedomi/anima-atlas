@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Slider } from "../../components/Slider";
+import { PlayPause } from "../../components/PlayPause";
 import { useInstanceId, useSharedParams } from "../linkStore";
 
 // ドメイン部品：振れ回り軌道アニメ（模式）。
@@ -120,12 +121,7 @@ export default function WhirlOrbit({ config }: { config: WhirlOrbitConfig }) {
           </div>
 
           <div className="mt-2 flex items-center gap-4 text-sm">
-            <button
-              onClick={() => setRunning((v) => !v)}
-              className="rounded border border-line px-3 py-1 text-ink transition-colors hover:border-accent"
-            >
-              {running ? "⏸ 一時停止" : "▶ 再生"}
-            </button>
+            <PlayPause running={running} onToggle={() => setRunning((v) => !v)} />
             <span className="tabular-nums text-mut">
               位相 φ = <b className="text-ink">{phiDeg}°</b> ／ 倍率 R/e = <b className="text-ink">{M.toFixed(1)}</b>
             </span>

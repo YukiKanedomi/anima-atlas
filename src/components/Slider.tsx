@@ -10,6 +10,7 @@ type Props = {
 };
 
 export function Slider({ label, value, min, max, step, unit, onChange }: Props) {
+  const pct = max > min ? ((value - min) / (max - min)) * 100 : 0;
   return (
     <label className="block">
       <div className="flex items-baseline justify-between text-sm">
@@ -26,7 +27,10 @@ export function Slider({ label, value, min, max, step, unit, onChange }: Props) 
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-1 w-full"
+        className="aa-range mt-2"
+        style={{
+          background: `linear-gradient(to right, var(--accent) ${pct}%, var(--soft2) ${pct}%)`,
+        }}
       />
     </label>
   );

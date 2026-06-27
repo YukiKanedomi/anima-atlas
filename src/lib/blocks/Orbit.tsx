@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Slider } from "../../components/Slider";
+import { PlayPause } from "../../components/PlayPause";
 import { useInstanceId, useSharedParams } from "../linkStore";
 
 // 汎用ドメイン部品：振れ回り軌道（一般版）。
@@ -170,12 +171,7 @@ export default function Orbit({ config }: { config: OrbitConfig }) {
             ) : null}
           </div>
 
-          <button
-            onClick={() => setRunning((v) => !v)}
-            className="mt-3 rounded border border-line px-3 py-1 text-sm text-ink transition-colors hover:border-accent"
-          >
-            {running ? "⏸ 一時停止" : "▶ 再生"}
-          </button>
+          <PlayPause running={running} onToggle={() => setRunning((v) => !v)} className="mt-3" />
         </div>
       </div>
 

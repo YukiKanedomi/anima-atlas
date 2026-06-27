@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { compileExpr } from "../expr";
 import { Slider } from "../../components/Slider";
+import { PlayPause } from "../../components/PlayPause";
 import { useInstanceId, useSharedParams } from "../linkStore";
 
 // 汎用ブロック：振動の時間波形（オシロスコープ風）。
@@ -157,12 +158,7 @@ export default function Waveform({ config }: { config: WaveformConfig }) {
       ) : null}
 
       {playhead ? (
-        <button
-          onClick={() => setRunning((v) => !v)}
-          className="mt-3 rounded border border-line px-3 py-1 text-sm text-ink transition-colors hover:border-accent"
-        >
-          {running ? "⏸ 一時停止" : "▶ 再生"}
-        </button>
+        <PlayPause running={running} onToggle={() => setRunning((v) => !v)} className="mt-3" />
       ) : null}
 
       {config.caption ? <p className="mt-3 text-sm leading-relaxed text-mut">{config.caption}</p> : null}
