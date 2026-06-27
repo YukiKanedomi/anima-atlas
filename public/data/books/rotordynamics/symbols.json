@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "book": "rotordynamics",
+    "note": "記号の正典。本文は記号をキー参照し、将来ホバー定義と記号一覧を自動生成する（仕組みは後で）。原典で表記が違う場合はここに正規化し、注記する。"
+  },
+  "symbols": [
+    { "key": "Omega", "glyph": "Ω", "read": "オメガ", "name": "回転角速度", "unit": "rad/s" },
+    { "key": "omega_n", "glyph": "ωn", "read": "オメガ・エヌ", "name": "固有角振動数", "unit": "rad/s" },
+    { "key": "zeta", "glyph": "ζ", "read": "ゼータ", "name": "減衰比", "unit": "-" },
+    { "key": "e", "glyph": "e", "read": "イー", "name": "不釣り合い偏心量（重心の軸中心からのずれ）", "unit": "m" },
+    { "key": "R", "glyph": "R", "read": "アール", "name": "ロータの振れ回り半径", "unit": "m" },
+    { "key": "r_ratio", "glyph": "r", "read": "アール", "name": "回転数比 Ω/ωn", "unit": "-" }
+  ]
+}

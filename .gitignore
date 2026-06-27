@@ -1,0 +1,7 @@
+node_modules
+dist
+*.local
+.DS_Store
+
+# 構想メモはローカルのみ（公開しない）
+Anima-Atlas-メモ.md

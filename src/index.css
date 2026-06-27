@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== 配色テーマ：紺（学術・王道）。後で臙脂等に差し替えやすいよう CSS変数に集約 ===== */
+:root {
+  --bg: #f6f7f9;       /* 紙の地 */
+  --ink: #1b2433;      /* 本文の墨（やや紺寄り） */
+  --mut: #5c6678;      /* 補助テキスト */
+  --accent: #1f3a5f;   /* 紺アクセント */
+  --accent-d: #15294a; /* 濃紺 */
+  --line: #e1e5ec;     /* 罫線 */
+  --soft: #eef1f6;     /* うすい面 */
+  --soft2: #e7ebf2;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Yu Gothic UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 見出しはセリフ（A案ワードマークと揃える） */
+h1,
+h2,
+h3 {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
+}
+
+/* スライダーの最低限のスタイル（紺アクセント） */
+input[type="range"] {
+  accent-color: var(--accent);
+}

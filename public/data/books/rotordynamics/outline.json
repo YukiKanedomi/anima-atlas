@@ -1,0 +1,22 @@
+{
+  "book": {
+    "id": "rotordynamics",
+    "title": "ロータダイナミクス",
+    "subtitle": "回転機械の振動を、触って理解する",
+    "accent": "navy"
+  },
+  "chapters": [
+    {
+      "id": "ch-basics",
+      "title": "はじめの一歩",
+      "sections": [
+        {
+          "id": "jeffcott-intro",
+          "title": "一番単純なロータはどう揺れるか",
+          "file": "sections/jeffcott-intro.md",
+          "status": "draft"
+        }
+      ]
+    }
+  ]
+}
