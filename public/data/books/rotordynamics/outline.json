@@ -72,6 +72,12 @@
       "title": "計測と診断",
       "sections": [
         {
+          "id": "bode-polar",
+          "title": "振幅と位相を1枚に——ボード線図とポーラ線図",
+          "file": "sections/bode-polar.md",
+          "status": "draft"
+        },
+        {
           "id": "spectrum",
           "title": "スペクトル——振動を周波数に分解して原因を知る",
           "file": "sections/spectrum.md",

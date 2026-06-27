@@ -34,16 +34,19 @@ function resp(r: number, zeta: number) {
 
 export default function PolarPlot({ config }: { config: PolarConfig }) {
   const instId = useInstanceId("polar");
+  // 掃引する回転数比 r も共有する → 連動した bode 等で同じ点が光る。
   const [vals, setParam] = useSharedParams(config.link ?? instId, {
     zeta: config.zetaDefault ?? 0.1,
+    r: 0.6,
   });
   const zeta = vals.zeta;
   const rMax = config.rMax ?? 2.5;
 
   const [running, setRunning] = useState(true);
-  const [rHead, setRHead] = useState(0.6);
   const raf = useRef<number>();
   const last = useRef<number>();
+  const rRef = useRef(vals.r);
+  rRef.current = vals.r; // 外からのスクラブも拾えるよう毎描画で同期
 
   useEffect(() => {
     if (!running) {
@@ -53,10 +56,10 @@ export default function PolarPlot({ config }: { config: PolarConfig }) {
     const step = (t: number) => {
       if (last.current !== undefined) {
         const dt = (t - last.current) / 1000;
-        setRHead((r) => {
-          const nr = r + 0.45 * dt; // 回転数を上げていく掃引
-          return nr > rMax ? 0.02 : nr;
-        });
+        const nr = rRef.current + 0.45 * dt; // 回転数を上げていく掃引
+        const next = nr > rMax ? 0.02 : nr;
+        rRef.current = next;
+        setParam("r", next);
       }
       last.current = t;
       raf.current = requestAnimationFrame(step);
@@ -65,7 +68,7 @@ export default function PolarPlot({ config }: { config: PolarConfig }) {
     return () => {
       if (raf.current) cancelAnimationFrame(raf.current);
     };
-  }, [running, rMax]);
+  }, [running, rMax, setParam]);
 
   // 曲線サンプルと、等比でフィットさせるスケール
   const { d, sx, sy, ticks } = useMemo(() => {
@@ -102,6 +105,7 @@ export default function PolarPlot({ config }: { config: PolarConfig }) {
     return { d, sx, sy, ticks };
   }, [zeta, rMax]);
 
+  const rHead = vals.r;
   const head = resp(rHead, zeta);
   const mag = Math.hypot(head.re, head.im);
   const phaseDeg = Math.round((Math.atan2(head.im, head.re) * 180) / Math.PI);
@@ -115,7 +119,7 @@ export default function PolarPlot({ config }: { config: PolarConfig }) {
         <figcaption className="mb-2 font-serif text-base text-ink">{config.title}</figcaption>
       ) : null}
 
-      <div className="grid items-center gap-4 sm:grid-cols-[1fr_auto]">
+      <div className="grid items-center gap-4 sm:grid-cols-[minmax(0,1fr)_200px]">
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="ポーラ線図">
           {/* 複素平面の軸（実=横・虚=縦、原点で交差） */}
           <line x1={PAD.l} y1={oy} x2={W - PAD.r} y2={oy} stroke="var(--line)" />
@@ -154,7 +158,7 @@ export default function PolarPlot({ config }: { config: PolarConfig }) {
           <circle cx={sx(head.re)} cy={sy(head.im)} r={5} fill="var(--accent-d)" />
         </svg>
 
-        <div className="min-w-[180px]">
+        <div>
           <div className="tabular-nums text-sm text-mut">
             回転数比 r = <b className="text-ink">{rHead.toFixed(2)}</b>
             <br />

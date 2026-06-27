@@ -6,6 +6,7 @@ import Waveform from "./Waveform";
 import Campbell from "./Campbell";
 import Spectrum from "./Spectrum";
 import PolarPlot from "./PolarPlot";
+import Bode from "./Bode";
 import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
@@ -124,7 +125,7 @@ export const blocks: BlockDef[] = [
   {
     name: "polar",
     title: "ポーラ線図（振幅＋位相の極座標）",
-    status: "experimental",
+    status: "stable",
     summary:
       "不釣り合い応答の複素ベクトルを回転数で掃引。原点→危険速度（位相−90°）で下に大ループ。振幅と位相を1枚に束ねる計測の花形。",
     component: PolarPlot,
@@ -133,6 +134,20 @@ export const blocks: BlockDef[] = [
       zetaDefault: 0.1,
       rMax: 2.5,
       caption: "底（真下）が危険速度。ζ を小さくするとループが大きく深くなります。",
+    },
+  },
+  {
+    name: "bode",
+    title: "ボード線図（振幅・位相 vs 回転数）",
+    status: "stable",
+    summary:
+      "振幅と位相を回転数の関数で上下2段に。r=1 で位相90°（共振）。link でポーラ線図と掃引点・ζを共有でき、同じ点が両図で光る。",
+    component: Bode,
+    sample: {
+      title: "ためし：振幅は山、位相は 0→180° の S字",
+      zetaDefault: 0.1,
+      rMax: 2.5,
+      caption: "r スライダーを動かすとカーソルが両パネルを走査。位相が 90° を切るところが危険速度。",
     },
   },
   {
