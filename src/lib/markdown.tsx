@@ -21,7 +21,15 @@ type Node =
   | { kind: "ul"; items: string[] }
   | { kind: "block"; name: string; config: unknown }
   | { kind: "block-error"; name: string; raw: string }
+  | { kind: "disclosure"; variant: string; label: string; children: Node[] }
   | { kind: "math"; tex: string };
+
+// 「容れ物」ディレクティブ＝中身をMarkdownとして畳む折りたたみ。
+// JSON設定ブロック（registry）とは別系統。深掘り(深さ on demand)の土台。
+// ここに名前を足すだけで色違いの折りたたみが増やせる（新構文は不要）。
+const CONTAINERS: Record<string, { chip: string }> = {
+  deep: { chip: "深掘り" },
+};
 
 function parse(src: string): Node[] {
   const lines = src.replace(/\r\n/g, "\n").split("\n");
@@ -31,7 +39,34 @@ function parse(src: string): Node[] {
   while (i < lines.length) {
     const line = lines[i];
 
-    // ブロック・ディレクティブ
+    // 容れ物ディレクティブ（:::deep タイトル … :::）。中身は再帰parse。
+    // 入れ子の :::block も持てるよう、開き :::名前 で深さ++・閉じ ::: で深さ-- して対応をとる。
+    const cm = line.match(/^:::\s*([a-z0-9-]+)\s+(.*)$/i);
+    if (cm && CONTAINERS[cm[1].toLowerCase()]) {
+      const variant = cm[1].toLowerCase();
+      const label = cm[2].trim();
+      const buf: string[] = [];
+      let depth = 1;
+      i++;
+      while (i < lines.length && depth > 0) {
+        const l = lines[i];
+        if (/^:::\s*[a-z0-9-]+/i.test(l)) {
+          depth++;
+        } else if (/^:::\s*$/.test(l)) {
+          depth--;
+          if (depth === 0) {
+            i++;
+            break;
+          }
+        }
+        buf.push(l);
+        i++;
+      }
+      nodes.push({ kind: "disclosure", variant, label, children: parse(buf.join("\n")) });
+      continue;
+    }
+
+    // ブロック・ディレクティブ（JSON設定）
     const m = line.match(/^:::\s*([a-z0-9-]+)\s*$/i);
     if (m) {
       const name = m[1];
@@ -141,8 +176,25 @@ function inline(text: string): ReactNode {
   });
 }
 
-export function Markdown({ src }: { src: string }) {
-  const nodes = parse(src);
+// 深掘り（折りたたみ）。既定は閉。やさしい本文を濁さず、専門は要るとき開く。
+// ネイティブ <details> なので状態管理なし・キーボード操作可。中に :::block も置ける。
+function Disclosure({ variant, label, children }: { variant: string; label: string; children: ReactNode }) {
+  const meta = CONTAINERS[variant] ?? CONTAINERS.deep;
+  return (
+    <details className="aa-deep my-5 overflow-hidden rounded-lg border border-line bg-soft/60">
+      <summary className="flex cursor-pointer select-none items-center gap-2 px-4 py-2.5 text-sm hover:bg-soft">
+        <svg className="aa-deep-tri shrink-0 text-accent" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true">
+          <path d="M3 1.5l5 4-5 4z" fill="currentColor" />
+        </svg>
+        <span className="rounded bg-accent/10 px-1.5 py-0.5 text-xs font-semibold text-accent">{meta.chip}</span>
+        <span className="text-ink/90">{label}</span>
+      </summary>
+      <div className="border-l-2 border-accent/40 px-4 pb-1 pt-1">{children}</div>
+    </details>
+  );
+}
+
+function renderNodes(nodes: Node[]): ReactNode {
   return (
     <>
       {nodes.map((n, idx) => {
@@ -193,8 +245,18 @@ export function Markdown({ src }: { src: string }) {
                 ブロック <code className="text-ink">{n.name}</code> の設定(JSON)が読めませんでした。
               </div>
             );
+          case "disclosure":
+            return (
+              <Disclosure key={idx} variant={n.variant} label={n.label}>
+                {renderNodes(n.children)}
+              </Disclosure>
+            );
         }
       })}
     </>
   );
+}
+
+export function Markdown({ src }: { src: string }) {
+  return renderNodes(parse(src));
 }

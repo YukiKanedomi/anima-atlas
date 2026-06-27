@@ -86,6 +86,11 @@ export default function Reader() {
                   }
                 >
                   {s.title}
+                  {s.level === "advanced" ? (
+                    <span className="ml-1 rounded bg-accent/10 px-1 py-0.5 align-middle text-[10px] font-semibold text-accent">
+                      発展
+                    </span>
+                  ) : null}
                   {s.status === "draft" ? (
                     <span className="ml-1 text-xs text-mut">（下書き）</span>
                   ) : null}

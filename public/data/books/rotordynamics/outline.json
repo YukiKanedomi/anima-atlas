@@ -45,6 +45,13 @@
           "title": "軌道は2つの波からできている",
           "file": "sections/orbit-from-waves.md",
           "status": "draft"
+        },
+        {
+          "id": "rotating-frame",
+          "title": "回転座標系で見る——回る軸はなぜ自重で疲労するか",
+          "file": "sections/rotating-frame.md",
+          "status": "draft",
+          "level": "advanced"
         }
       ]
     },

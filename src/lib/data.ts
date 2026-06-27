@@ -22,6 +22,7 @@ export type SectionRef = {
   title: string;
   file: string;
   status?: string;
+  level?: "basic" | "advanced"; // 省略時 basic。advanced は目次に「発展」バッジ。
 };
 
 export type Outline = {
