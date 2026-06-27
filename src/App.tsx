@@ -42,6 +42,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/read" element={<Reader />} />
+          <Route path="/read/:sectionId" element={<Reader />} />
           <Route path="/gallery" element={<Gallery />} />
         </Routes>
       </main>

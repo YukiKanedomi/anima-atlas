@@ -1,23 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchJson, fetchText, type Outline, type SectionRef } from "../lib/data";
 import { Markdown } from "../lib/markdown";
 
 const BOOK_DIR = "data/books/rotordynamics";
 
 export default function Reader() {
+  const { sectionId } = useParams();
+  const navigate = useNavigate();
   const [outline, setOutline] = useState<Outline | null>(null);
-  const [currentId, setCurrentId] = useState<string | null>(null);
   const [body, setBody] = useState<string>("");
   const [error, setError] = useState<string>("");
 
   // 目次（背骨）を読む
   useEffect(() => {
     fetchJson<Outline>(`${BOOK_DIR}/outline.json`)
-      .then((o) => {
-        setOutline(o);
-        const first = o.chapters[0]?.sections[0]?.id ?? null;
-        setCurrentId(first);
-      })
+      .then(setOutline)
       .catch((e) => setError(String(e)));
   }, []);
 
@@ -25,6 +23,8 @@ export default function Reader() {
     () => outline?.chapters.flatMap((c) => c.sections) ?? [],
     [outline]
   );
+  // URL の節IDを正とし、無ければ先頭の節。
+  const currentId = sectionId ?? allSections[0]?.id ?? null;
   const current = allSections.find((s) => s.id === currentId) ?? null;
 
   // 選ばれた節の本文を読む
@@ -61,7 +61,7 @@ export default function Reader() {
                 {ch.sections.map((s) => (
                   <li key={s.id}>
                     <button
-                      onClick={() => setCurrentId(s.id)}
+                      onClick={() => navigate(`/read/${s.id}`)}
                       className={
                         "text-left text-sm leading-6 transition-colors " +
                         (s.id === currentId

@@ -15,6 +15,18 @@
           "title": "一番単純なロータはどう揺れるか",
           "file": "sections/jeffcott-intro.md",
           "status": "draft"
+        },
+        {
+          "id": "natural-frequency",
+          "title": "危険速度はどこで決まる？",
+          "file": "sections/natural-frequency.md",
+          "status": "draft"
+        },
+        {
+          "id": "phase-lag",
+          "title": "重い点はどこにある？——位相の話",
+          "file": "sections/phase-lag.md",
+          "status": "draft"
         }
       ]
     }
