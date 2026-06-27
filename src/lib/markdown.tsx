@@ -1,6 +1,7 @@
 import { Fragment, type ReactNode } from "react";
 import { getBlock, UnknownBlock } from "./blocks/registry";
 import { BlockMath, InlineMath } from "./Math";
+import { BlockBoundary } from "../components/BlockBoundary";
 
 // ごく小さな Markdown＋ディレクティブ描画。
 // 対応：# / ## / ###、段落、**強調**、箇条書き(-)、
@@ -170,7 +171,11 @@ export function Markdown({ src }: { src: string }) {
             const def = getBlock(n.name);
             if (!def) return <UnknownBlock key={idx} name={n.name} />;
             const C = def.component;
-            return <C key={idx} config={n.config} />;
+            return (
+              <BlockBoundary key={idx} name={n.name}>
+                <C config={n.config} />
+              </BlockBoundary>
+            );
           }
           case "block-error":
             return (

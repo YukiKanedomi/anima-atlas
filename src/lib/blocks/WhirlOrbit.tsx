@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Slider } from "../../components/Slider";
+import { useInstanceId, useSharedParams } from "../linkStore";
 
 // ドメイン部品：振れ回り軌道アニメ（模式）。
 // 上から見たロータ。回転中心 O のまわりを、軸の中心 C が半径 R で振れ回る。
@@ -15,6 +16,7 @@ export type WhirlOrbitConfig = {
   rDefault?: number;
   rMin?: number;
   rMax?: number;
+  link?: string; // 連動グループ名（r・zeta を他ブロックと共有）
 };
 
 const SIZE = 360;
@@ -26,8 +28,13 @@ const HOUSING = 150;
 const HEAVY = "#9b2d3a"; // 臙脂（重い点）
 
 export default function WhirlOrbit({ config }: { config: WhirlOrbitConfig }) {
-  const zeta = config.zeta ?? 0.1;
-  const [r, setR] = useState(config.rDefault ?? 0.6);
+  const instId = useInstanceId("wo");
+  const [vals, setParam] = useSharedParams(config.link ?? instId, {
+    r: config.rDefault ?? 0.6,
+    zeta: config.zeta ?? 0.1,
+  });
+  const r = vals.r;
+  const zeta = vals.zeta;
   const [running, setRunning] = useState(true);
   const [theta, setTheta] = useState(0);
   const raf = useRef<number>();
@@ -108,7 +115,7 @@ export default function WhirlOrbit({ config }: { config: WhirlOrbitConfig }) {
               min={config.rMin ?? 0.2}
               max={config.rMax ?? 3}
               step={0.01}
-              onChange={setR}
+              onChange={(v) => setParam("r", v)}
             />
           </div>
 

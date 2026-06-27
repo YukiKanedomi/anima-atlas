@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { compileExpr } from "../expr";
 import { Slider } from "../../components/Slider";
+import { useInstanceId, useSharedParams } from "../linkStore";
 
 // 汎用ブロック：スライダー連動グラフ（y = f(x)）。
 // 数式とスライダーを JSON で宣言するだけで、本物の曲線がリアルタイムに動く。
@@ -31,6 +32,8 @@ export type FunctionPlotConfig = {
   sliders?: SliderDef[];
   markerX?: number; // 縦の目印線（例：危険速度 x=1）
   markerLabel?: string;
+  link?: string; // 連動グループ名（同名の他ブロックとスライダー値を共有）
+  cursor?: { param: string; yUnit?: string }; // 共有パラメータ上を動く点（連動の可視化）
 };
 
 const W = 640;
@@ -42,12 +45,19 @@ export default function FunctionPlot({ config }: { config: FunctionPlotConfig })
   const sliders = config.sliders ?? [];
   const samples = config.samples ?? 240;
 
-  const [vals, setVals] = useState<Record<string, number>>(() =>
+  const instId = useInstanceId("fp");
+  const [vals, setParam] = useSharedParams(
+    config.link ?? instId,
     Object.fromEntries(sliders.map((s) => [s.key, s.default]))
   );
 
+  // xKey と同名のスライダー（連動カーソル用の r など）は変数名を重複させないよう除外。
   const compiled = useMemo(
-    () => compileExpr(config.expr, [xKey, ...sliders.map((s) => s.key)]),
+    () =>
+      compileExpr(config.expr, [
+        xKey,
+        ...sliders.map((s) => s.key).filter((k) => k !== xKey),
+      ]),
     [config.expr, xKey, sliders]
   );
 
@@ -56,7 +66,8 @@ export default function FunctionPlot({ config }: { config: FunctionPlotConfig })
     let dataMax = -Infinity;
     for (let i = 0; i <= samples; i++) {
       const x = config.xMin + ((config.xMax - config.xMin) * i) / samples;
-      const y = compiled({ [xKey]: x, ...vals });
+      // xKey は最後に上書き（xKey と同名の共有パラメータがあっても曲線は x で走査）。
+      const y = compiled({ ...vals, [xKey]: x });
       if (Number.isFinite(y)) {
         pts.push([x, y]);
         if (y > dataMax) dataMax = y;
@@ -80,9 +91,23 @@ export default function FunctionPlot({ config }: { config: FunctionPlotConfig })
     return { path: d.trim(), yLo, yHi };
   }, [compiled, vals, config, xKey, samples]);
 
-  // 目印線の横位置だけ別途必要（縦軸スケールは描画に使わない）。
+  // 目印線・カーソルの座標変換（yLo/yHi は描画メモから取得済み）。
   const sx = (x: number) =>
     PAD.l + ((x - config.xMin) / (config.xMax - config.xMin)) * (W - PAD.l - PAD.r);
+  const sy = (y: number) => {
+    const c = Math.min(Math.max(y, yLo), yHi);
+    return H - PAD.b - ((c - yLo) / (yHi - yLo)) * (H - PAD.t - PAD.b);
+  };
+
+  // 連動カーソル：共有パラメータ cursor.param の現在値の位置に点を打つ。
+  const cur = config.cursor;
+  const cursorX = cur ? vals[cur.param] : undefined;
+  const cursorY =
+    cur && cursorX !== undefined
+      ? compiled({ ...vals, [xKey]: cursorX })
+      : undefined;
+  const showCursor =
+    cursorX !== undefined && cursorY !== undefined && Number.isFinite(cursorY);
 
   return (
     <figure className="my-6 rounded-lg border border-line bg-white p-4 shadow-card">
@@ -138,6 +163,31 @@ export default function FunctionPlot({ config }: { config: FunctionPlotConfig })
         {/* 曲線 */}
         <path d={path} fill="none" stroke="var(--accent)" strokeWidth={2.4} />
 
+        {/* 連動カーソル（共有パラメータの現在地） */}
+        {showCursor ? (
+          <>
+            <line
+              x1={sx(cursorX!)}
+              y1={PAD.t}
+              x2={sx(cursorX!)}
+              y2={H - PAD.b}
+              stroke="var(--accent-d)"
+              strokeWidth={1}
+              opacity={0.35}
+            />
+            <circle cx={sx(cursorX!)} cy={sy(cursorY!)} r={5.5} fill="var(--accent-d)" />
+            <text
+              x={sx(cursorX!) + 8}
+              y={sy(cursorY!) - 8}
+              fontSize="12"
+              fill="var(--accent-d)"
+            >
+              {Math.round(cursorY!)}
+              {cur?.yUnit ?? ""}
+            </text>
+          </>
+        ) : null}
+
         {/* 軸ラベル */}
         <text
           x={(PAD.l + W - PAD.r) / 2}
@@ -179,7 +229,7 @@ export default function FunctionPlot({ config }: { config: FunctionPlotConfig })
               max={s.max}
               step={s.step}
               unit={s.unit}
-              onChange={(v) => setVals((prev) => ({ ...prev, [s.key]: v }))}
+              onChange={(v) => setParam(s.key, v)}
             />
           ))}
         </div>

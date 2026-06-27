@@ -13,6 +13,7 @@ $$\varphi = \operatorname{atan2}\!\left(2\zeta r,\; 1 - r^2\right)$$
 :::function-plot
 {
   "title": "危険速度で位相が 90° を通り、180° へ反転する",
+  "link": "rotor",
   "xKey": "r",
   "xLabel": "回転数の比  r = Ω / ωn",
   "yLabel": "位相のズレ  φ（度）",
@@ -23,10 +24,12 @@ $$\varphi = \operatorname{atan2}\!\left(2\zeta r,\; 1 - r^2\right)$$
   "expr": "atan2(2*zeta*r, 1 - r*r) * 180 / PI",
   "markerX": 1,
   "markerLabel": "危険速度（φ = 90°）",
+  "cursor": { "param": "r", "yUnit": "°" },
   "sliders": [
-    { "key": "zeta", "label": "減衰比 ζ（揺れの収まりやすさ）", "min": 0.05, "max": 1, "step": 0.01, "default": 0.2 }
+    { "key": "zeta", "label": "減衰比 ζ（揺れの収まりやすさ）", "min": 0.05, "max": 1, "step": 0.01, "default": 0.2 },
+    { "key": "r", "label": "回転数の比 r（この点が下の軌道と連動）", "min": 0, "max": 3, "step": 0.01, "default": 0.6 }
   ],
-  "caption": "減衰が弱い（ζ小）ほど、危険速度の前後で位相は急にひっくり返ります。"
+  "caption": "下の振れ回りアニメと r・ζ が連動します。r を動かすと、この曲線上の点と下のアニメが同時に動きます。"
 }
 :::
 
@@ -35,9 +38,12 @@ $$\varphi = \operatorname{atan2}\!\left(2\zeta r,\; 1 - r^2\right)$$
 :::whirl-orbit
 {
   "title": "振れ回りを上から見る：位相の反転と自動調心",
-  "zeta": 0.1,
+  "link": "rotor",
+  "zeta": 0.2,
   "rDefault": 0.6,
-  "caption": "再生したまま r を 1 より大きくしていくと、重い点 G が回転中心 O の側へ寄っていきます（自動調心）。e は見やすく誇張した模式です。"
+  "rMin": 0,
+  "rMax": 3,
+  "caption": "上の位相グラフと連動しています。再生したまま r を 1 より大きくしていくと、重い点 G が回転中心 O の側へ寄っていきます（自動調心）。e は見やすく誇張した模式です。"
 }
 :::
 
