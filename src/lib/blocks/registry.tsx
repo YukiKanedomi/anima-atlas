@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import FunctionPlot from "./FunctionPlot";
 import WhirlOrbit from "./WhirlOrbit";
 import Orbit from "./Orbit";
+import Waveform from "./Waveform";
 import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
@@ -71,6 +72,21 @@ export const blocks: BlockDef[] = [
       backwardDefault: 0.3,
       showGrowth: true,
       caption: "F>B で前向き楕円、F<B で後ろ向き、F=B で直線。成長率を上げると発散（不安定）。",
+    },
+  },
+  {
+    name: "waveform",
+    title: "振動の時間波形（オシロ風）",
+    status: "stable",
+    summary: "時間 t の関数を走査線つきで描く汎用波形ブロック。減衰振動・センサ波形・複数トレースに。",
+    component: Waveform,
+    sample: {
+      title: "ためし：減衰する自由振動（リングダウン）",
+      tSpan: 9,
+      yMax: 1.1,
+      traces: [{ label: "変位", expr: "exp(-zeta*t) * cos(6*t)", color: "accent" }],
+      sliders: [{ key: "zeta", label: "減衰の強さ", min: 0, max: 1.2, step: 0.01, default: 0.35 }],
+      caption: "減衰が強いほど早く収まる。ζ=0 で永遠に続く正弦波。",
     },
   },
   {

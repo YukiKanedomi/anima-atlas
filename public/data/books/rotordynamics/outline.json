@@ -39,6 +39,12 @@
           "title": "前向き？後ろ向き？——振れ回りの向き",
           "file": "sections/whirl-direction.md",
           "status": "draft"
+        },
+        {
+          "id": "orbit-from-waves",
+          "title": "軌道は2つの波からできている",
+          "file": "sections/orbit-from-waves.md",
+          "status": "draft"
         }
       ]
     }
