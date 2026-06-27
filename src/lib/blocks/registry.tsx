@@ -5,6 +5,7 @@ import Orbit from "./Orbit";
 import Waveform from "./Waveform";
 import Campbell from "./Campbell";
 import Spectrum from "./Spectrum";
+import PolarPlot from "./PolarPlot";
 import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
@@ -118,6 +119,20 @@ export const blocks: BlockDef[] = [
         { key: "a3", freq: 0.43, label: "0.43× オイルホワール", color: "mut", default: 0.1 }
       ],
       caption: "各スライダーを動かすと、時間波形が変わり、対応する周波数にピークが立ちます。",
+    },
+  },
+  {
+    name: "polar",
+    title: "ポーラ線図（振幅＋位相の極座標）",
+    status: "experimental",
+    summary:
+      "不釣り合い応答の複素ベクトルを回転数で掃引。原点→危険速度（位相−90°）で下に大ループ。振幅と位相を1枚に束ねる計測の花形。",
+    component: PolarPlot,
+    sample: {
+      title: "ためし：回転数を上げると応答ベクトルがループを描く",
+      zetaDefault: 0.1,
+      rMax: 2.5,
+      caption: "底（真下）が危険速度。ζ を小さくするとループが大きく深くなります。",
     },
   },
   {
