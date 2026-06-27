@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import FunctionPlot from "./FunctionPlot";
+import WhirlOrbit from "./WhirlOrbit";
 
 // ブロック部品の「型契約」とレジストリ。
 // ・本文（Markdown）は :::ブロック名 でここに登録された部品を呼ぶ。
@@ -39,6 +40,20 @@ export const blocks: BlockDef[] = [
         { key: "zeta", label: "減衰比 ζ", min: 0.05, max: 1, step: 0.01, default: 0.2 },
       ],
       caption: "ζ を小さくすると山が高く鋭くなる。",
+    },
+  },
+  {
+    name: "whirl-orbit",
+    title: "振れ回り軌道アニメ",
+    status: "stable",
+    summary:
+      "上から見たロータの振れ回りを再生。r を上げると位相が反転し、重い点が中心へ寄る（自動調心）。",
+    component: WhirlOrbit,
+    sample: {
+      title: "ためし：振れ回りと自動調心",
+      zeta: 0.1,
+      rDefault: 0.6,
+      caption: "再生しながら r を 1 より上へ動かしてみてください。",
     },
   },
 ];

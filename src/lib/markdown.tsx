@@ -1,5 +1,6 @@
 import { Fragment, type ReactNode } from "react";
 import { getBlock, UnknownBlock } from "./blocks/registry";
+import { BlockMath, InlineMath } from "./Math";
 
 // ごく小さな Markdown＋ディレクティブ描画。
 // 対応：# / ## / ###、段落、**強調**、箇条書き(-)、
@@ -17,7 +18,8 @@ type Node =
   | { kind: "p"; text: string }
   | { kind: "ul"; items: string[] }
   | { kind: "block"; name: string; config: unknown }
-  | { kind: "block-error"; name: string; raw: string };
+  | { kind: "block-error"; name: string; raw: string }
+  | { kind: "math"; tex: string };
 
 function parse(src: string): Node[] {
   const lines = src.replace(/\r\n/g, "\n").split("\n");
@@ -45,6 +47,34 @@ function parse(src: string): Node[] {
       } catch {
         nodes.push({ kind: "block-error", name, raw });
       }
+      continue;
+    }
+
+    // ブロック数式 $$ ... $$
+    const tl = line.trim();
+    if (tl.startsWith("$$")) {
+      if (tl.length > 4 && tl.endsWith("$$")) {
+        // 単一行：$$ ... $$
+        nodes.push({ kind: "math", tex: tl.slice(2, -2).trim() });
+        i++;
+        continue;
+      }
+      // 複数行：$$ で始まり $$ で閉じる
+      const buf: string[] = [];
+      const firstRest = tl.slice(2).trim();
+      if (firstRest) buf.push(firstRest);
+      i++;
+      while (i < lines.length && !lines[i].trim().endsWith("$$")) {
+        buf.push(lines[i]);
+        i++;
+      }
+      if (i < lines.length) {
+        const last = lines[i].trim();
+        const lastContent = last.slice(0, last.length - 2).trim();
+        if (lastContent) buf.push(lastContent);
+        i++;
+      }
+      nodes.push({ kind: "math", tex: buf.join("\n").trim() });
       continue;
     }
 
@@ -79,6 +109,7 @@ function parse(src: string): Node[] {
       i < lines.length &&
       lines[i].trim() !== "" &&
       !/^:::/.test(lines[i]) &&
+      !/^\$\$/.test(lines[i].trim()) &&
       !/^#{1,3}\s/.test(lines[i]) &&
       !/^\s*-\s+/.test(lines[i])
     ) {
@@ -91,10 +122,11 @@ function parse(src: string): Node[] {
   return nodes;
 }
 
-// **強調** だけの最小インライン処理。
+// インライン処理：**強調** と $数式$。
 function inline(text: string): ReactNode {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  const parts = text.split(/(\$[^$]+\$|\*\*[^*]+\*\*)/g);
   return parts.map((p, idx) => {
+    if (/^\$[^$]+\$$/.test(p)) return <InlineMath key={idx} tex={p.slice(1, -1)} />;
     const b = p.match(/^\*\*([^*]+)\*\*$/);
     if (b) return <strong key={idx} className="font-semibold text-ink">{b[1]}</strong>;
     return <Fragment key={idx}>{p}</Fragment>;
@@ -132,6 +164,8 @@ export function Markdown({ src }: { src: string }) {
                 ))}
               </ul>
             );
+          case "math":
+            return <BlockMath key={idx} tex={n.tex} />;
           case "block": {
             const def = getBlock(n.name);
             if (!def) return <UnknownBlock key={idx} name={n.name} />;
