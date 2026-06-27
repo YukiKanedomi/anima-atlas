@@ -4,6 +4,7 @@ import WhirlOrbit from "./WhirlOrbit";
 import Orbit from "./Orbit";
 import Waveform from "./Waveform";
 import Campbell from "./Campbell";
+import Spectrum from "./Spectrum";
 import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
@@ -101,6 +102,22 @@ export const blocks: BlockDef[] = [
       gammaDefault: 0.6,
       opDefault: 1.5,
       caption: "γ（円板の扁平さ）を 1 に近づけると前向き危険速度が右へ逃げ、1 を超えると消える。",
+    },
+  },
+  {
+    name: "spectrum",
+    title: "FFTスペクトル（振動診断）",
+    status: "stable",
+    summary: "成分を足して本物のFFTで分解。時間波形↔スペクトルのピーク（1×不釣り合い・2×ミスアライメント・0.43×オイルホワール）。",
+    component: Spectrum,
+    sample: {
+      title: "ためし：成分を足すとピークが立つ",
+      components: [
+        { key: "a1", freq: 1, label: "1× 不釣り合い", color: "accent", default: 0.8 },
+        { key: "a2", freq: 2, label: "2× ミスアライメント", color: "heavy", default: 0.25 },
+        { key: "a3", freq: 0.43, label: "0.43× オイルホワール", color: "mut", default: 0.1 }
+      ],
+      caption: "各スライダーを動かすと、時間波形が変わり、対応する周波数にピークが立ちます。",
     },
   },
   {
