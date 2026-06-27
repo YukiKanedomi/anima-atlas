@@ -2,6 +2,7 @@ import { Fragment, type ReactNode } from "react";
 import { getBlock, UnknownBlock } from "./blocks/registry";
 import { BlockMath, InlineMath } from "./Math";
 import { BlockBoundary } from "../components/BlockBoundary";
+import { TermPop } from "../components/TermPop";
 
 // ごく小さな Markdown＋ディレクティブ描画。
 // 対応：# / ## / ###、段落、**強調**、箇条書き(-)、
@@ -123,13 +124,19 @@ function parse(src: string): Node[] {
   return nodes;
 }
 
-// インライン処理：**強調** と $数式$。
+// インライン処理：**強調**、$数式$、[[記号キー]] / [[記号キー|表示]]。
 function inline(text: string): ReactNode {
-  const parts = text.split(/(\$[^$]+\$|\*\*[^*]+\*\*)/g);
+  const parts = text.split(/(\$[^$]+\$|\*\*[^*]+\*\*|\[\[[^\]]+\]\])/g);
   return parts.map((p, idx) => {
     if (/^\$[^$]+\$$/.test(p)) return <InlineMath key={idx} tex={p.slice(1, -1)} />;
+    const term = p.match(/^\[\[([^\]]+)\]\]$/);
+    if (term) {
+      const [k, label] = term[1].split("|");
+      return <TermPop key={idx} tokenKey={k.trim()} label={label?.trim()} />;
+    }
     const b = p.match(/^\*\*([^*]+)\*\*$/);
-    if (b) return <strong key={idx} className="font-semibold text-ink">{b[1]}</strong>;
+    // 太字の中の $数式$ や [[記号]] も活かすため再帰的に処理。
+    if (b) return <strong key={idx} className="font-semibold text-ink">{inline(b[1])}</strong>;
     return <Fragment key={idx}>{p}</Fragment>;
   });
 }

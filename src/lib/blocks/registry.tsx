@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import FunctionPlot from "./FunctionPlot";
 import WhirlOrbit from "./WhirlOrbit";
+import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
 // ・本文（Markdown）は :::ブロック名 でここに登録された部品を呼ぶ。
@@ -55,6 +56,14 @@ export const blocks: BlockDef[] = [
       rDefault: 0.6,
       caption: "再生しながら r を 1 より上へ動かしてみてください。",
     },
+  },
+  {
+    name: "nomenclature",
+    title: "記号一覧（nomenclature）",
+    status: "stable",
+    summary: "symbols.json から記号一覧を自動生成。本文の [[key]] ポップと同じ正典を使う。",
+    component: Nomenclature,
+    sample: { title: "記号一覧（※本編の節で記号データとともに表示）" },
   },
 ];
 

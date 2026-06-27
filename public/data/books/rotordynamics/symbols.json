@@ -9,6 +9,9 @@
     { "key": "zeta", "glyph": "ζ", "read": "ゼータ", "name": "減衰比", "unit": "-" },
     { "key": "e", "glyph": "e", "read": "イー", "name": "不釣り合い偏心量（重心の軸中心からのずれ）", "unit": "m" },
     { "key": "R", "glyph": "R", "read": "アール", "name": "ロータの振れ回り半径", "unit": "m" },
-    { "key": "r_ratio", "glyph": "r", "read": "アール", "name": "回転数比 Ω/ωn", "unit": "-" }
+    { "key": "r_ratio", "glyph": "r", "read": "アール", "name": "回転数比 Ω/ωn", "unit": "-" },
+    { "key": "k", "glyph": "k", "read": "ケー", "name": "軸の硬さ（ばね定数）", "unit": "N/m" },
+    { "key": "m", "glyph": "m", "read": "エム", "name": "円板の質量", "unit": "kg" },
+    { "key": "phi", "glyph": "φ", "read": "ファイ", "name": "位相（重い点と揺れの向きのズレ）", "unit": "度" }
   ]
 }

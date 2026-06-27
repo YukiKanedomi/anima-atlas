@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchJson, fetchText, type Outline, type SectionRef } from "../lib/data";
 import { Markdown } from "../lib/markdown";
+import { SymbolsContext, type Sym } from "../lib/symbols";
 
 const BOOK_DIR = "data/books/rotordynamics";
 
@@ -11,12 +12,16 @@ export default function Reader() {
   const [outline, setOutline] = useState<Outline | null>(null);
   const [body, setBody] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [symbols, setSymbols] = useState<Record<string, Sym>>({});
 
-  // 目次（背骨）を読む
+  // 目次（背骨）と記号正典を読む
   useEffect(() => {
     fetchJson<Outline>(`${BOOK_DIR}/outline.json`)
       .then(setOutline)
       .catch((e) => setError(String(e)));
+    fetchJson<{ symbols: Sym[] }>(`${BOOK_DIR}/symbols.json`)
+      .then((d) => setSymbols(Object.fromEntries(d.symbols.map((s) => [s.key, s]))))
+      .catch(() => {}); // 記号が無くても本文は出す
   }, []);
 
   const allSections = useMemo<SectionRef[]>(
@@ -82,9 +87,11 @@ export default function Reader() {
         </nav>
       </aside>
 
-      {/* 本文 */}
+      {/* 本文（記号正典を配って [[key]] のポップ定義を有効化） */}
       <article className="min-w-0 max-w-content">
-        {body ? <Markdown src={body} /> : <p className="text-mut">読み込み中…</p>}
+        <SymbolsContext.Provider value={symbols}>
+          {body ? <Markdown src={body} /> : <p className="text-mut">読み込み中…</p>}
+        </SymbolsContext.Provider>
       </article>
     </div>
   );
