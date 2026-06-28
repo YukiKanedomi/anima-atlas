@@ -68,6 +68,18 @@
       ]
     },
     {
+      "id": "ch-modes",
+      "title": "モードと連続体",
+      "sections": [
+        {
+          "id": "mode-shapes",
+          "title": "軸はいくつもの形で揺れる——曲げモード形状",
+          "file": "sections/mode-shapes.md",
+          "status": "draft"
+        }
+      ]
+    },
+    {
       "id": "ch-measure",
       "title": "計測と診断",
       "sections": [

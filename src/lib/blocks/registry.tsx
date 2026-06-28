@@ -7,6 +7,7 @@ import Campbell from "./Campbell";
 import Spectrum from "./Spectrum";
 import PolarPlot from "./PolarPlot";
 import Bode from "./Bode";
+import ModeShape from "./ModeShape";
 import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
@@ -148,6 +149,20 @@ export const blocks: BlockDef[] = [
       zetaDefault: 0.1,
       rMax: 2.5,
       caption: "r スライダーを動かすとカーソルが両パネルを走査。位相が 90° を切るところが危険速度。",
+    },
+  },
+  {
+    name: "mode-shape",
+    title: "曲げモード形状（連続体の軸）",
+    status: "stable",
+    summary:
+      "軸の複数の曲げモードをアニメ表示。モード1/2/3と支持（単純支持/自由）を切替。n次は (n−1) 個の節を持ち、危険速度は単純支持で 1:4:9。",
+    component: ModeShape,
+    sample: {
+      title: "ためし：モードと支持を切り替える",
+      maxMode: 3,
+      boundaryDefault: "pinned",
+      caption: "モードを上げると節（動かない点）が増える。支持を自由-自由にすると形が変わり、危険速度の比も変わります。",
     },
   },
   {
