@@ -112,6 +112,12 @@
           "title": "スペクトル——振動を周波数に分解して原因を知る",
           "file": "sections/spectrum.md",
           "status": "draft"
+        },
+        {
+          "id": "waterfall",
+          "title": "昇速の全体像を1枚に——ウォーターフォール線図",
+          "file": "sections/waterfall.md",
+          "status": "draft"
         }
       ]
     },

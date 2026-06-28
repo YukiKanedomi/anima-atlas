@@ -5,6 +5,7 @@ import Orbit from "./Orbit";
 import Waveform from "./Waveform";
 import Campbell from "./Campbell";
 import Spectrum from "./Spectrum";
+import Waterfall from "./Waterfall";
 import PolarPlot from "./PolarPlot";
 import Bode from "./Bode";
 import ModeShape from "./ModeShape";
@@ -124,6 +125,22 @@ export const blocks: BlockDef[] = [
         { key: "a3", freq: 0.43, label: "0.43× オイルホワール", color: "mut", default: 0.1 }
       ],
       caption: "各スライダーを動かすと、時間波形が変わり、対応する周波数にピークが立ちます。",
+    },
+  },
+  {
+    name: "waterfall",
+    title: "ウォーターフォール（カスケード線図）",
+    status: "stable",
+    summary:
+      "昇速しながら各回転数のスペクトルを積み重ねた俯瞰図。斜めの尾根＝次数成分（1×・2×）、立った壁＝固有振動数に固定された自励（オイルホイップ）。診断の花形。",
+    component: Waterfall,
+    sample: {
+      title: "ためし：斜めの尾根（次数）と縦の壁（自励）を見分ける",
+      unbDefault: 0.8,
+      misDefault: 0.25,
+      whipDefault: 0.5,
+      opDefault: 2.5,
+      caption: "1×は回転数に比例して右へ動く斜めの尾根。Ω=1で危険速度を叩いて大きくなる。ホイップを上げると、固有振動数に立つ縦の壁が現れます。",
     },
   },
   {
