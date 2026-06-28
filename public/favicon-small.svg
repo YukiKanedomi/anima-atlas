@@ -6,7 +6,7 @@
     </linearGradient>
   </defs>
   <rect width="512" height="512" rx="96" fill="url(#bg)"/>
-  <g transform="translate(256 256)">
+  <g transform="translate(230 270)">
     <g transform="rotate(-24)" fill="none">
       <ellipse rx="150" ry="92" stroke="#f1e6c6" stroke-width="22"/>
       <path d="M 150 0 A 150 92 0 0 1 -60 78" stroke="#e0a64a" stroke-width="22" stroke-linecap="round"/>
