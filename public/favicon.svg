@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Anima Atlas">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#274a76"/>
+      <stop offset="1" stop-color="#13274a"/>
+    </linearGradient>
+    <radialGradient id="vig" cx="0.5" cy="0.42" r="0.62">
+      <stop offset="0.6" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.28"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 地（紺のタイル） -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="112" fill="url(#vig)"/>
+
+  <g fill="none" stroke="#e9dcbb" transform="translate(256 256)">
+    <!-- 古地図の目盛環（グラティキュール） -->
+    <circle r="176" stroke-width="3" stroke-opacity="0.30" stroke-dasharray="2 19" stroke-linecap="round"/>
+    <circle r="158" stroke-width="2" stroke-opacity="0.45"/>
+
+    <!-- コンパスの主軸（淡く） -->
+    <g stroke-opacity="0.16" stroke-width="2">
+      <line x1="0" y1="-158" x2="0" y2="158"/>
+      <line x1="-158" y1="0" x2="158" y2="0"/>
+    </g>
+
+    <!-- 振れ回り軌道（前向き楕円） -->
+    <g transform="rotate(-24)">
+      <ellipse rx="138" ry="82" stroke="#f1e6c6" stroke-width="9"/>
+      <!-- 進行を示す掃引アーク -->
+      <path d="M 138 0 A 138 82 0 0 1 -41 71" stroke="#d8a24a" stroke-width="9" stroke-linecap="round" stroke-opacity="0.9"/>
+    </g>
+
+    <!-- 中心（シャフト）から振れ回る点への半径 -->
+    <line x1="0" y1="0" x2="126.1" y2="-56.1" stroke="#f1e6c6" stroke-width="5" stroke-opacity="0.55" stroke-linecap="round"/>
+
+    <!-- 振れ回る質点（ゴールド） -->
+    <circle cx="126.1" cy="-56.1" r="26" fill="#e8ad4e" stroke="#13274a" stroke-width="6"/>
+    <!-- シャフト中心 -->
+    <circle r="13" fill="#f4ead2"/>
+    <circle r="4.5" fill="#13274a"/>
+  </g>
+</svg>

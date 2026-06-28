@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Anima Atlas">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a4f7c"/>
+      <stop offset="1" stop-color="#13274a"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <g transform="translate(256 256)">
+    <g transform="rotate(-24)" fill="none">
+      <ellipse rx="150" ry="92" stroke="#f1e6c6" stroke-width="22"/>
+      <path d="M 150 0 A 150 92 0 0 1 -60 78" stroke="#e0a64a" stroke-width="22" stroke-linecap="round"/>
+    </g>
+    <circle cx="137" cy="-61" r="46" fill="#e8ad4e" stroke="#13274a" stroke-width="12"/>
+    <circle r="22" fill="#f4ead2"/>
+  </g>
+</svg>
