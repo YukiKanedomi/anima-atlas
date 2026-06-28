@@ -124,6 +124,14 @@
 - **絵文字禁止**。アイコンは**インラインSVG**で、`fill`/`stroke="currentColor"` にして色は文字色から継承。
 - 線アイコンは `strokeWidth 1.6` 前後・`strokeLinecap="round"`（ハンバーガー、閉じる×、三角など）。
 
+### アプリアイコン（favicon／PWA）
+
+- **紋章のコンセプト**：「古地図のコンパス環 × 振れ回り軌道」。紺地（`#274a76→#13274a` 縦グラデ）に、古地図ゴールド（軌道 `#f1e6c6`／掃引アーク・質点 `#e8ad4e`）。外周＝グラティキュール（目盛環の破線）、中央＝-24°傾けた楕円軌道を回る質点＋シャフト中心。アトラス（地図帳）と回転体力学の主役を一つに束ねる。
+- **二段構え**：`public/favicon.svg`（精緻版・目盛環や掃引アークあり、192px以上向け）と `public/favicon-small.svg`（16–32px向け。目盛環を省き線を太く `strokeWidth 22`・質点を大きく＝小サイズで潰れない簡略版）。
+- **生成物**：`icon-512/192.png`・`apple-touch-icon.png`(180)は精緻版から、`favicon-16/32.png`は簡略版から書き出し。`favicon.ico`は32px PNGを内包。`manifest.webmanifest` に `theme_color #1f3a5f`／`background_color #13274a`／maskable は512を流用。
+- **配信**：`index.html` のリンクは**相対パス**（先頭スラッシュなし）。サブパス `/anima-atlas/` で `/favicon.svg` は404になるため。
+- **作り直し方**：SVGを直したら、ヘッドレスChromeで各サイズに `--screenshot`（`--window-size=N,N`・`--default-background-color=00000000`）して `public/` に上書き → ICOは32px PNGをICONDIRで包む。
+
 ---
 
 _最終更新の責任：見た目を変えたら、この表も同時に直すこと。_
