@@ -72,6 +72,12 @@
       "title": "モードと連続体",
       "sections": [
         {
+          "id": "rigid-rotor-modes",
+          "title": "剛体でも2つのモードを持つ——並進と傾き",
+          "file": "sections/rigid-rotor-modes.md",
+          "status": "draft"
+        },
+        {
           "id": "mode-shapes",
           "title": "軸はいくつもの形で揺れる——曲げモード形状",
           "file": "sections/mode-shapes.md",

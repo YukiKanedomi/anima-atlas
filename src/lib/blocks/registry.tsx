@@ -8,6 +8,7 @@ import Spectrum from "./Spectrum";
 import PolarPlot from "./PolarPlot";
 import Bode from "./Bode";
 import ModeShape from "./ModeShape";
+import RigidRotor2DOF from "./RigidRotor2DOF";
 import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
@@ -149,6 +150,20 @@ export const blocks: BlockDef[] = [
       zetaDefault: 0.1,
       rMax: 2.5,
       caption: "r スライダーを動かすとカーソルが両パネルを走査。位相が 90° を切るところが危険速度。",
+    },
+  },
+  {
+    name: "rigid-rotor-2dof",
+    title: "剛体ロータの2自由度（並進＋傾き）",
+    status: "stable",
+    summary:
+      "両端軟支持の剛体ロータ。並進(円筒)と傾き(円錐)の2モード・2危険速度。支持の非対称 k₂/k₁ を上げると2モードが連成し、節が動く。曲げモードの手前の剛体モード。",
+    component: RigidRotor2DOF,
+    sample: {
+      title: "ためし：剛体でも2つのモードを持つ",
+      asymDefault: 1,
+      rhoDefault: 0.4,
+      caption: "対称(k₂/k₁=1)なら 1次=並進・2次=傾きに分離。非対称にすると両者が混ざり（連成）、節の位置が動きます。",
     },
   },
   {
