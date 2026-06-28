@@ -10,9 +10,9 @@
     </radialGradient>
   </defs>
 
-  <!-- 地（紺のタイル） -->
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <rect width="512" height="512" rx="112" fill="url(#vig)"/>
+  <!-- 地（紺のタイル・full-bleed：角丸はOSに任せる） -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" fill="url(#vig)"/>
 
   <g fill="none" stroke="#e9dcbb" transform="translate(256 256)">
     <!-- 古地図の目盛環（グラティキュール） -->
