@@ -102,6 +102,18 @@
           "status": "draft"
         }
       ]
+    },
+    {
+      "id": "ch-field",
+      "title": "不釣り合いと現場",
+      "sections": [
+        {
+          "id": "balancing",
+          "title": "試しおもり1回で釣り合いを取る——影響係数法",
+          "file": "sections/balancing.md",
+          "status": "draft"
+        }
+      ]
     }
   ]
 }

@@ -9,6 +9,7 @@ import PolarPlot from "./PolarPlot";
 import Bode from "./Bode";
 import ModeShape from "./ModeShape";
 import RigidRotor2DOF from "./RigidRotor2DOF";
+import Balancing from "./Balancing";
 import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
@@ -178,6 +179,19 @@ export const blocks: BlockDef[] = [
       maxMode: 3,
       boundaryDefault: "pinned",
       caption: "モードを上げると節（動かない点）が増える。支持を自由-自由にすると形が変わり、危険速度の比も変わります。",
+    },
+  },
+  {
+    name: "balancing",
+    title: "1面バランシング（影響係数法）",
+    status: "stable",
+    summary:
+      "振動フェーザとロータ正面の2画面で field balancing を体験。試しおもり1回で影響係数α=(V1−V0)/Tを求め、補正C=−V0/αで残留ゼロ。補正は『振動の真逆』ではなく位相ψぶんずれる。",
+    component: Balancing,
+    sample: {
+      title: "ためし：試しおもり1回で補正を計算する",
+      psiDefault: 60,
+      caption: "試しおもりの大きさ・角度をどう選んでも、補正は同じ正解（重い点の真逆）に決まります。ψを動かすと振動の向きは回りますが補正の向きは不変。",
     },
   },
   {
