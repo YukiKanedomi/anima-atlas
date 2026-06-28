@@ -10,6 +10,7 @@ import Bode from "./Bode";
 import ModeShape from "./ModeShape";
 import RigidRotor2DOF from "./RigidRotor2DOF";
 import Balancing from "./Balancing";
+import WhirlInstability from "./WhirlInstability";
 import Nomenclature from "./Nomenclature";
 
 // ブロック部品の「型契約」とレジストリ。
@@ -179,6 +180,20 @@ export const blocks: BlockDef[] = [
       maxMode: 3,
       boundaryDefault: "pinned",
       caption: "モードを上げると節（動かない点）が増える。支持を自由-自由にすると形が変わり、危険速度の比も変わります。",
+    },
+  },
+  {
+    name: "whirl-instability",
+    title: "自励振れ回りの不安定（クロスカップリング）",
+    status: "stable",
+    summary:
+      "運動方程式を RK4 積分。変位に直角な力（クロスカップリング q）が減衰 c を超えると前向き振れ回りが発散。しきい値 q=c·ωn。オイルホワール/シール/アルフォードの共通機構。",
+    component: WhirlInstability,
+    sample: {
+      title: "ためし：q が c を超えると渦巻きが発散する",
+      qDefault: 0.15,
+      cDefault: 0.25,
+      caption: "q を上げて c を超えると、収束する渦巻き（安定）が発散する渦巻き（自励不安定）に変わります。色も赤に。",
     },
   },
   {

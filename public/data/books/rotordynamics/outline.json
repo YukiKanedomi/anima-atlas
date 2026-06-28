@@ -68,6 +68,18 @@
       ]
     },
     {
+      "id": "ch-bearings",
+      "title": "軸受と安定性",
+      "sections": [
+        {
+          "id": "whirl-instability",
+          "title": "軸受が振れ回りを発散させる——自励振動とクロスカップリング",
+          "file": "sections/whirl-instability.md",
+          "status": "draft"
+        }
+      ]
+    },
+    {
       "id": "ch-modes",
       "title": "モードと連続体",
       "sections": [
