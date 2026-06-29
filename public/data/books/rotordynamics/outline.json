@@ -118,6 +118,12 @@
           "title": "昇速の全体像を1枚に——ウォーターフォール線図",
           "file": "sections/waterfall.md",
           "status": "draft"
+        },
+        {
+          "id": "standards-intro",
+          "title": "規格というものさし——ISOとAPIの地図",
+          "file": "sections/standards-intro.md",
+          "status": "draft"
         }
       ]
     },

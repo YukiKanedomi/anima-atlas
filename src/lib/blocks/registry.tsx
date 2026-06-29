@@ -11,6 +11,7 @@ import Bode from "./Bode";
 import ModeShape from "./ModeShape";
 import RigidRotor2DOF from "./RigidRotor2DOF";
 import Balancing from "./Balancing";
+import StandardsMap from "./StandardsMap";
 import WhirlInstability from "./WhirlInstability";
 import Nomenclature from "./Nomenclature";
 
@@ -224,6 +225,61 @@ export const blocks: BlockDef[] = [
       title: "ためし：試しおもり1回で補正を計算する",
       psiDefault: 60,
       caption: "試しおもりの大きさ・角度をどう選んでも、補正は同じ正解（重い点の真逆）に決まります。ψを動かすと振動の向きは回りますが補正の向きは不変。",
+    },
+  },
+  {
+    name: "standards-map",
+    title: "規格マップ（ロータの一生×ものさし）",
+    status: "stable",
+    summary:
+      "「作る前にどれだけ釣り合わせる？」「動かして大丈夫？」「機種ごとの約束は？」の局面ごとに、効く規格（ISO 21940 / ISO 20816 / API）を地図的に示す。データ駆動・出典明記。",
+    component: StandardsMap,
+    sample: {
+      title: "ためし：局面を選ぶと、効く規格が切り替わる",
+      stages: [
+        {
+          label: "作る（釣り合わせ）",
+          question: "作る前に——どれだけ釣り合わせれば十分？",
+          lead: "完璧なゼロにはできないので、許してよい残留不釣り合いを「品質等級 G」で線引きする。回転数が高いほど厳しくなる。",
+          standards: [
+            {
+              code: "ISO 21940-11",
+              name: "回転体の機械的釣り合い／剛性ロータの釣り合い品質等級 G",
+              use: "許容残留偏心 e_per ≈ G×1000 / Ω（Ωは角速度 rad/s）。G2.5 など等級で線引き（旧 ISO 1940-1）。",
+            },
+          ],
+        },
+        {
+          label: "動かす（測って評価）",
+          question: "動かしてから——この揺れは大丈夫？",
+          lead: "振動速度などの実効値（RMS）を測り、新品域から損傷リスク域まで4つのゾーンで評価する。",
+          standards: [
+            {
+              code: "ISO 20816",
+              name: "機械振動の測定と評価",
+              use: "実効値をゾーン A（新品）〜 D（損傷リスク）で評価。回転軸の振動と非回転部（軸受台）の両方。2016年に ISO 7919＋ISO 10816 を統合。",
+            },
+            {
+              code: "API 670",
+              name: "機械保護システム",
+              use: "振動・軸位置などを常時監視し、しきい値で警報・停止する保護系の標準。",
+            },
+          ],
+        },
+        {
+          label: "機種の約束",
+          question: "この機械では——調達の基準は何？",
+          lead: "発注者とメーカーの間で、許容振動値や試験方法を機種ごとに取り決める仕様書。",
+          standards: [
+            {
+              code: "API 610 / 617 / 612",
+              name: "遠心ポンプ／圧縮機／蒸気タービンの仕様",
+              use: "機種別に許容振動・釣り合い・試験を規定。ISO を土台に、より厳しい契約値を置くことが多い。",
+            },
+          ],
+        },
+      ],
+      caption: "番号と用途は概観のための模式です。実際の適用は各規格の最新版・該当パート・該当機種を確認してください。",
     },
   },
   {
