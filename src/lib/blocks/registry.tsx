@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import RunupHero from "./RunupHero";
 import FunctionPlot from "./FunctionPlot";
 import WhirlOrbit from "./WhirlOrbit";
 import Orbit from "./Orbit";
@@ -30,6 +31,20 @@ export type BlockDef = {
 };
 
 export const blocks: BlockDef[] = [
+  {
+    name: "runup-hero",
+    title: "昇速デモ（序章の顔）",
+    status: "stable",
+    summary:
+      "回転数を上げ下げすると、振れ回りが危険速度で膨らみ通過するとしぼむ。Jeffcottの不釣り合い応答 A=r²/√((1−r²)²+(2ζr)²) を自動再生。本書の主題を一発体感。",
+    component: RunupHero,
+    sample: {
+      title: "ためし：回せば揺れる、ある速度でいちばん暴れる",
+      zeta: 0.08,
+      rMax: 2.6,
+      caption: "自動で昇速・降速をくり返します。危険速度（回転数=1）で軌道がいちばん大きくなり、通過するとまた収まります。",
+    },
+  },
   {
     name: "function-plot",
     title: "スライダー連動グラフ（y = f(x)）",

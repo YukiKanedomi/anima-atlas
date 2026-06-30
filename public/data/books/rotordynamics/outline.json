@@ -7,6 +7,18 @@
   },
   "chapters": [
     {
+      "id": "ch-prologue",
+      "title": "はじめに",
+      "sections": [
+        {
+          "id": "prologue",
+          "title": "なぜ回る機械は揺れるのか",
+          "file": "sections/prologue.md",
+          "status": "draft"
+        }
+      ]
+    },
+    {
       "id": "ch-basics",
       "title": "はじめの一歩",
       "sections": [
