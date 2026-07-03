@@ -1,4 +1,5 @@
 import { Fragment, type ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { getBlock, UnknownBlock } from "./blocks/registry";
 import { BlockMath, InlineMath } from "./Math";
 import { BlockBoundary } from "../components/BlockBoundary";
@@ -159,13 +160,26 @@ function parse(src: string): Node[] {
   return nodes;
 }
 
-// インライン処理：**強調**、$数式$、[[記号キー]] / [[記号キー|表示]]。
+// インライン処理：**強調**、$数式$、[[記号キー]] / [[記号キー|表示]]、[[link:節ID|表示]]。
 function inline(text: string): ReactNode {
   const parts = text.split(/(\$[^$]+\$|\*\*[^*]+\*\*|\[\[[^\]]+\]\])/g);
   return parts.map((p, idx) => {
     if (/^\$[^$]+\$$/.test(p)) return <InlineMath key={idx} tex={p.slice(1, -1)} />;
     const term = p.match(/^\[\[([^\]]+)\]\]$/);
     if (term) {
+      // 節間クロスリンク：[[link:節ID|表示名]]。本文の「第◯章で見た…」を実際に飛べる参照にする。
+      const ln = term[1].match(/^link:\s*([a-z0-9-]+)\s*\|\s*(.+)$/i);
+      if (ln) {
+        return (
+          <Link
+            key={idx}
+            to={`/read/${ln[1]}`}
+            className="text-accent underline decoration-accent/40 underline-offset-2 transition-colors hover:decoration-accent"
+          >
+            {ln[2].trim()}
+          </Link>
+        );
+      }
       const [k, label] = term[1].split("|");
       return <TermPop key={idx} tokenKey={k.trim()} label={label?.trim()} />;
     }

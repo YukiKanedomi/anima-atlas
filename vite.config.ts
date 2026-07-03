@@ -10,4 +10,17 @@ export default defineConfig({
   resolve: {
     alias: { "@": path.resolve(__dirname, "src") },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // 巨大な依存を別チャンクに分離（初回ロードの体感改善）。
+        // ・katex は数式のためだけに大きいので単独チャンクへ。
+        // ・react/react-dom も分けると、本体側の更新でキャッシュが無駄にならない。
+        manualChunks: {
+          katex: ["katex"],
+          react: ["react", "react-dom"],
+        },
+      },
+    },
+  },
 });

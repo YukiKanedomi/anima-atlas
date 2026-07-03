@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import Predict from "./Predict";
 import RunupHero from "./RunupHero";
 import FunctionPlot from "./FunctionPlot";
 import WhirlOrbit from "./WhirlOrbit";
@@ -31,6 +32,20 @@ export type BlockDef = {
 };
 
 export const blocks: BlockDef[] = [
+  {
+    name: "predict",
+    title: "予測プロンプト（触る前に一呼吸）",
+    status: "stable",
+    summary:
+      "ブロックを触る前に「どうなると思う？」と予想を選ばせる横断部品。受け身の閲覧を能動的な確認に変える。正解=緑・おしい=金でやさしく開示。",
+    component: Predict,
+    sample: {
+      question: "回転数を上げて危険速度を超えると、揺れの大きさはどうなる？",
+      options: ["どこまでも大きくなる", "だんだん小さくなり一定に落ち着く", "変わらない"],
+      answer: 1,
+      reveal: "危険速度の先では位相が反転して自動調心が働き、揺れはむしろ収まっていきます。下のブロックで r を上げて確かめてみてください。",
+    },
+  },
   {
     name: "runup-hero",
     title: "昇速デモ（序章の顔）",

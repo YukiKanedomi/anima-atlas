@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchJson, fetchText, type Outline, type SectionRef } from "../lib/data";
 import { Markdown } from "../lib/markdown";
+import { markVisited } from "../lib/progress";
 import { SymbolsContext, type Sym } from "../lib/symbols";
 
 const BOOK_DIR = "data/books/rotordynamics";
@@ -41,12 +42,13 @@ export default function Reader() {
     c.sections.some((s) => s.id === currentId)
   );
 
-  // 選ばれた節の本文を読む（読むたび先頭へ戻す）
+  // 選ばれた節の本文を読む（読むたび先頭へ戻し、足あとを残す）
   useEffect(() => {
     if (!current) return;
     setBody("");
     setDrawerOpen(false);
     window.scrollTo({ top: 0 });
+    markVisited(current.id);
     fetchText(`${BOOK_DIR}/${current.file}`)
       .then(setBody)
       .catch((e) => setError(String(e)));

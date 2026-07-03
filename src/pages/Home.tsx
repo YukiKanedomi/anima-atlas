@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchJson, type Outline } from "../lib/data";
+import { getVisited } from "../lib/progress";
 import { Wordmark } from "../components/Wordmark";
 
 const BOOK_DIR = "data/books/rotordynamics";
@@ -50,6 +51,8 @@ function sampleRoute(per = 26): Pt[] {
 export default function Home() {
   const navigate = useNavigate();
   const [outline, setOutline] = useState<Outline | null>(null);
+  // 読了の足あと（localStorage）。歩いた章のピンが塗られる。
+  const [visited] = useState<Set<string>>(() => getVisited());
 
   useEffect(() => {
     fetchJson<Outline>(`${BOOK_DIR}/outline.json`).then(setOutline).catch(() => {});
@@ -77,10 +80,17 @@ export default function Home() {
       const f = n > 1 ? i / (n - 1) : 0.5;
       const p = at(f);
       const side: "left" | "right" = p.x > W * 0.6 ? "left" : "right";
-      return { ch, x: p.x, y: p.y, side, index: i, last: i === n - 1 };
+      const done = ch.sections.filter((s) => visited.has(s.id)).length;
+      return { ch, x: p.x, y: p.y, side, index: i, last: i === n - 1, done, total: ch.sections.length };
     });
     return { routeD, pins };
-  }, [outline]);
+  }, [outline, visited]);
+
+  // 全体の歩数（読了カウンタ）
+  const walked = useMemo(() => {
+    const all = outline?.chapters.flatMap((c) => c.sections) ?? [];
+    return { done: all.filter((s) => visited.has(s.id)).length, total: all.length };
+  }, [outline, visited]);
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -173,17 +183,29 @@ export default function Home() {
                   {pin.ch.title}
                 </text>
                 <text x={labelX} y={headY + 15} fontSize="13" fill="var(--mut)" textAnchor={anchor} className="font-ui">
-                  {pin.last ? "実機の頂・" : ""}{pin.ch.sections.length}節
+                  {pin.last ? "実機の頂・" : ""}
+                  {pin.done > 0 ? `${pin.done}/${pin.total}節` : `${pin.total}節`}
                 </text>
 
-                {/* ピン本体 */}
+                {/* ピン本体（歩いた足あと：踏破＝塗りつぶし、途中＝白のまま進捗表示） */}
                 <g className="aa-pin">
                   <ellipse cx={pin.x} cy={pin.y + 2} rx={7} ry={2.5} fill="rgba(20,30,50,.18)" />
                   <path d={`M${pin.x},${pin.y} L${pin.x - 7},${headY + 6} A14,14 0 1 1 ${pin.x + 7},${headY + 6} Z`} fill="var(--accent)" />
-                  <circle cx={pin.x} cy={headY} r={9} fill="#fff" />
-                  <text x={pin.x} y={headY + 4} fontSize="12" fill="var(--accent-d)" textAnchor="middle" className="font-ui font-semibold">
-                    {pin.index + 1}
-                  </text>
+                  <circle cx={pin.x} cy={headY} r={9} fill={pin.done === pin.total && pin.total > 0 ? "var(--accent-d)" : "#fff"} />
+                  {pin.done === pin.total && pin.total > 0 ? (
+                    <path
+                      d={`M${pin.x - 4},${headY} l3,3.4 l5.5,-6.4`}
+                      fill="none"
+                      stroke="#fff"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  ) : (
+                    <text x={pin.x} y={headY + 4} fontSize="12" fill="var(--accent-d)" textAnchor="middle" className="font-ui font-semibold">
+                      {pin.index + 1}
+                    </text>
+                  )}
                 </g>
               </g>
             );
@@ -211,12 +233,22 @@ export default function Home() {
         </svg>
       </figure>
 
-      {/* 地図の下：お試し場と但し書き */}
+      {/* 地図の下：歩数・お試し場・但し書き */}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-        <Link to="/gallery" className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-4 py-2.5 text-sm shadow-card transition-colors hover:border-accent">
-          <span className="font-serif text-ink">お試し場（部品ギャラリ）</span>
-          <span className="text-accent">のぞく →</span>
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          {walked.done > 0 ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 text-sm text-mut shadow-card">
+              <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" className="text-accent">
+                <path d="M2 6.5l2.5 2.8L10 3.2" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              歩いた節 <b className="tabular-nums text-ink">{walked.done}</b> / {walked.total}
+            </span>
+          ) : null}
+          <Link to="/gallery" className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-4 py-2.5 text-sm shadow-card transition-colors hover:border-accent">
+            <span className="font-serif text-ink">お試し場（部品ギャラリ）</span>
+            <span className="text-accent">のぞく →</span>
+          </Link>
+        </div>
         <p className="max-w-md text-sm leading-7 text-mut">
           嘘をつかないことを大切に。図・式は正確に、概念図には「模式」と明記し、出典をつけ、捏造はしません。
         </p>
