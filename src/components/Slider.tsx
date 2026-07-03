@@ -1,4 +1,5 @@
 // ラベル付きスライダー。値はその場で数値表示。
+// format を渡すと表示だけ差し替えられる（例：対数スライダーで 3.48 → "3,000 rpm"）。
 type Props = {
   label: string;
   value: number;
@@ -6,17 +7,18 @@ type Props = {
   max: number;
   step: number;
   unit?: string;
+  format?: (v: number) => string;
   onChange: (v: number) => void;
 };
 
-export function Slider({ label, value, min, max, step, unit, onChange }: Props) {
+export function Slider({ label, value, min, max, step, unit, format, onChange }: Props) {
   const pct = max > min ? ((value - min) / (max - min)) * 100 : 0;
   return (
     <label className="block">
       <div className="flex items-baseline justify-between text-sm">
         <span className="text-mut">{label}</span>
         <span className="font-ui tabular-nums text-ink">
-          {value}
+          {format ? format(value) : value}
           {unit ? <span className="text-mut">{unit}</span> : null}
         </span>
       </div>

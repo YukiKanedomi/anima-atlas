@@ -13,7 +13,9 @@ import Bode from "./Bode";
 import ModeShape from "./ModeShape";
 import RigidRotor2DOF from "./RigidRotor2DOF";
 import Balancing from "./Balancing";
+import BalanceGrade from "./BalanceGrade";
 import StandardsMap from "./StandardsMap";
+import VibrationGauge from "./VibrationGauge";
 import WhirlInstability from "./WhirlInstability";
 import Nomenclature from "./Nomenclature";
 
@@ -255,6 +257,33 @@ export const blocks: BlockDef[] = [
       title: "ためし：試しおもり1回で補正を計算する",
       psiDefault: 60,
       caption: "試しおもりの大きさ・角度をどう選んでも、補正は同じ正解（重い点の真逆）に決まります。ψを動かすと振動の向きは回りますが補正の向きは不変。",
+    },
+  },
+  {
+    name: "vibration-gauge",
+    title: "振動評価ゲージ（ISO 20816 流・ゾーンA〜D）",
+    status: "stable",
+    summary:
+      "振動速度の実効値（mm/s RMS）をゾーンA〜Dで判定するものさし。機械の区分（大きさ・支持の硬さ）で境界が動くことも体感できる。境界値は代表例（模式）。",
+    component: VibrationGauge,
+    sample: {
+      title: "ためし：針を動かすとゾーンの判定が変わる",
+      vDefault: 3.2,
+      caption: "スライダーで測定値を動かしてみてください。同じ振動でも、機械の区分を切り替えると判定が変わります——境界は「機械ごとのものさし」です。",
+    },
+  },
+  {
+    name: "balance-grade",
+    title: "釣り合い品質等級 G（ISO 21940 流セレクタ）",
+    status: "stable",
+    summary:
+      "等級Gと回転数から許容残留偏心 e=G×1000/Ω [μm] を読む。名物の log-log 線図（傾き−1の等級線の束）に運転点を打つ。高速機ほど許される偏心が小さい。",
+    component: BalanceGrade,
+    sample: {
+      title: "ためし：同じ等級でも、速い機械ほど許容が小さい",
+      gDefault: 2.5,
+      rpmDefault: 3000,
+      caption: "G2.5 の 3,000 rpm で約 8 μm。回転数を10倍にすると、許される偏心は 1/10 になります（対数図で傾き−1の直線）。",
     },
   },
   {
