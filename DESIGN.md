@@ -63,6 +63,8 @@
 - ラベルは左に `text-mut`、現在値は右に `font-ui tabular-nums text-ink`。
 - 溝は `--soft2`、**進んだ分を紺で塗る**（`linear-gradient(to right, var(--accent) {pct}%, var(--soft2) {pct}%)` をインライン指定）。
 - つまみ＝白丸・紺2px枠・微シャドウ、6pxトラック／16pxつまみ。hoverで1.15倍、フォーカスで紺の淡いリング。
+- **数値表示は常に固定桁**：format 未指定なら step の小数桁へ toFixed（Slider 内蔵）。アニメが setParam で書く生の浮動小数（0.2149946…）を垂れ流すと、桁数の変化で行折り返しが暴れ**スマホで画面ががくがくする**。対数スライダー等は `format` で表示を整形（例 3.48→「3,000 rpm」）。
+- **動的に長さが変わるテキスト**（状態表示など）は、スマホでは `w-full sm:w-auto` で行を固定し、折り返しの出入り自体をなくす（RunupHero の作法）。
 
 ### 再生／停止（`components/PlayPause.tsx`）
 - **絵文字は使わない**。インラインSVG（再生＝三角／停止＝二本バー、`fill="currentColor"`）。
