@@ -126,13 +126,16 @@
 - **絵文字禁止**。アイコンは**インラインSVG**で、`fill`/`stroke="currentColor"` にして色は文字色から継承。
 - 線アイコンは `strokeWidth 1.6` 前後・`strokeLinecap="round"`（ハンバーガー、閉じる×、三角など）。
 
-### アプリアイコン（favicon／PWA）
+### アプリアイコン（favicon／PWA）＝「マッチラベル」意匠（2026-07-04 刷新）
 
-- **紋章のコンセプト**：「古地図のコンパス環 × 振れ回り軌道」。紺地（`#274a76→#13274a` 縦グラデ）に、古地図ゴールド（軌道 `#f1e6c6`／掃引アーク・質点 `#e8ad4e`）。外周＝グラティキュール（目盛環の破線）、中央＝-24°傾けた楕円軌道を回る質点＋シャフト中心。アトラス（地図帳）と回転体力学の主役を一つに束ねる。
-- **二段構え**：`public/favicon.svg`（精緻版・目盛環や掃引アークあり、192px以上向け）と `public/favicon-small.svg`（16–32px向け。目盛環を省き線を太く `strokeWidth 22`・質点を大きく＝小サイズで潰れない簡略版）。
-- **生成物**：`icon-512/192.png`・`apple-touch-icon.png`(180)は精緻版から、`favicon-16/32.png`は簡略版から書き出し。`favicon.ico`は32px PNGを内包。`manifest.webmanifest` に `theme_color #1f3a5f`／`background_color #13274a`／maskable は512を流用。
-- **配信**：`index.html` のリンクは**相対パス**（先頭スラッシュなし）。サブパス `/anima-atlas/` で `/favicon.svg` は404になるため。
-- **作り直し方**：SVGを直したら、ヘッドレスChromeで各サイズに `--screenshot`（`--window-size=N,N`・`--default-background-color=00000000`）して `public/` に上書き → ICOは32px PNGをICONDIRで包む。
+- **紋章のコンセプト**：昭和のマッチ箱ラベルの系譜（レトロ印刷／ヴァナキュラー）。生成り紙 `#efe5cd` に**朱 `#b5493a` ＋紺 `#22456e` の2色刷り**。朱の外枠＋紺の内枠、上下に `ANIMA / ATLAS` の題字（Georgia系セリフ・letter-spacing広め）、四隅に朱の菱飾り。紋章＝紺の円板ロータを朱の軌道環が周回し、**朱版をわざと3pxずらした「版ズレ」がシグネチャー**。
+- **三段構え**：
+  - `favicon.svg`（フル版＝ラベル全部入り。192px以上のPNGの元）
+  - `favicon-small.svg`（16–32px向け。題字・内枠・菱を落とし、外枠と紋章だけを太く＝「小さな切手」として読める）
+  - `icon-maskable.png`（Android円形マスク用。**矩形の枠は円マスクで角が切られる**ため、枠なし・紋章＋題字を中央80%セーフゾーンに収めた別版。manifest の `purpose:"maskable"` はこれを指す）
+- **生成**：グローバルの **app-icon スキル**（512pxで描いて高品質縮小）。`manifest.webmanifest` は `theme_color #1f3a5f`（サイトのUI色）／`background_color #efe5cd`（紙色＝スプラッシュがラベルと同化）。
+- **配信**：`index.html` のリンクは**相対パス**（サブパス `/anima-atlas/` で `/favicon.svg` は404になるため）。
+- **注意**：SVG favicon の題字はローカルフォント描画（Georgia→無ければserif代替）。PNG群は生成時に焼き込むので安定。アイコンの旧デザイン（紺地・コンパス環×軌道）は 2026-07-04 まで。
 
 ---
 
