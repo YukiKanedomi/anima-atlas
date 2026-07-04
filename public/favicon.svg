@@ -1,44 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Anima Atlas">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#274a76"/>
-      <stop offset="1" stop-color="#13274a"/>
-    </linearGradient>
-    <radialGradient id="vig" cx="0.5" cy="0.42" r="0.62">
-      <stop offset="0.6" stop-color="#000000" stop-opacity="0"/>
-      <stop offset="1" stop-color="#000000" stop-opacity="0.28"/>
-    </radialGradient>
-  </defs>
-
-  <!-- 地（紺のタイル・full-bleed：角丸はOSに任せる） -->
-  <rect width="512" height="512" fill="url(#bg)"/>
-  <rect width="512" height="512" fill="url(#vig)"/>
-
-  <g fill="none" stroke="#e9dcbb" transform="translate(256 256)">
-    <!-- 古地図の目盛環（グラティキュール） -->
-    <circle r="176" stroke-width="3" stroke-opacity="0.30" stroke-dasharray="2 19" stroke-linecap="round"/>
-    <circle r="158" stroke-width="2" stroke-opacity="0.45"/>
-
-    <!-- コンパスの主軸（淡く） -->
-    <g stroke-opacity="0.16" stroke-width="2">
-      <line x1="0" y1="-158" x2="0" y2="158"/>
-      <line x1="-158" y1="0" x2="158" y2="0"/>
-    </g>
-
-    <!-- 振れ回り軌道（前向き楕円） -->
-    <g transform="rotate(-24)">
-      <ellipse rx="138" ry="82" stroke="#f1e6c6" stroke-width="9"/>
-      <!-- 進行を示す掃引アーク -->
-      <path d="M 138 0 A 138 82 0 0 1 -41 71" stroke="#d8a24a" stroke-width="9" stroke-linecap="round" stroke-opacity="0.9"/>
-    </g>
-
-    <!-- 中心（シャフト）から振れ回る点への半径 -->
-    <line x1="0" y1="0" x2="126.1" y2="-56.1" stroke="#f1e6c6" stroke-width="5" stroke-opacity="0.55" stroke-linecap="round"/>
-
-    <!-- 振れ回る質点（ゴールド） -->
-    <circle cx="126.1" cy="-56.1" r="26" fill="#e8ad4e" stroke="#13274a" stroke-width="6"/>
-    <!-- シャフト中心 -->
-    <circle r="13" fill="#f4ead2"/>
-    <circle r="4.5" fill="#13274a"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#efe5cd"/>
+  <!-- 外枠（朱・少し版ズレ） -->
+  <rect x="38" y="36" width="436" height="438" rx="18" fill="none" stroke="#b5493a" stroke-width="13" transform="translate(3 2)"/>
+  <!-- 内枠（紺） -->
+  <rect x="64" y="62" width="384" height="388" rx="10" fill="none" stroke="#22456e" stroke-width="4.5"/>
+  <!-- 上下の題字 -->
+  <text x="256" y="118" font-family="Georgia,'Times New Roman',serif" font-size="42" letter-spacing="14" fill="#22456e" text-anchor="middle" font-weight="bold">ANIMA</text>
+  <text x="256" y="432" font-family="Georgia,'Times New Roman',serif" font-size="42" letter-spacing="14" fill="#22456e" text-anchor="middle" font-weight="bold">ATLAS</text>
+  <!-- 角飾り（朱の菱） -->
+  <g fill="#b5493a">
+    <path d="M96 96 l10 -10 10 10 -10 10 Z"/>
+    <path d="M396 96 l10 -10 10 10 -10 10 Z"/>
+    <path d="M96 416 l10 -10 10 10 -10 10 Z"/>
+    <path d="M396 416 l10 -10 10 10 -10 10 Z"/>
+  </g>
+  <!-- 紋章：紺の円板ロータ -->
+  <circle cx="256" cy="268" r="92" fill="#22456e"/>
+  <circle cx="256" cy="268" r="14" fill="#efe5cd"/>
+  <!-- 朱の軌道環（2色目・あえて3pxズレ＝版ズレ） -->
+  <g transform="translate(4 3) rotate(-15 256 268)">
+    <ellipse cx="256" cy="268" rx="148" ry="56" fill="none" stroke="#b5493a" stroke-width="15"/>
+    <circle cx="391" cy="240" r="22" fill="#b5493a"/>
   </g>
 </svg>
