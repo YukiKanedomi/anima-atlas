@@ -143,11 +143,12 @@ export default function RunupHero({ config }: { config: RunupHeroConfig }) {
         </text>
       </svg>
 
-      <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
+      {/* 状態テキストは長さが変わるので、スマホでは常に2行目に固定（折り返しの出入りでがくがくさせない） */}
+      <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-sm">
         <span className="text-mut">
           回転数 <b className="tabular-nums text-ink">{r.toFixed(2)}</b>（危険速度＝1.00）
         </span>
-        <span className={"font-semibold " + (crit ? "text-[#9b2d3a]" : "text-accent")}>{status}</span>
+        <span className={"w-full font-semibold sm:w-auto " + (crit ? "text-[#9b2d3a]" : "text-accent")}>{status}</span>
       </div>
 
       <div className="mt-3 flex items-center gap-3">
