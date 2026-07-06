@@ -17,6 +17,7 @@
 | done | 高 | UX/骨格 | **節間クロスリンク**。markdown に `[[link:節id|表示名]]` 記法を追加し、既存の「第6章で見た」等の言及をリンク化 | 縦（deep）横（発展節）はあるが「参照」の導線が無い。16節に育った今、迷子防止に効く | S | markdown.tsx に link 記法を1つ足し、whirl-instability↔spectrum↔waterfall の3節を相互リンク |
 | new | 高 | コンテンツ一貫性 | **用語ポップ[[記号]]の遍在化**。symbols.json を拡充し、後発13節にも [[zeta]] [[omega_n]] 等を配る | TermPop の仕組みは正典ごとあるのに初期3節しか使っていない。用語のわからなさは離脱要因 | M | symbols.json に q・c・G・RMS 等を追加→ whirl-instability と standards-intro から適用 |
 | done | 高 | delight | **既読の足あと×探検地図**。読了節を localStorage 記録→Home のピンを「訪問済み」表示（塗り/旗） | 「旅する教科書」の世界観がUIに現れる。再訪の動機づけにも | M | Reader で節到達時に localStorage 記録→Home で読んで塗り分け |
+| new | 高 | コンテンツ | **FFT章の残り5節**（フーリエの目②〜⑥：内積で取り出す/エイリアシング/窓とリーケージ/分解能と平均/次数の読み方） | ユーザー要望「FFTはがっつり一章」。①合成は実装済み。新ブロック dft-probe・aliasing・leakage | L | ②「周波数を取り出す仕組み」dft-probe から順に1節ずつ |
 | new | 高 | コンテンツ | **薄い節の増強**：whirl-direction(997字)・campbell(1267字)・spectrum(1298字) | 後発節（2000字超+deep+模式注記）と品質差が開いた。特に Campbell は花形なのに素通り感 | M | campbell に :::deep（固有値の由来）と模式・出典注記を追記 |
 | done | 中 | 機能 | **ISO 20816 評価ゲージ部品**（実効値スライダー→ゾーンA〜D帯に針が動く） | standards-intro が「次の専用ブロックで」と予告済み。約束の回収 | M | ゾーン境界を機械クラス別データで持つゲージSVG部品を新設 |
 | done | 中 | 機能 | **ISO 21940 G等級セレクタ**（等級×回転数→許容残留不釣り合いを計算） | 同上・第7章バランシングの実務接続。e=G×1000/Ω の一本式で作れる | S | balancing 節の末尾に置く計算機ブロックを新設 |
