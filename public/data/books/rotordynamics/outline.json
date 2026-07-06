@@ -118,6 +118,12 @@
           "title": "波は正弦波の足し算でできている",
           "file": "sections/fourier-synthesis.md",
           "status": "draft"
+        },
+        {
+          "id": "dft-probe",
+          "title": "周波数を取り出す仕組み——掛けて、平均する",
+          "file": "sections/dft-probe.md",
+          "status": "draft"
         }
       ]
     },

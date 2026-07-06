@@ -6,6 +6,8 @@ import WhirlOrbit from "./WhirlOrbit";
 import Orbit from "./Orbit";
 import Waveform from "./Waveform";
 import Campbell from "./Campbell";
+import DftProbe from "./DftProbe";
+import FourierSynth from "./FourierSynth";
 import Spectrum from "./Spectrum";
 import Waterfall from "./Waterfall";
 import PolarPlot from "./PolarPlot";
@@ -142,6 +144,37 @@ export const blocks: BlockDef[] = [
       gammaDefault: 0.6,
       opDefault: 1.5,
       caption: "γ（円板の扁平さ）を 1 に近づけると前向き危険速度が右へ逃げ、1 を超えると消える。",
+    },
+  },
+  {
+    name: "fourier-synth",
+    title: "フーリエ合成（倍音の足し算シンセ）",
+    status: "stable",
+    summary:
+      "正弦波を1本ずつ足して矩形波・のこぎり波・三角波を組み上げる古典デモ。上＝時間波形（部分和・目標・いま足した1本）、下＝レシピ棒（＝スペクトルの正体）。ギブス現象も見える。",
+    component: FourierSynth,
+    sample: {
+      title: "ためし：丸い波だけでギザギザの波を作る",
+      waveDefault: "square",
+      nDefault: 1,
+      caption: "スライダーで正弦波の本数を増やしてみてください。破線の目標にどんどん近づきます。下の棒グラフが「レシピ」——これがスペクトルの正体です。",
+    },
+  },
+  {
+    name: "dft-probe",
+    title: "探り正弦波と平均（DFTの心臓）",
+    status: "stable",
+    summary:
+      "信号に探りの正弦波を掛けて平均すると、同じ速さの成分だけが生き残る（直交性）。探りを掃引すると平均の曲線がスペクトルになる——「分解」の種明かし。",
+    component: DftProbe,
+    sample: {
+      title: "ためし：探りを掃引して、隠れた成分を見つける",
+      k1: 1,
+      a1: 0.8,
+      k2: 3,
+      a2: 0.5,
+      fDefault: 2,
+      caption: "探りが成分と同じ速さになると、掛け算の緑（正）が勝って平均が立ち上がります。違う速さでは緑と赤が打ち消してゼロ。",
     },
   },
   {
