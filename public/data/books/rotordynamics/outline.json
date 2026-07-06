@@ -110,6 +110,18 @@
       ]
     },
     {
+      "id": "ch-fourier",
+      "title": "フーリエの目",
+      "sections": [
+        {
+          "id": "fourier-synthesis",
+          "title": "波は正弦波の足し算でできている",
+          "file": "sections/fourier-synthesis.md",
+          "status": "draft"
+        }
+      ]
+    },
+    {
       "id": "ch-measure",
       "title": "計測と診断",
       "sections": [
