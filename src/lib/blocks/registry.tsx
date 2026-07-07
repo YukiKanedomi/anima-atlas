@@ -9,6 +9,9 @@ import Aliasing from "./Aliasing";
 import Campbell from "./Campbell";
 import DftProbe from "./DftProbe";
 import FourierSynth from "./FourierSynth";
+import Leakage from "./Leakage";
+import Resolution from "./Resolution";
+import SyncAverage from "./SyncAverage";
 import Spectrum from "./Spectrum";
 import Waterfall from "./Waterfall";
 import PolarPlot from "./PolarPlot";
@@ -190,6 +193,44 @@ export const blocks: BlockDef[] = [
       fDefault: 4,
       fsDefault: 10,
       caption: "fs を下げていくと、赤破線の「見かけの波」が現れます。fs=4 でロータは静止して見え、fs=5 では逆回りに。サンプル点（金）はどちらの波にも完全に乗っています。",
+    },
+  },
+  {
+    name: "leakage",
+    title: "窓とリーケージ（切り取り方の作法）",
+    status: "stable",
+    summary:
+      "DFTは窓の中身が繰り返すとみなす。整数個ぴったり入らないと、つなぎ目の段差が偽の広がり（リーケージ）に化ける。Hann窓で端を絞ると裾が激減（山は少し太る）。本物のFFT。",
+    component: Leakage,
+    sample: {
+      title: "ためし：つなぎ目の段差が、にじみに化ける",
+      fDefault: 8.5,
+      caption: "スライダーを整数（8や9）に合わせると1本にすっと立ち、半端（8.5）にするとにじみます。Hann窓に切り替えると、段差が消えて裾が沈みます。",
+    },
+  },
+  {
+    name: "resolution",
+    title: "分解能と平均化（時間との取引）",
+    status: "stable",
+    summary:
+      "近い2成分（8Hzと8.75Hz）を見分けられるかは記録の長さで決まる（Δf=1/T）。ノイズの荒れは平均回数で1/√Mに沈む。どちらも「時間で買う」。乱数はseed固定で再現可能。",
+    component: Resolution,
+    sample: {
+      title: "ためし：記録を長くすると、2つの山が割れる",
+      caption: "0.5秒では1山に融けています。4秒で2山に。平均回数を上げるとノイズの荒れがならされて、山がくっきり浮かびます。",
+    },
+  },
+  {
+    name: "sync-average",
+    title: "回転同期平均（キーフェイザ基準の平均）",
+    status: "stable",
+    summary:
+      "1回転1パルスの基準（キーフェイザ）に合わせて波形をM回転ぶん平均。同期成分（1×・2×）は残り、非同期（0.43×ホワール・ノイズ）は1/√Mで消える。回転成分の抽出フィルタ。",
+    component: SyncAverage,
+    sample: {
+      title: "ためし：平均するほど、回転の声だけが残る",
+      mDefault: 1,
+      caption: "M=1では生の波形そのまま（灰の残像とほぼ同じ）。Mを増やすと、紺の平均が金破線（真の同期成分）へ吸い付いていきます。",
     },
   },
   {

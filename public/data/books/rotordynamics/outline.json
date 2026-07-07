@@ -130,6 +130,24 @@
           "title": "サンプリングの罠——エイリアシング",
           "file": "sections/aliasing.md",
           "status": "draft"
+        },
+        {
+          "id": "leakage",
+          "title": "窓とリーケージ——切り取り方の作法",
+          "file": "sections/leakage.md",
+          "status": "draft"
+        },
+        {
+          "id": "resolution",
+          "title": "分解能と平均化——細かさも静けさも、時間で買う",
+          "file": "sections/resolution.md",
+          "status": "draft"
+        },
+        {
+          "id": "order-reading",
+          "title": "回転機械ならではの読み方——次数と回転同期平均",
+          "file": "sections/order-reading.md",
+          "status": "draft"
         }
       ]
     },

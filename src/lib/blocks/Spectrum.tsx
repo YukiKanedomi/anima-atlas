@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Slider } from "../../components/Slider";
+import { fft } from "../fft";
 import { useInstanceId, useSharedParams } from "../linkStore";
 
 // ドメイン部品：FFTスペクトル（振動診断の核）。
@@ -33,38 +34,6 @@ const COLORS: Record<string, string> = {
   heavy: "#9b2d3a",
   mut: "var(--mut)",
 };
-
-// 反復 Cooley–Tukey FFT（in-place、N=2のべき）
-function fft(re: Float64Array, im: Float64Array) {
-  const n = re.length;
-  for (let i = 1, j = 0; i < n; i++) {
-    let bit = n >> 1;
-    for (; j & bit; bit >>= 1) j ^= bit;
-    j ^= bit;
-    if (i < j) {
-      [re[i], re[j]] = [re[j], re[i]];
-      [im[i], im[j]] = [im[j], im[i]];
-    }
-  }
-  for (let len = 2; len <= n; len <<= 1) {
-    const ang = (-2 * Math.PI) / len;
-    const half = len >> 1;
-    for (let i = 0; i < n; i += len) {
-      for (let k = 0; k < half; k++) {
-        const c = Math.cos(ang * k);
-        const s = Math.sin(ang * k);
-        const ar = re[i + k];
-        const ai = im[i + k];
-        const br = re[i + k + half] * c - im[i + k + half] * s;
-        const bi = re[i + k + half] * s + im[i + k + half] * c;
-        re[i + k] = ar + br;
-        im[i + k] = ai + bi;
-        re[i + k + half] = ar - br;
-        im[i + k + half] = ai - bi;
-      }
-    }
-  }
-}
 
 export default function Spectrum({ config }: { config: SpectrumConfig }) {
   const comps = config.components ?? [];
