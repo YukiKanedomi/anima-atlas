@@ -5,6 +5,7 @@ import FunctionPlot from "./FunctionPlot";
 import WhirlOrbit from "./WhirlOrbit";
 import Orbit from "./Orbit";
 import Waveform from "./Waveform";
+import Aliasing from "./Aliasing";
 import Campbell from "./Campbell";
 import DftProbe from "./DftProbe";
 import FourierSynth from "./FourierSynth";
@@ -175,6 +176,20 @@ export const blocks: BlockDef[] = [
       a2: 0.5,
       fDefault: 2,
       caption: "探りが成分と同じ速さになると、掛け算の緑（正）が勝って平均が立ち上がります。違う速さでは緑と赤が打ち消してゼロ。",
+    },
+  },
+  {
+    name: "aliasing",
+    title: "エイリアシング（サンプリングの罠）",
+    status: "stable",
+    summary:
+      "速い波を粗く測ると点列が「別の遅い波」に完全一致してしまう。左＝ストロボで見た回転円板（止まる・逆回り）、右＝波形とサンプル点＋見かけの波。境界 fs=2f。",
+    component: Aliasing,
+    sample: {
+      title: "ためし：点滅を遅くすると、回転が止まって見える",
+      fDefault: 4,
+      fsDefault: 10,
+      caption: "fs を下げていくと、赤破線の「見かけの波」が現れます。fs=4 でロータは静止して見え、fs=5 では逆回りに。サンプル点（金）はどちらの波にも完全に乗っています。",
     },
   },
   {

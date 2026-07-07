@@ -124,6 +124,12 @@
           "title": "周波数を取り出す仕組み——掛けて、平均する",
           "file": "sections/dft-probe.md",
           "status": "draft"
+        },
+        {
+          "id": "aliasing",
+          "title": "サンプリングの罠——エイリアシング",
+          "file": "sections/aliasing.md",
+          "status": "draft"
         }
       ]
     },
