@@ -13,8 +13,7 @@
         {
           "id": "prologue",
           "title": "なぜ回る機械は揺れるのか",
-          "file": "sections/prologue.md",
-          "status": "draft"
+          "file": "sections/prologue.md"
         }
       ]
     },
@@ -25,20 +24,22 @@
         {
           "id": "jeffcott-intro",
           "title": "一番単純なロータはどう揺れるか",
-          "file": "sections/jeffcott-intro.md",
-          "status": "draft"
+          "file": "sections/jeffcott-intro.md"
         },
         {
           "id": "natural-frequency",
           "title": "危険速度はどこで決まる？",
-          "file": "sections/natural-frequency.md",
-          "status": "draft"
+          "file": "sections/natural-frequency.md"
         },
         {
           "id": "phase-lag",
           "title": "重い点はどこにある？——位相の話",
-          "file": "sections/phase-lag.md",
-          "status": "draft"
+          "file": "sections/phase-lag.md"
+        },
+        {
+          "id": "transmissibility",
+          "title": "揺れを伝えない——外部加振と防振の√2",
+          "file": "sections/transmissibility.md"
         }
       ]
     },
@@ -49,20 +50,17 @@
         {
           "id": "whirl-direction",
           "title": "前向き？後ろ向き？——振れ回りの向き",
-          "file": "sections/whirl-direction.md",
-          "status": "draft"
+          "file": "sections/whirl-direction.md"
         },
         {
           "id": "orbit-from-waves",
           "title": "軌道は2つの波からできている",
-          "file": "sections/orbit-from-waves.md",
-          "status": "draft"
+          "file": "sections/orbit-from-waves.md"
         },
         {
           "id": "rotating-frame",
           "title": "回転座標系で見る——回る軸はなぜ自重で疲労するか",
           "file": "sections/rotating-frame.md",
-          "status": "draft",
           "level": "advanced"
         }
       ]
@@ -74,8 +72,7 @@
         {
           "id": "campbell",
           "title": "回転数で危険速度が変わる——Campbell線図",
-          "file": "sections/campbell.md",
-          "status": "draft"
+          "file": "sections/campbell.md"
         }
       ]
     },
@@ -86,8 +83,12 @@
         {
           "id": "whirl-instability",
           "title": "軸受が振れ回りを発散させる——自励振動とクロスカップリング",
-          "file": "sections/whirl-instability.md",
-          "status": "draft"
+          "file": "sections/whirl-instability.md"
+        },
+        {
+          "id": "stability-chart",
+          "title": "安定の地図——q と c の綱引きを俯瞰する",
+          "file": "sections/stability-chart.md"
         }
       ]
     },
@@ -98,14 +99,12 @@
         {
           "id": "rigid-rotor-modes",
           "title": "剛体でも2つのモードを持つ——並進と傾き",
-          "file": "sections/rigid-rotor-modes.md",
-          "status": "draft"
+          "file": "sections/rigid-rotor-modes.md"
         },
         {
           "id": "mode-shapes",
           "title": "軸はいくつもの形で揺れる——曲げモード形状",
-          "file": "sections/mode-shapes.md",
-          "status": "draft"
+          "file": "sections/mode-shapes.md"
         }
       ]
     },
@@ -116,38 +115,32 @@
         {
           "id": "fourier-synthesis",
           "title": "波は正弦波の足し算でできている",
-          "file": "sections/fourier-synthesis.md",
-          "status": "draft"
+          "file": "sections/fourier-synthesis.md"
         },
         {
           "id": "dft-probe",
           "title": "周波数を取り出す仕組み——掛けて、平均する",
-          "file": "sections/dft-probe.md",
-          "status": "draft"
+          "file": "sections/dft-probe.md"
         },
         {
           "id": "aliasing",
           "title": "サンプリングの罠——エイリアシング",
-          "file": "sections/aliasing.md",
-          "status": "draft"
+          "file": "sections/aliasing.md"
         },
         {
           "id": "leakage",
           "title": "窓とリーケージ——切り取り方の作法",
-          "file": "sections/leakage.md",
-          "status": "draft"
+          "file": "sections/leakage.md"
         },
         {
           "id": "resolution",
           "title": "分解能と平均化——細かさも静けさも、時間で買う",
-          "file": "sections/resolution.md",
-          "status": "draft"
+          "file": "sections/resolution.md"
         },
         {
           "id": "order-reading",
           "title": "回転機械ならではの読み方——次数と回転同期平均",
-          "file": "sections/order-reading.md",
-          "status": "draft"
+          "file": "sections/order-reading.md"
         }
       ]
     },
@@ -158,26 +151,22 @@
         {
           "id": "bode-polar",
           "title": "振幅と位相を1枚に——ボード線図とポーラ線図",
-          "file": "sections/bode-polar.md",
-          "status": "draft"
+          "file": "sections/bode-polar.md"
         },
         {
           "id": "spectrum",
           "title": "スペクトル——振動を周波数に分解して原因を知る",
-          "file": "sections/spectrum.md",
-          "status": "draft"
+          "file": "sections/spectrum.md"
         },
         {
           "id": "waterfall",
           "title": "昇速の全体像を1枚に——ウォーターフォール線図",
-          "file": "sections/waterfall.md",
-          "status": "draft"
+          "file": "sections/waterfall.md"
         },
         {
           "id": "standards-intro",
           "title": "規格というものさし——ISOとAPIの地図",
-          "file": "sections/standards-intro.md",
-          "status": "draft"
+          "file": "sections/standards-intro.md"
         }
       ]
     },
@@ -188,8 +177,18 @@
         {
           "id": "balancing",
           "title": "試しおもり1回で釣り合いを取る——影響係数法",
-          "file": "sections/balancing.md",
-          "status": "draft"
+          "file": "sections/balancing.md"
+        }
+      ]
+    },
+    {
+      "id": "ch-appendix",
+      "title": "付録",
+      "sections": [
+        {
+          "id": "appendix-symbols",
+          "title": "記号一覧",
+          "file": "sections/appendix-symbols.md"
         }
       ]
     }

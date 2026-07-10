@@ -105,6 +105,13 @@ h3 {
   animation: aa-pin-in 0.5s ease forwards;
   cursor: pointer;
 }
+/* スマホでは地図が縮んでラベルが読めない（実質8px相当）ため、
+   文字を隠してピン＋番号だけにし、章名は地図下のチップ一覧で示す */
+@media (max-width: 640px) {
+  .aa-pin-text {
+    display: none;
+  }
+}
 /* ピン本体だけホバーで浮く（入場アニメと干渉しないよう内側で） */
 .aa-pin {
   transform-box: fill-box;

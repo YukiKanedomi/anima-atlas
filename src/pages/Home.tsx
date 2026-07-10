@@ -178,11 +178,11 @@ export default function Home() {
                   fill="transparent"
                 />
 
-                {/* ラベル */}
-                <text className="aa-pin-label font-serif" x={labelX} y={headY - 3} fontSize="18.5" fill="var(--ink)" textAnchor={anchor}>
+                {/* ラベル（スマホでは非表示→地図下のチップ一覧が代役） */}
+                <text className="aa-pin-text aa-pin-label font-serif" x={labelX} y={headY - 3} fontSize="18.5" fill="var(--ink)" textAnchor={anchor}>
                   {pin.ch.title}
                 </text>
-                <text x={labelX} y={headY + 15} fontSize="13" fill="var(--mut)" textAnchor={anchor} className="font-ui">
+                <text x={labelX} y={headY + 15} fontSize="13" fill="var(--mut)" textAnchor={anchor} className="aa-pin-text font-ui">
                   {pin.last ? "実機の頂・" : ""}
                   {pin.done > 0 ? `${pin.done}/${pin.total}節` : `${pin.total}節`}
                 </text>
@@ -232,6 +232,30 @@ export default function Home() {
           ) : null}
         </svg>
       </figure>
+
+      {/* スマホ専用：章チップ一覧（地図のラベルの代役。番号＝ピンと対応） */}
+      <nav className="mt-4 flex flex-wrap gap-2 sm:hidden" aria-label="章の一覧">
+        {pins.map((pin) => (
+          <button
+            key={pin.ch.id}
+            onClick={() => pin.ch.sections[0] && navigate(`/read/${pin.ch.sections[0].id}`)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 text-sm text-ink shadow-card active:bg-soft"
+          >
+            <span
+              className={
+                "flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-semibold " +
+                (pin.done === pin.total && pin.total > 0 ? "bg-accent-d text-white" : "bg-accent/10 text-accent")
+              }
+            >
+              {pin.done === pin.total && pin.total > 0 ? "✓" : pin.index + 1}
+            </span>
+            {pin.ch.title}
+            {pin.done > 0 && pin.done < pin.total ? (
+              <span className="tabular-nums text-xs text-mut">{pin.done}/{pin.total}</span>
+            ) : null}
+          </button>
+        ))}
+      </nav>
 
       {/* 地図の下：歩数・お試し場・但し書き */}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4">

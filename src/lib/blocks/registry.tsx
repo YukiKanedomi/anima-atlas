@@ -13,6 +13,8 @@ import Leakage from "./Leakage";
 import Resolution from "./Resolution";
 import SyncAverage from "./SyncAverage";
 import Spectrum from "./Spectrum";
+import StabilityChart from "./StabilityChart";
+import Transmissibility from "./Transmissibility";
 import Waterfall from "./Waterfall";
 import PolarPlot from "./PolarPlot";
 import Bode from "./Bode";
@@ -319,6 +321,34 @@ export const blocks: BlockDef[] = [
       maxMode: 3,
       boundaryDefault: "pinned",
       caption: "モードを上げると節（動かない点）が増える。支持を自由-自由にすると形が変わり、危険速度の比も変わります。",
+    },
+  },
+  {
+    name: "stability-chart",
+    title: "安定性チャート（q–c 平面の安定マップ）",
+    status: "stable",
+    summary:
+      "横軸c・縦軸qの平面を安定域(緑)/不安定域(臙脂)に塗り分け、境界 q=c と成長率σの等値線の上で運転点を動かす俯瞰図。対策（cを増やす/qを減らす）が地図上の移動として見える。whirl-instability と link で運転点を共有可。",
+    component: StabilityChart,
+    sample: {
+      title: "ためし：境界 q = c をまたぐと判定が変わる",
+      qDefault: 0.35,
+      cDefault: 0.2,
+      caption: "運転点を動かして境界をまたいでみてください。不安定側では、安定域へ戻る2つの道（右=減衰を増やす、下=qを減らす）が金の矢印で出ます。",
+    },
+  },
+  {
+    name: "transmissibility",
+    title: "伝達率曲線（外部加振と防振）",
+    status: "stable",
+    summary:
+      "外から来る揺れ／外へ伝える力が何倍になるかの伝達率 T=√(1+(2ζr)²)/√((1−r²)²+(2ζr)²)。r=√2 で全ての ζ が T=1 を通る金の交点、r>√2 の防振域では減衰を増やすとかえって悪化するパラドックスも見える。",
+    component: Transmissibility,
+    sample: {
+      title: "ためし：√2 を境に、増幅と防振が入れ替わる",
+      zetaDefault: 0.1,
+      rDefault: 0.6,
+      caption: "運転点 r を √2 の右へ動かすと「防振できている」に変わります。そこで ζ を上げると曲線が持ち上がる——防振域では減衰が邪魔をします。",
     },
   },
   {
