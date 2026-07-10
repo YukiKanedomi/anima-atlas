@@ -5,7 +5,9 @@ import FunctionPlot from "./FunctionPlot";
 import WhirlOrbit from "./WhirlOrbit";
 import Orbit from "./Orbit";
 import Waveform from "./Waveform";
+import AlfordForce from "./AlfordForce";
 import Aliasing from "./Aliasing";
+import AnisoOrbit from "./AnisoOrbit";
 import Campbell from "./Campbell";
 import DftProbe from "./DftProbe";
 import FourierSynth from "./FourierSynth";
@@ -14,12 +16,15 @@ import Resolution from "./Resolution";
 import SyncAverage from "./SyncAverage";
 import Spectrum from "./Spectrum";
 import StabilityChart from "./StabilityChart";
+import Torsional from "./Torsional";
 import Transmissibility from "./Transmissibility";
+import TwoPlaneBalancing from "./TwoPlaneBalancing";
 import Waterfall from "./Waterfall";
 import PolarPlot from "./PolarPlot";
 import Bode from "./Bode";
 import ModeShape from "./ModeShape";
 import RigidRotor2DOF from "./RigidRotor2DOF";
+import RunupTransient from "./RunupTransient";
 import Balancing from "./Balancing";
 import BalanceGrade from "./BalanceGrade";
 import StandardsMap from "./StandardsMap";
@@ -324,6 +329,63 @@ export const blocks: BlockDef[] = [
     },
   },
   {
+    name: "runup-transient",
+    title: "危険速度の通過（昇速の過渡応答）",
+    status: "stable",
+    summary:
+      "無次元Jeffcottの過渡 z̈+2ζż+z=r(t)²e^{iθ}（r=αt）をRK4積分し、包絡線|z|を横軸r(t)で描く。定常曲線をゴースト破線で重ね、急いで通ると山が低く・r=1より遅れ、通過後にうなりが残ることを体感。",
+    component: RunupTransient,
+    sample: {
+      title: "ためし：急いで通ると、山は低く・遅れて現れる",
+      alphaDefault: 0.01,
+      zetaDefault: 0.05,
+      caption: "破線＝定常応答（ゆっくり回した理想）。αを上げるとピークが下がって右へずれ、通過後にうなりが現れます。",
+    },
+  },
+  {
+    name: "aniso-orbit",
+    title: "異方支持と楕円軌道（後ろ向き帯）",
+    status: "stable",
+    summary:
+      "支持の硬さが縦横で違う（kx≠ky）Jeffcottの不釣り合い応答。危険速度が2つに割れ、その間で|B|>|F|となり振れ回りが後ろ向きに反転。左=軌道アニメ（前向き=紺/後ろ向き=臙脂）、右=Ax・Ayの2山と後ろ向き帯。",
+    component: AnisoOrbit,
+    sample: {
+      title: "ためし：2つの山のあいだで軌道が逆回りする",
+      zeta: 0.08,
+      kDefault: 1.5,
+      omegaDefault: 0.7,
+      caption: "Ω を 1 と 1.22 のあいだ（淡い臙脂の帯）に入れると、軌道の色が臙脂に変わり後ろ向きに回ります。ky/kx=1 に戻すと真円。",
+    },
+  },
+  {
+    name: "torsional",
+    title: "ねじり振動（2慣性系）",
+    status: "stable",
+    summary:
+      "モータI₁—軸kt—負荷I₂の2慣性ねじり系。互いに逆向きにねじれるモードをアニメし、節（ねじれない断面・金マーカー）が慣性の大きい側に寄るのを見せる。ωn=√(kt(1/I₁+1/I₂))、節=I₂/(I₁+I₂)。",
+    component: Torsional,
+    sample: {
+      title: "ためし：モータと負荷が軸をねじり合う",
+      ratioDefault: 1,
+      ktDefault: 1,
+      caption: "慣性比 I₂/I₁ を動かすと節が重い側へ寄り、kt を上げると震えが速くなります。",
+    },
+  },
+  {
+    name: "alford-force",
+    title: "アルフォード力の模式（翼先すきま）",
+    status: "stable",
+    summary:
+      "偏心→翼先すきまが不均一→狭い側の翼だけよく働き接線力に差→合計が変位と直角の力（=クロスカップリングq）に。q=βT/(DH)でトルク比例=高出力ほど危ない。幾何は誇張模式・力の合成は計算どおり。",
+    component: AlfordForce,
+    sample: {
+      title: "ためし：偏心させると、直角の横押し力が現れる",
+      eDefault: 0.6,
+      tDefault: 0.7,
+      caption: "偏心 e とトルクを動かすと、臙脂の「横押し力」が比例して育ちます。向きはいつも変位の90°先——前向き振れ回りを育てる向きです。",
+    },
+  },
+  {
     name: "stability-chart",
     title: "安定性チャート（q–c 平面の安定マップ）",
     status: "stable",
@@ -458,6 +520,20 @@ export const blocks: BlockDef[] = [
         },
       ],
       caption: "番号と用途は概観のための模式です。実際の適用は各規格の最新版・該当パート・該当機種を確認してください。",
+    },
+  },
+  {
+    name: "two-plane-balancing",
+    title: "2面バランシング（影響係数の行列）",
+    status: "stable",
+    summary:
+      "2測定面×2修正面の影響係数行列 A（2×2複素）で V=A·W を連立で解く。試し2回でAの列が埋まり、W=−A⁻¹V0 で両面同時にゼロ。1面補正のみだと偶不釣り合い（逆相）で面2が悪化する対比が一目で分かる。",
+    component: TwoPlaneBalancing,
+    sample: {
+      title: "ためし：1面では消えない不釣り合いが、2面なら両方ゼロに",
+      psiDefault: 60,
+      mixDefault: 1,
+      caption: "「1面補正のみ」だと面1はゼロでも面2に残留（悪化することも）。「2面補正」に切り替えると両面ほぼゼロ。混合比0.5なら不釣り合いが面1に集中していて1面で足ります。",
     },
   },
   {

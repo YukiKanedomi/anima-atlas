@@ -37,6 +37,11 @@
           "file": "sections/phase-lag.md"
         },
         {
+          "id": "runup-transient",
+          "title": "危険速度を駆け抜ける——昇速の通過",
+          "file": "sections/runup-transient.md"
+        },
+        {
           "id": "transmissibility",
           "title": "揺れを伝えない——外部加振と防振の√2",
           "file": "sections/transmissibility.md"
@@ -56,6 +61,11 @@
           "id": "orbit-from-waves",
           "title": "軌道は2つの波からできている",
           "file": "sections/orbit-from-waves.md"
+        },
+        {
+          "id": "anisotropy",
+          "title": "楕円の軌道——支持のかたよりと、間で起きる逆回り",
+          "file": "sections/anisotropy.md"
         },
         {
           "id": "rotating-frame",
@@ -89,6 +99,11 @@
           "id": "stability-chart",
           "title": "安定の地図——q と c の綱引きを俯瞰する",
           "file": "sections/stability-chart.md"
+        },
+        {
+          "id": "alford-force",
+          "title": "翼先のすきまが生む力——アルフォード力",
+          "file": "sections/alford-force.md"
         }
       ]
     },
@@ -178,6 +193,22 @@
           "id": "balancing",
           "title": "試しおもり1回で釣り合いを取る——影響係数法",
           "file": "sections/balancing.md"
+        },
+        {
+          "id": "two-plane-balancing",
+          "title": "2面で釣り合わせる——影響係数を行列にする",
+          "file": "sections/two-plane-balancing.md"
+        }
+      ]
+    },
+    {
+      "id": "ch-torsion",
+      "title": "ねじり振動",
+      "sections": [
+        {
+          "id": "torsional-intro",
+          "title": "ねじり振動——軸のもう一つの揺れ方",
+          "file": "sections/torsional-intro.md"
         }
       ]
     },
