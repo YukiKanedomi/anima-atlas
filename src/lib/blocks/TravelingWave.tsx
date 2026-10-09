@@ -113,7 +113,12 @@ export default function TravelingWave({ config }: { config: TravelingWaveConfig 
   const u = phi / (2 * Math.PI);
   const f0 = Math.cos(k * phi);
   const f1 = Math.cos(k * phi + (2 * Math.PI * k) / N);
-  const ibpaDeg = (360 * k) / N;
+  // 翼間位相角は 2πk/N だが、位相として意味があるのは (−180°, 180°] に巻き戻した値。
+  // k > N/2 では負の角（逆向きの波）に等価で、k が N の倍数なら全翼同相（0°）。
+  const kMod = ((k % N) + N) % N;
+  const kAlias = kMod > N / 2 ? kMod - N : kMod; // 符号付きの見かけの波数
+  const ibpaRaw = (360 * k) / N;
+  const ibpaDeg = (360 * kAlias) / N;
 
   const blade = (cx: number, th: number, j: number) => {
     const col = j === 0 ? "var(--accent)" : j === 1 ? HEAVY : "var(--mut)";
@@ -139,7 +144,8 @@ export default function TravelingWave({ config }: { config: TravelingWaveConfig 
         <figcaption className="mb-2 font-serif text-base text-ink">{config.title}</figcaption>
       ) : null}
 
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="静止系と回転系で見た励起パターン">
+      <div className="overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[520px]" role="img" aria-label="静止系と回転系で見た励起パターン">
         {/* 左：静止系 */}
         <text x={LCX} y={16} fontSize="12" fill="var(--ink)" textAnchor="middle">
           静止系（ノズルの側から見る）
@@ -192,10 +198,16 @@ export default function TravelingWave({ config }: { config: TravelingWaveConfig 
           1回転
         </text>
       </svg>
+      </div>
 
       <div className="mt-2 min-h-[3rem] text-sm leading-6 text-mut">
-        1回転で <b className="text-ink">{k}</b> 回叩かれる → 励起振動数は <b className="text-ink">k × 回転数</b>。翼1は翼0より位相
-        <b className="text-ink"> 2π·{k}/{N} = {ibpaDeg.toFixed(1)}°</b> 先に叩かれます（翼間位相角）。
+        1回転で <b className="text-ink">{k}</b> 回叩かれる → 励起振動数は <b className="text-ink">k × 回転数</b>。翼間位相角は
+        <b className="text-ink"> 2π·{k}/{N} = {ibpaRaw.toFixed(1)}°</b>
+        {kAlias === 0
+          ? "：k が N の倍数なので全翼が同時に叩かれます（同相）。"
+          : kAlias > 0
+          ? `：翼1は翼0より ${ibpaDeg.toFixed(1)}° 先に叩かれます（見かけの波数 ${kAlias}）。`
+          : `（= ${ibpaDeg.toFixed(1)}° と同じ）：位相が 180° を超えるので、波としては逆向きの見かけの波数 ${Math.abs(kAlias)} に見えます（翼1は時間では先に叩かれます）。`}
       </div>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-3">

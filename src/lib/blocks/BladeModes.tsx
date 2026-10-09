@@ -9,6 +9,8 @@ import { Slider } from "../../components/Slider";
 //   固有振動数 f_n = (β_nL)²/(2πL²)·√(EI/ρA) → 振動数比 1 : 6.27 : 17.5
 //   一様な矩形断面なら f_1 ∝ h/L²（厚さに比例・長さの2乗に反比例）
 // ねじり 1T：一様な棒の clamped-free ねじり 1次 φ(ξ)=sin(πξ/2)（翼の形で変わるため「模式」）。
+//   振動数は f_T = (1/4L)·√(GJ/ρI_p)。翼弦 c を固定した薄い矩形断面では J ≈ c h³/3、I_p ≈ c³h/12 なので
+//   f_T ∝ h/L（曲げの h/L² と違い、長さの 1 乗に反比例）。1F との比 2.6 は模式値。
 // 「叩く」：ping test の見立て。減衰正弦波 e^{−ζωt}·sin(ωt)（ζ=0.02）をそのモードの振動数比で描く。
 
 export type BladeModesConfig = {
@@ -46,9 +48,10 @@ export default function BladeModes({ config }: { config: BladeModesConfig }) {
   const raf = useRef<number>();
   const last = useRef<number>();
 
-  // 振動数比（1F=1）。曲げは f ∝ h/L²。ねじりは一様棒の見立てで 1F の 2.6 倍に置く（模式）。
-  const geom = thick / (len * len);
-  const fRel = mode === "1T" ? 2.6 * geom : RATIO[Number(mode[0]) - 1] * geom;
+  // 振動数比（1F=1）。曲げは f ∝ h/L²。ねじりは翼弦固定の薄板の見立てで f ∝ h/L、基準形状で 1F の 2.6 倍（模式）。
+  const geomBend = thick / (len * len);
+  const geomTwist = thick / len;
+  const fRel = mode === "1T" ? 2.6 * geomTwist : RATIO[Number(mode[0]) - 1] * geomBend;
 
   useEffect(() => {
     if (!running) {
@@ -260,7 +263,7 @@ export default function BladeModes({ config }: { config: BladeModesConfig }) {
         <span className="text-ink">{modeLabel}</span>
         <span className="ml-2">
           振動数（1F・基準形状 = 1 として）：<b className="tabular-nums text-ink">{fRel.toFixed(2)}</b>
-          {mode === "1T" ? "（ねじりは模式値）" : ""}
+          {mode === "1T" ? "（ねじりは模式値・h/L に比例）" : "（h/L² に比例）"}
         </span>
       </div>
 

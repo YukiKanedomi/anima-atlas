@@ -30,10 +30,11 @@ type Node =
 // 「容れ物」ディレクティブ＝中身をMarkdownとして畳む折りたたみ。
 // JSON設定ブロック（registry）とは別系統。深掘り(深さ on demand)の土台。
 // ここに名前を足すだけで色違いの折りたたみが増やせる（新構文は不要）。
-const CONTAINERS: Record<string, { chip: string }> = {
+const CONTAINERS: Record<string, { chip: string; open?: boolean }> = {
   deep: { chip: "深掘り" },
   history: { chip: "歴史" }, // 人物・事故・系譜の余談
   field: { chip: "実務" }, // 現場の落とし穴・設計の勘所
+  analogy: { chip: "たとえ話", open: true }, // 難所の手すり。畳まず常に見える囲み
 };
 
 function parse(src: string): Node[] {
@@ -89,6 +90,15 @@ function parse(src: string): Node[] {
       } catch {
         nodes.push({ kind: "block-error", name, raw });
       }
+      continue;
+    }
+
+    // 包括分岐：未知の容器（:::foo タイトル）や対応のない閉じ ::: は、必ず 1 行消費してエラー表示に落とす。
+    // （段落ループは ::: 行を消費しないため、ここで拾わないと i が進まず描画が固まる）
+    if (/^:::/.test(line)) {
+      const nm = line.replace(/^:::\s*/, "").trim();
+      nodes.push({ kind: "block-error", name: nm || "（閉じ記号 ::: の対応なし）", raw: line });
+      i++;
       continue;
     }
 
@@ -207,6 +217,18 @@ function inline(text: string): ReactNode {
 // ネイティブ <details> なので状態管理なし・キーボード操作可。中に :::block も置ける。
 function Disclosure({ variant, label, children }: { variant: string; label: string; children: ReactNode }) {
   const meta = CONTAINERS[variant] ?? CONTAINERS.deep;
+  // 常に開いた囲み（たとえ話）：読み飛ばしやすいよう左に太い罫、チップは同じ作法。
+  if (meta.open) {
+    return (
+      <aside className="aa-analogy my-5 rounded-lg border border-line border-l-4 border-l-accent/50 bg-soft/40 px-4 pb-1 pt-3">
+        <div className="mb-1 flex items-center gap-2 text-sm">
+          <span className="rounded bg-accent/10 px-1.5 py-0.5 text-xs font-semibold text-accent">{meta.chip}</span>
+          <span className="font-serif text-ink/90">{label}</span>
+        </div>
+        {children}
+      </aside>
+    );
+  }
   return (
     <details className="aa-deep my-5 overflow-hidden rounded-lg border border-line bg-soft/60">
       <summary className="flex cursor-pointer select-none items-center gap-2 px-4 py-2.5 text-sm hover:bg-soft">

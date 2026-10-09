@@ -6,12 +6,14 @@ import { useInstanceId, useSharedParams } from "../linkStore";
 // N 翼の周期鎖モデル（無次元、翼単体の静止固有振動数 ω0 = 1、質量 m = 1）。
 //   翼 j の運動方程式（調和応答・複素振幅 x_j）：
 //     [ (1 + δ_j) + 2κc − ω² + i·2ζω ] x_j − κc (x_{j−1} + x_{j+1}) = e^{ i·2πkj/N }
-//   δ_j：翼 j の剛性ばらつき（正規乱数、標準偏差 σ）。κc = kc/k：隣接翼との結合（シュラウド・円盤）。
+//   δ_j：翼 j の剛性ばらつき。スライダーの σ は「固有振動数のばらつき」なので δ_j = (1 + σ·g_j)² − 1（g_j は標準正規乱数）。
+//   κc = kc/k：隣接翼との結合（シュラウド・円盤）。
 //   右辺：励起次数 k の進行波パターン（隣の翼と 2πk/N だけ位相がずれた力）。
 //   tuned（δ_j = 0）の解は閉形式 x_j = X e^{iφj}、X = 1/(1 + 2κc(1−cos φ) − ω² + i2ζω)、φ = 2πk/N。
 //   mistuned は各 ω で N×N の複素線形系をガウス消去で解く（N ≤ 36 なので軽い）。
 //   増幅率 = max_j |x_j| の掃引最大（mistuned）÷ 同（tuned）。
-//   Whitehead の上限 (1 + √N)/2（Whitehead 1966, 1998）を参考線として併記。
+//   Whitehead の理想最悪値 (1 + √N)/2（Whitehead 1966, 1998）を参考として併記。これは特定のばらつきパターン・弱い結合・
+//   小さな減衰のときにだけ近づく最悪値で、表示中の乱数実現に対する予測上限ではない。
 // ※ 1翼1自由度・結合は隣接のみの最小モデル。形・傾向は式どおりの「模式」。
 
 export type MistuningConfig = {
@@ -137,7 +139,7 @@ export default function Mistuning({ config }: { config: MistuningConfig }) {
   const eo = Math.min(Math.round(vals.eo), Math.floor(N / 2));
   const [seed, setSeed] = useState(config.seedDefault ?? 7);
 
-  const delta = useMemo(() => gaussians(N, seed).map((g) => g * sigma), [N, seed, sigma]);
+  const delta = useMemo(() => gaussians(N, seed).map((g) => (1 + g * sigma) ** 2 - 1), [N, seed, sigma]);
 
   const res = useMemo(() => {
     const phi = (2 * Math.PI * eo) / N;
@@ -280,7 +282,8 @@ export default function Mistuning({ config }: { config: MistuningConfig }) {
           <span className="ml-1">（最も揺れる翼 ÷ 同じ翼のとき）</span>
         </div>
         <div className="min-h-6">
-          Whitehead の上限 (1+√N)/2：<b className="font-ui tabular-nums text-ink">{whitehead.toFixed(2)}</b> 倍
+          Whitehead の理想最悪値 (1+√N)/2：<b className="font-ui tabular-nums text-ink">{whitehead.toFixed(2)}</b> 倍
+          <span className="ml-1 text-xs">（弱い結合・小さな減衰・最悪のパターンを仮定した参考値）</span>
         </div>
       </div>
 

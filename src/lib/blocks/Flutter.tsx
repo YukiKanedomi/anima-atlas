@@ -8,7 +8,8 @@ import { useInstanceId, useSharedParams } from "../linkStore";
 // 空力減衰は σ によって変わり、どこかの σ で負になれば、その進行波モードが自励で育つ＝フラッタ。
 //   ξ_aero(σ) = ξ0(k*) − A(k*)·cos(σ − σ_min)        （Carta 流の「σ に対して正弦状」の模式）
 //   ξ0 = 0.003 + 0.004·k*,  A = 0.010 / (0.5 + k*)     （k* 小＝長く柔らかい翼・速い流れ ほど危険、の単調関係）
-//   ミスチューニング μ：A → A·(1 − 0.6μ)                （翼ごとの差が進行波を崩し、最悪値を緩和する効果の模式）
+//   進行波の乱れ μ：A → A·(1 − 0.6μ)                    （ミスチューニングで進行波が崩れ最悪値が緩和される効果を、
+//                                                         振幅の単調な縮小に置き換えた模式。実際は構造の連成固有値問題で決まる）
 //   総減衰 ξ = ξ_aero + ξs（構造減衰）。ξ < 0 の σ があればフラッタ。
 // 右の小図：最も危ない進行波モードの時間波形 e^{−ξωt}cos(ωt)、30 サイクル（ξ<0 なら発散）。
 // ※ 係数はすべて模式。実機では非定常空力（線形化CFD等）で σ ごとの仕事を計算して求める。
@@ -18,10 +19,10 @@ export type FlutterConfig = {
   caption?: string;
   link?: string;
   N?: number; // 翼の枚数（既定 24）
-  sigmaMinDeg?: number; // 空力減衰が最小になる位相角（既定 +60°：前向き進行波の小さな節直径）
+  sigmaMinDeg?: number; // 空力減衰が最小になる位相角（既定 +60°。本書の規約では σ>0 が後ろ向き進行波＝小さな節直径の後ろ向き波）
   kDefault?: number; // 無次元振動数の既定
   zsDefault?: number; // 構造減衰の既定
-  muDefault?: number; // ミスチューニングの既定
+  muDefault?: number; // 進行波の乱れ（ミスチューニングの模式）の既定
 };
 
 const W = 680;
@@ -67,7 +68,8 @@ export default function Flutter({ config }: { config: FlutterConfig }) {
     // 許される離散モード σ_n = 2πn/N
     const half = Math.floor(N / 2);
     const modes: { n: number; deg: number; xi: number }[] = [];
-    for (let n = -half; n <= half; n++) {
+    // 半開区間：偶数 N では −N/2 と +N/2（σ = ∓π）は同じモードなので片方だけ数える
+    for (let n = -half + (N % 2 === 0 ? 1 : 0); n <= half; n++) {
       const s = (2 * Math.PI * n) / N;
       const deg = (s * 180) / Math.PI;
       if (deg < -180 || deg > 180) continue;
@@ -80,7 +82,8 @@ export default function Flutter({ config }: { config: FlutterConfig }) {
   }, [k, zs, mu, N, sigMin]);
 
   const unstable = worst.xi < 0;
-  const dir = worst.n > 0 ? "前向き" : worst.n < 0 ? "後ろ向き" : "節直径 0";
+  // 本書の規約（第II部）：σ = 2πq/N で q>0 は後ろ向き進行波、q<0 は前向き進行波
+  const dir = worst.n > 0 ? "後ろ向き" : worst.n < 0 ? "前向き" : "節直径 0";
 
   // 右：時間波形 x(t)=e^{−ξωt}cos(ωt)、12 サイクル。振幅は図内に収まるよう上限クリップ。
   const wave = useMemo(() => {
@@ -132,10 +135,10 @@ export default function Flutter({ config }: { config: FlutterConfig }) {
           ξ = 0
         </text>
         <text x={sx(-100)} y={H - L.b + 32} fontSize="11" fill="var(--mut)" textAnchor="middle">
-          ← 後ろ向き進行波
+          ← 前向き進行波（σ が負）
         </text>
         <text x={sx(100)} y={H - L.b + 32} fontSize="11" fill="var(--mut)" textAnchor="middle">
-          前向き進行波 →
+          後ろ向き進行波（σ が正） →
         </text>
         <text
           x={14}
@@ -183,7 +186,7 @@ export default function Flutter({ config }: { config: FlutterConfig }) {
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
         <Slider label="無次元振動数 k*" value={k} min={0.1} max={2} step={0.01} onChange={(v) => setParam("k", v)} />
         <Slider label="構造減衰 ξs" value={zs} min={0} max={0.02} step={0.0005} format={(v) => pct(v)} onChange={(v) => setParam("zs", v)} />
-        <Slider label="ミスチューニング μ" value={mu} min={0} max={1} step={0.01} onChange={(v) => setParam("mu", v)} />
+        <Slider label="進行波の乱れ μ（模式）" value={mu} min={0} max={1} step={0.01} onChange={(v) => setParam("mu", v)} />
       </div>
 
       {config.caption ? <p className="mt-3 text-sm leading-relaxed text-mut">{config.caption}</p> : null}

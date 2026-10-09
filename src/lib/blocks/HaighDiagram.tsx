@@ -115,13 +115,16 @@ export default function HaighDiagram({ config }: { config: HaighDiagramConfig })
   }, [presetKey]);
 
   // 安全率（比例負荷）
-  const nG = 1 / (sa / P.se + sm / P.su);
-  const nY = P.sy / (sm + sa);
+  // 原点（σm = σa = 0）では安全率が無限大。0×∞ の NaN を SVG に流さないよう特別扱いする
+  const atOrigin = sm <= 0 && sa <= 0;
+  const nG = atOrigin ? Infinity : 1 / (sa / P.se + sm / P.su);
+  const nY = atOrigin ? Infinity : P.sy / (sm + sa);
   const n = Math.min(nG, nY);
   const safe = n >= 1;
-  // 荷重線が Goodman 線に当たる点
-  const hitM = sm * nG;
-  const hitA = sa * nG;
+  // 荷重線が Goodman 線に当たる点（原点では荷重線を描かない）
+  const hitM = atOrigin ? 0 : sm * nG;
+  const hitA = atOrigin ? 0 : sa * nG;
+  const fmtN = (v: number) => (Number.isFinite(v) ? v.toFixed(2) : "∞");
 
   const fmt = (v: number) => (P.unit ? `${Math.round(v)} ${P.unit}` : v.toFixed(2));
   const col = safe ? "var(--accent-d)" : HEAVY;
@@ -212,7 +215,7 @@ export default function HaighDiagram({ config }: { config: HaighDiagramConfig })
           strokeDasharray="4 3"
           opacity={0.8}
         />
-        {hitM <= XMAX && hitA <= YMAX ? <circle cx={sx(hitM)} cy={sy(hitA)} r={4} fill="none" stroke={col} strokeWidth={1.5} /> : null}
+        {!atOrigin && hitM <= XMAX && hitA <= YMAX ? <circle cx={sx(hitM)} cy={sy(hitA)} r={4} fill="none" stroke={col} strokeWidth={1.5} /> : null}
         {/* 運転点 */}
         <circle cx={sx(Math.min(sm, XMAX))} cy={sy(Math.min(sa, YMAX))} r={6} fill={col} />
         <text x={sx(Math.min(sm, XMAX)) + 10} y={sy(Math.min(sa, YMAX)) - 8} fontSize="11" fill={col}>
@@ -236,11 +239,11 @@ export default function HaighDiagram({ config }: { config: HaighDiagramConfig })
 
       <div className="mt-2 grid min-h-[3.25rem] gap-x-4 text-sm text-mut sm:grid-cols-2">
         <div>
-          Goodman 安全率 <b className="tabular-nums text-ink">{nG.toFixed(2)}</b>／ 降伏に対して{" "}
-          <b className="tabular-nums text-ink">{nY.toFixed(2)}</b>
+          Goodman 安全率 <b className="tabular-nums text-ink">{fmtN(nG)}</b>／ 降伏に対して{" "}
+          <b className="tabular-nums text-ink">{fmtN(nY)}</b>
         </div>
         <div className="font-semibold" style={{ color: col }}>
-          {safe ? `安全側（余裕 ${n.toFixed(2)} 倍）` : `危険側（${n.toFixed(2)} 倍：線の外）`}
+          {safe ? `安全側（余裕 ${fmtN(n)} 倍）` : `危険側（${fmtN(n)} 倍：線の外）`}
         </div>
       </div>
 

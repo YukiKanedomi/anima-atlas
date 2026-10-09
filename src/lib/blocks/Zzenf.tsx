@@ -35,7 +35,7 @@ const HEAVY = "#9b2d3a";
 const W = 680;
 const H = 400;
 const PAD = { l: 58, r: 54, t: 26, b: 44 };
-const YMAX = 2.2;
+const YMAX_MIN = 2.2;
 const HC = 250;
 const PADC = { l: 58, r: 18, t: 20, b: 40 };
 
@@ -106,6 +106,8 @@ export default function Zzenf({ config }: { config: ZzenfConfig }) {
 
   // 座標
   const sx = (n: number) => PAD.l + (n / Math.max(1, half)) * (W - PAD.l - PAD.r);
+  // 縦軸の上限：族の最大値（kc を上げると翼支配の族が 2.2 を超える）に追従させ、黙ってクランプしない
+  const YMAX = Math.max(YMAX_MIN, 1.12 * Math.max(...fam.map((c) => c.high)));
   const sy = (f: number) => H - PAD.b - (Math.min(f, YMAX) / YMAX) * (H - PAD.t - PAD.b);
   const lowD = fam.map((c, i) => `${i === 0 ? "M" : "L"}${sx(c.n).toFixed(1)},${sy(c.low).toFixed(1)}`).join(" ");
   const highD = fam.map((c, i) => `${i === 0 ? "M" : "L"}${sx(c.n).toFixed(1)},${sy(c.high).toFixed(1)}`).join(" ");
@@ -120,9 +122,9 @@ export default function Zzenf({ config }: { config: ZzenfConfig }) {
     }
     return pts.join(" ");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exc, half]);
+  }, [exc, half, YMAX]);
 
-  const yTicks = [0, 0.5, 1, 1.5, 2];
+  const yTicks = Array.from({ length: Math.floor(YMAX / 0.5) + 1 }, (_, i) => i * 0.5);
   const xEvery = half <= 12 ? 1 : half <= 24 ? 2 : half <= 36 ? 4 : 6;
   const hzLabel = (f: number) => `${Math.round(f * fb).toLocaleString()}`;
 
@@ -157,7 +159,8 @@ export default function Zzenf({ config }: { config: ZzenfConfig }) {
         <figcaption className="mb-2 font-serif text-base text-ink">{config.title}</figcaption>
       ) : null}
 
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="ZZENF線図：節直径 vs 周波数">
+      <div className="overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[520px]" role="img" aria-label="ZZENF線図：節直径 vs 周波数">
         <rect x={PAD.l} y={PAD.t} width={W - PAD.l - PAD.r} height={H - PAD.t - PAD.b} fill="var(--soft)" opacity={0.35} />
         <line x1={PAD.l} y1={H - PAD.b} x2={W - PAD.r} y2={H - PAD.b} stroke="var(--line)" />
         <line x1={PAD.l} y1={PAD.t} x2={PAD.l} y2={H - PAD.b} stroke="var(--line)" />
@@ -248,6 +251,7 @@ export default function Zzenf({ config }: { config: ZzenfConfig }) {
           ジグザグ＝励起 {Math.round(rpm).toLocaleString()} rpm{p > 0 ? ` ±${Math.round(p * 100)}%` : ""}
         </text>
       </svg>
+      </div>
 
       {/* 数で見る二重条件 */}
       <div className="mt-2 grid gap-2 text-sm sm:grid-cols-2">

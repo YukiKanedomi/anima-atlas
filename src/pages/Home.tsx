@@ -116,7 +116,7 @@ export default function Home() {
       );
       const pick = ok ?? cands[0];
       placed.push(pick.box);
-      return { ...p, label: pick.pos };
+      return { ...p, label: pick.pos, labelBox: pick.box };
     });
     return { routeD, pins };
   }, [outline, visited]);
@@ -209,8 +209,9 @@ export default function Home() {
                   }
                 }}
               >
-                {/* 当たり判定（ピン＋ラベルを覆う透明矩形） */}
-                <rect x={pin.x - 110} y={headY - 50} width={220} height={pin.y - headY + 98} fill="transparent" />
+                {/* 当たり判定：ピン本体と、実際に置いたラベル箱だけ（大きな矩形は隣のピンのクリックを奪う） */}
+                <rect x={pin.x - 16} y={headY - 16} width={32} height={pin.y - headY + 22} fill="transparent" />
+                <rect className="aa-pin-text" x={pin.labelBox.x} y={pin.labelBox.y} width={pin.labelBox.w} height={pin.labelBox.h} fill="transparent" />
 
                 {/* ラベル（スマホでは非表示→地図下のチップ一覧が代役） */}
                 <text className="aa-pin-text aa-pin-label font-serif" x={labelX} y={titleY} fontSize="18.5" fill="var(--ink)" textAnchor={anchor}>

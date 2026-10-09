@@ -5,9 +5,10 @@ import { useInstanceId, useSharedParams } from "../linkStore";
 // 翼振動章：励起の次数分解（ノズル後流と部分噴射）。
 // 動翼から見た「1 周ぶんの力」F(θ) を作って、直接 DFT で次数成分 |F_k| を出す。
 //   ・全周にノズルを並べたときの枚数を Ns（ピッチ 2π/Ns）。噴射弧は [0, ε·2π)。
-//     実装ノズル数 = floor(ε·Ns)。弧の外では流れが無い（F = 0）。
+//     実装ノズル数 = floor(ε·Ns)（ε·Ns < 1 なら 0 枚＝弧の中は平らな荷重だけ）。弧の外では流れが無い（F = 0）。
 //   ・弧の中では平均荷重 1 に、各ノズルの後流（幅 w×ピッチ、深さ a の釣鐘形）の落ち込みが乗る：
-//       F(θ) = 1 − a·Σ_j exp(−((θ−θ_j)/(w·ピッチ))²/2)      （θ が弧内のとき）
+//       F(θ) = 1 − a·Σ_j exp(−(d_j/(w·ピッチ))²/2)、 d_j = 円周で巻き戻した角距離 atan2(sin(θ−θ_j), cos(θ−θ_j))
+//     （θ が弧内のとき。角距離を円周で巻き戻すので、全周噴射では F が厳密に Ns 周期になる）
 //   ・|F_k| = |(1/M) Σ_m F(θ_m) e^{−ikθ_m}|、M = 720 点。
 //   全周噴射（ε=1）では k = 0 と Ns の倍数だけが立つ。部分噴射（ε<1）では弧の切れ目が
 //   「幅 ε の窓」として働き、すべての k に sinc 状の包絡で成分が立つ（＝FFT 章のリーケージと同じ構造）。
@@ -43,7 +44,7 @@ export default function ExcitationHarmonics({ config }: { config: ExcitationHarm
   const ns = Math.round(vals.ns);
   const eps = vals.eps;
   const width = vals.width;
-  const installed = Math.max(1, Math.floor(eps * ns + 1e-9));
+  const installed = Math.floor(eps * ns + 1e-9); // 0 枚もあり得る（弧が 1 ピッチ未満のとき）
   const pitch = (Math.PI * 2) / ns;
 
   // 力の波形と DFT
@@ -60,10 +61,10 @@ export default function ExcitationHarmonics({ config }: { config: ExcitationHarm
       let dip = 0;
       for (let j = 0; j < installed; j++) {
         const thj = (j + 0.5) * pitch;
-        const d = th - thj;
+        const d = Math.atan2(Math.sin(th - thj), Math.cos(th - thj)); // 円周で巻き戻した角距離
         dip += Math.exp(-(d * d) / (2 * sig * sig));
       }
-      force[m] = 1 - depth * Math.min(1, dip);
+      force[m] = 1 - depth * dip;
     }
     const spec: number[] = [];
     let specMax = 1e-9;
@@ -104,7 +105,8 @@ export default function ExcitationHarmonics({ config }: { config: ExcitationHarm
     <figure className="my-6 rounded-lg border border-line bg-white p-4 shadow-card">
       {config.title ? <figcaption className="mb-2 font-serif text-base text-ink">{config.title}</figcaption> : null}
 
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="ノズル後流の力の波形と次数スペクトル">
+      <div className="overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[520px]" role="img" aria-label="ノズル後流の力の波形と次数スペクトル">
         {/* 円形の模式図：噴射弧とノズル */}
         <circle cx={CIRC.cx} cy={CIRC.cy} r={CIRC.r} fill="var(--soft)" stroke="var(--line)" />
         <circle cx={CIRC.cx} cy={CIRC.cy} r={CIRC.r * 0.55} fill="#fff" stroke="var(--line)" />
@@ -194,11 +196,12 @@ export default function ExcitationHarmonics({ config }: { config: ExcitationHarm
           励起次数 k（回転 1 周あたりの回数）
         </text>
       </svg>
+      </div>
 
       <div className="mt-2 min-h-[1.5rem] text-sm text-mut">
         立っている次数（最大の 5% 以上）：<b className="tabular-nums text-ink">{nAlive}</b> 本／{kmax}
         <span className="ml-3">
-          {eps >= 0.999 ? `全周噴射：${ns}E とその倍数だけ` : `部分噴射：弧の切れ目が全次数を立てる`}
+          {eps >= 0.999 ? `全周噴射：${ns}E とその倍数だけ` : installed === 0 ? `ノズル 0 枚：弧の切れ目（窓）だけで全次数が立つ` : `部分噴射：弧の切れ目が全次数を立てる`}
         </span>
       </div>
 

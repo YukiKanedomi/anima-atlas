@@ -77,7 +77,9 @@ export default function TipTiming({ config }: { config: TipTimingConfig }) {
   const EO = f / omega;
   const nearest = Math.round(EO);
   const fAlias = Math.abs(f - nearest * omega);
-  const isSync = Math.abs(EO - nearest) < 0.02;
+  // 「同期」は数値的に整数のときだけ。近いだけなら遅いうなり（エイリアス）が残るので「同期近傍」と言う
+  const isSync = Math.abs(EO - nearest) < 1e-9;
+  const nearSync = !isSync && Math.abs(EO - nearest) < 0.05;
 
   // 真の波形 x(t) と標本点。上段は最初の ZOOM 回転ぶんだけ拡大表示（波が潰れないように）。
   const ZOOM = 4;
@@ -135,7 +137,8 @@ export default function TipTiming({ config }: { config: TipTimingConfig }) {
     <figure className="my-6 rounded-lg border border-line bg-white p-4 shadow-card">
       {config.title ? <figcaption className="mb-2 font-serif text-base text-ink">{config.title}</figcaption> : null}
 
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="ブレードチップタイミング：回る翼をケーシングのプローブが1回転1点で標本化する">
+      <div className="overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[520px]" role="img" aria-label="ブレードチップタイミング：回る翼をケーシングのプローブが1回転1点で標本化する">
         {/* 左：ロータとプローブ */}
         <circle cx={ROT.cx} cy={ROT.cy} r={ROT.r + 14} fill="none" stroke="var(--line)" strokeWidth={6} />
         <circle cx={ROT.cx} cy={ROT.cy} r={ROT.r * 0.62} fill="var(--soft)" stroke="var(--line)" />
@@ -206,15 +209,16 @@ export default function TipTiming({ config }: { config: TipTimingConfig }) {
           1 回転 1 点（プローブごと）
         </text>
       </svg>
+      </div>
 
       <div className="mt-2 grid min-h-[3.25rem] gap-x-4 text-sm text-mut sm:grid-cols-2">
         <div>
           励起次数 f/Ω = <b className="tabular-nums text-ink">{EO.toFixed(2)}</b>
-          {isSync ? "（整数＝同期）" : "（非整数＝非同期）"}
+          {isSync ? "（整数＝同期）" : nearSync ? "（同期近傍）" : "（非整数＝非同期）"}
         </div>
         <div>
           1本のプローブに見える周波数 <b className="tabular-nums text-ink">{fAlias.toFixed(1)} Hz</b>
-          {isSync ? "：ずれが一定で振動が見えない" : ""}
+          {isSync ? "：ずれが一定で振動が見えない" : nearSync ? "：ゆっくりしたうなりだけが見える" : ""}
         </div>
       </div>
 

@@ -38,6 +38,10 @@ export default function EoFolding({ config }: { config: EoFoldingConfig }) {
   const k = Math.min(Math.round(vals.k), kMax);
   const n = foldND(k, N);
   const half = Math.floor(N / 2);
+  // N が link 経由で変わったときも k を上限内に正規化する
+  useEffect(() => {
+    if (Math.round(vals.k) > kMax) setParam("k", kMax);
+  }, [vals.k, kMax, setParam]);
 
   // 再生：k を一定間隔で進める
   const [running, setRunning] = useState(false);
@@ -126,7 +130,8 @@ export default function EoFolding({ config }: { config: EoFoldingConfig }) {
       ) : null}
 
       {/* 上段：連続パターンと翼の標本点 */}
-      <svg viewBox={`0 0 ${W} ${H1}`} className="w-full" role="img" aria-label="励起次数のパターンを翼が標本化する図">
+      <div className="overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H1}`} className="w-full min-w-[520px]" role="img" aria-label="励起次数のパターンを翼が標本化する図">
         {/* リング：翼の列 */}
         <circle cx={RING.cx} cy={RING.cy} r={RING.r * 0.62} fill="var(--soft)" stroke="var(--line)" />
         {samples.map((s, j) => {
@@ -163,6 +168,7 @@ export default function EoFolding({ config }: { config: EoFoldingConfig }) {
         <text x={(PLOT.l + PLOT.r) / 2} y={H1 - 10} fontSize="11" fill="var(--mut)" textAnchor="middle">円周の角度 θ</text>
         <text x={PLOT.r} y={H1 - 10} fontSize="11" fill="var(--mut)" textAnchor="end">360°</text>
       </svg>
+      </div>
 
       <div className="mt-1 min-h-[2.5rem] text-sm text-mut">
         <span className="font-ui tabular-nums text-ink">k = {k}</span> → 翼に見える節直径{" "}

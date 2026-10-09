@@ -52,3 +52,5 @@ ISO評価ゲージ → G等級セレクタ → 安定性チャート。本文で
 
 - 2026-07-11 第2弾バッチ：昇速の通過(1.4)・楕円軌道(2.2)・2面バランシング・ねじり振動の新章・アルフォード力の模式 の5件を一括実装（BACKLOG表外のロードマップ項目）。残る大物は A11y・PWA・3Dビューアのみ。
 - 2026-10-09 **翼振動の特別章（ch-blade）**：5部17節＋新部品13（blade-modes / blade-campbell / excitation-harmonics / nodal-diameter / traveling-wave / family-curves / eo-folding / zzenf / mistuning / friction-damper / haigh-diagram / flutter / tip-timing）を Fable 5体並行＋本体で一括実装。到達目標＝ZZENF（SAFE）線図の完全理解、題材＝ロケットターボポンプのタービン（SSME HPFTP の公開値で通し演習）。付随：共有物理 `lib/bladedDisk.ts`、画像記法 `![](){caption}`、`:::history` / `:::field` 容器、目次の部見出し、探検地図のラベル自動配置、生成画像2枚。残課題＝発展候補（翼の FE/周期対称解析の実データ、BTT の実測例、ミスチューニング 63 翼対応＝部品の上限 36 枚）。
+- 2026-10-10 翼振動章の磨き込み：全17節に「たとえ話」囲み（:::analogy、常時表示）45個＋言い換え＋節末「ひとことで」。Codex（gpt-5.6 high）に部品コードと本文を外部レビューさせ、コード17件・本文約70件の指摘を裏取りして反映（後流モデルの円周折り返し、進行波の向きの符号付き折り返し次数 q の導入、回転周波数 f_rot の記法統一、絶対表現の条件付け、PD-ED-1268 の軸受ケージ記述の翼への誤帰属を削除、Flutter の σ 符号規約を本文と統一）。
+

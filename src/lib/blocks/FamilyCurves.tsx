@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Slider } from "../../components/Slider";
 import { useInstanceId, useSharedParams } from "../linkStore";
 import { familyCurves, TWO_PI } from "../bladedDisk";
@@ -51,6 +51,10 @@ export default function FamilyCurves({ config }: { config: FamilyCurvesConfig })
   const kcRatio = vals.kc;
   const md = vals.md;
   const nsel = Math.min(Math.round(vals.nsel), half);
+  // N が（link 経由も含め）下がったら、共有状態の nsel も範囲内に正規化する
+  useEffect(() => {
+    if (Math.round(vals.nsel) > half) setParam("nsel", half);
+  }, [vals.nsel, half, setParam]);
 
   const mb = 1;
   const kb = TWO_PI * TWO_PI * mb;
@@ -97,7 +101,7 @@ export default function FamilyCurves({ config }: { config: FamilyCurvesConfig })
   for (let v = 0; v <= yMax + 1e-9; v += 0.5) ticks.push(v);
 
   // 右上：選んだ n の節直径アイコン（cos(nθ) の符号で塗り分け）
-  const WEDGES = 48;
+  const WEDGES = Math.max(96, 8 * nsel); // 空間波長あたり 4 サンプル以上（N/2 で交互に見えるように）
   const icon = Array.from({ length: WEDGES }, (_, i) => {
     const a0 = (TWO_PI * i) / WEDGES;
     const a1 = (TWO_PI * (i + 1)) / WEDGES;
@@ -116,7 +120,8 @@ export default function FamilyCurves({ config }: { config: FamilyCurvesConfig })
         <figcaption className="mb-2 font-serif text-base text-ink">{config.title}</figcaption>
       ) : null}
 
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="固有振動数 対 節直径のモード族曲線">
+      <div className="overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[520px]" role="img" aria-label="固有振動数 対 節直径のモード族曲線">
         <rect x={PAD.l} y={PAD.t} width={CHART_R - PAD.l} height={H - PAD.t - PAD.b} fill="var(--soft)" opacity={0.35} />
         {/* veering 帯 */}
         <rect
@@ -219,6 +224,7 @@ export default function FamilyCurves({ config }: { config: FamilyCurvesConfig })
           翼支配
         </text>
       </svg>
+      </div>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <Slider label="見る節直径 n" value={nsel} min={0} max={half} step={1} onChange={(v) => setParam("nsel", v)} />

@@ -201,7 +201,7 @@ export default function BladeCampbell({ config }: { config: BladeCampbellConfig 
         {curves.map((c) => (
           <g key={c.name}>
             <path d={c.d} fill="none" stroke="var(--accent)" strokeWidth={2.4} />
-            <text x={W - PAD.r + 4} y={sy(c.fEnd) + 4} fontSize="11" fill="var(--accent)">
+            <text x={W - PAD.r - 3} y={sy(c.fEnd) - 5} fontSize="11" fill="var(--accent)" textAnchor="end">
               {c.name}
             </text>
           </g>

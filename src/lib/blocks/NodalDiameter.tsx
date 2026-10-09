@@ -44,6 +44,10 @@ export default function NodalDiameter({ config }: { config: NodalDiameterConfig 
   });
   const N = Math.round(vals.N);
   const nd = Math.min(Math.round(vals.nd), Math.floor(N / 2));
+  // N が（link 経由も含め）下がったら、共有状態の nd も範囲内に正規化する
+  useEffect(() => {
+    if (Math.round(vals.nd) > Math.floor(N / 2)) setParam("nd", Math.floor(N / 2));
+  }, [vals.nd, N, setParam]);
   const [mode, setMode] = useState<Mode>("standing");
   const [running, setRunning] = useState(true);
   const [t, setT] = useState(0.4);
@@ -133,7 +137,8 @@ export default function NodalDiameter({ config }: { config: NodalDiameterConfig 
         <figcaption className="mb-2 font-serif text-base text-ink">{config.title}</figcaption>
       ) : null}
 
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="翼付き円盤の節直径モード">
+      <div className="overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[520px]" role="img" aria-label="翼付き円盤の節直径モード">
         {/* 円盤 */}
         <circle cx={CX} cy={CY} r={R_IN} fill="var(--soft)" stroke="var(--line)" />
         <circle cx={CX} cy={CY} r={R_OUT + 12} fill="none" stroke="var(--line)" strokeDasharray="2 4" />
@@ -215,6 +220,7 @@ export default function NodalDiameter({ config }: { config: NodalDiameterConfig 
           点線＝cos(nθ) の包絡（定在波のとき）
         </text>
       </svg>
+      </div>
 
       <div className="mt-2 min-h-[3rem] text-sm leading-6 text-mut">
         <b className="text-ink">{summary}</b>
