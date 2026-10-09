@@ -73,6 +73,14 @@
 ### 深掘り折りたたみ（`:::deep` ／ `.aa-deep`）
 - ネイティブ `<details>`。既定は**閉**。サマリ行＝自前の三角（開くと90°回転）＋「深掘り」チップ（`bg-accent/10 text-accent`）＋手書きタイトル。
 - 開くと中身の左に `border-l-2 border-accent/40`（発展部分を視覚的に括る）。地は `bg-soft/60`。
+- 同じ容器の色違い：`:::history タイトル`（チップ「歴史」＝人物・事故・系譜の余談）／`:::field タイトル`（チップ「実務」＝現場の勘所）。`markdown.tsx` の `CONTAINERS` に名前を足すだけで増やせる（2026-10-09、翼振動章で導入）。
+
+### 画像（`![alt](path "caption")`）
+- 1行の画像記法。パスは `data/books/…` 起点（`asset()` で BASE_URL を付ける）。描画は figure（`rounded-lg border border-line bg-white shadow-card`）＋下に `text-sm text-mut` のキャプション。`loading="lazy"`。
+- 生成画像（imagegen）は**「イメージ図（生成画像・模式）」とキャプションに明記**し、事実を担う図には使わない。保存は `public/data/books/<book>/images/`、幅 1400px・JPEG q82（250KB 前後）に落としてから置く。様式＝中世紀 NASA 技術マニュアル調の線画、紺×生成り×臙脂の二色刷り（翼振動章の `turbopump-hero.jpg` / `nozzle-wakes.jpg`）。
+
+### 目次の「部」見出し（`outline.json` の `part`）
+- 大きな章では節に `part:"I 翼はなぜ揺れるか"` のような文字列を付けると、目次（サイドバー・ドロワー）で部が変わる位置に `font-serif text-[11px] text-accent/80` の小見出し＋上罫線が入る（`Reader.tsx`）。部の文字列は節に繰り返し持たせる（グループ化はしない）。
 
 ### バッジ
 | 種類 | スタイル | 例 |
@@ -85,6 +93,7 @@
 
 ### トップの探検地図（`pages/Home.tsx`）
 - `outline.json` 駆動。章ピンを蛇行する経路上に等間隔（弧長）で配置＝**章が増えると自動で増える**。ピン→その章の先頭節へ。
+- **ラベルは自動配置**（2026-10-09、章が12になりピンとラベルが重なったため）：各ピンの章名を「頭の上→足元の下→右→左」の順に試し、他のピン本体・置き済みラベル・START バッジ・頂上の旗と重ならない最初の位置に置く（文字幅は全角18.5px/半角10pxで見積もり）。上下は中央揃え、左右は `textAnchor` start/end。経路の制御点 `NODES` を変えるときも手作業の位置調整は不要。
 - アニメ用クラス（`index.css`）：`.aa-route`（経路が描かれる・`pathLength=1`で正規化）、`.aa-pin-wrap`（順に立ち上がる・`animation-delay`でstagger）、`.aa-pin`（ホバーで浮く・`transform-box:fill-box`）。
 - 配色は紺トークン＋頂上の旗だけ臙脂。等高線＝`--line`、道＝`--soft2`の太線＋`--accent`の細い描画線。**新規の装飾アニメもこの3クラスの作法に倣う**。
 

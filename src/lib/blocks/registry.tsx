@@ -560,106 +560,119 @@ export const blocks: BlockDef[] = [
   {
     name: "blade-modes",
     title: "翼の固有モード（片持ちの 1F/2F/1T）",
-    status: "experimental",
+    status: "stable",
     summary: "片持ち翼のモード形と振動数比。叩いて測る→1F/2F/1T。",
     component: BladeModes,
-    sample: { title: "ためし：翼の固有モード（片持ちの 1F/2F/1T）" },
+    sample: {"title": "ためし：モードを切り替え、長さと厚さを変える", "modeDefault": "2F", "caption": "2F は節が 1 つ、振動数比 6.27。L を半分にすると 4 倍。"},
+  
   },
   {
     name: "blade-campbell",
     title: "翼のCampbell線図（遠心剛性化＋励起次数の扇）",
-    status: "experimental",
+    status: "stable",
     summary: "f²=f0²+κΩ² の固有振動数と EO 線の扇。運転範囲と余裕。",
     component: BladeCampbell,
-    sample: { title: "ためし：翼のCampbell線図（遠心剛性化＋励起次数の扇）" },
+    sample: {"title": "ためし：部分噴射で扇が埋まる", "ns": 12, "kmax": 36, "loDefault": 9000, "hiDefault": 12000, "caption": "全周噴射に切り替えると 12E の倍数だけになり交点が激減。"},
+  
   },
   {
     name: "excitation-harmonics",
     title: "励起の次数分解（ノズル後流・部分噴射）",
-    status: "experimental",
+    status: "stable",
     summary: "ノズル数と噴射弧からパルス列を作りフーリエ分解。どの次数が強いか。",
     component: ExcitationHarmonics,
-    sample: { title: "ためし：励起の次数分解（ノズル後流・部分噴射）" },
+    sample: {"title": "ためし：噴射弧を狭めると全次数が立つ", "nsDefault": 12, "epsDefault": 0.3, "caption": "sinc 状の包絡で低次数から順に立つ。"},
+  
   },
   {
     name: "nodal-diameter",
     title: "節直径（翼付き円盤のモード形）",
-    status: "experimental",
+    status: "stable",
     summary: "N 枚の翼に cos(nθ) のパターン。立つ波/走る波の再生。",
     component: NodalDiameter,
-    sample: { title: "ためし：節直径（翼付き円盤のモード形）" },
+    sample: {"title": "ためし：節直径 n を 0 から N/2 まで動かす", "nDefault": 3, "bladesDefault": 24, "caption": "点線が節直径。ピルで定在波/前向き/後ろ向き進行波を切替。"},
+  
   },
   {
     name: "traveling-wave",
     title: "進行波（静止系の固定パターンが回転系で走る）",
-    status: "experimental",
+    status: "stable",
     summary: "静止ノズル列のパターンを回転座標から見ると kΩ の進行波。",
     component: TravelingWave,
-    sample: { title: "ためし：進行波（静止系の固定パターンが回転系で走る）" },
+    sample: {"title": "ためし：静止系の cos(kθ) は回転系では後ろ向き進行波", "kDefault": 3, "bladesDefault": 12, "caption": "翼0 は 1 回転で k 回叩かれ、翼1 は 2πk/N だけ先に叩かれる。"},
+  
   },
   {
     name: "family-curves",
     title: "モード族の曲線（周波数 vs 節直径）",
-    status: "experimental",
+    status: "stable",
     summary: "円盤支配族と翼支配族、veering。bladedDisk.ts の 2×2 モデル。",
     component: FamilyCurves,
-    sample: { title: "ためし：モード族の曲線（周波数 vs 節直径）" },
+    sample: {"title": "ためし：円盤支配の族と翼支配の族が veering で避け合う", "bladesDefault": 24, "kcDefault": 2.5, "mdDefault": 3, "nDefault": 4, "caption": "kc を上げると斜めの線が立ち、veering が左へ移る。"},
+  
   },
   {
     name: "eo-folding",
     title: "励起次数の折り返し（空間エイリアシング）",
-    status: "experimental",
+    status: "stable",
     summary: "N 枚の翼が cos(kθ) をサンプリング。ND=fold(k,N) でジグザグが生まれる。",
     component: EoFolding,
-    sample: { title: "ためし：励起次数の折り返し（空間エイリアシング）" },
+    sample: {"title": "ためし：k を進めると見える節直径がジグザグに折り返す", "nDefault": 24, "kDefault": 20, "caption": "細線 cos(kθ) と太線 cos(nθ) は翼の位置で必ず同じ値。k=N で全翼同相、k=N/2 で隣同士逆相。"},
+  
   },
   {
     name: "zzenf",
     title: "ZZENF（SAFE）線図",
-    status: "experimental",
+    status: "stable",
     summary: "周波数 vs 節直径に族曲線とジグザグ励起線。共振の二重条件を判定。",
     component: Zzenf,
-    sample: { title: "ためし：ZZENF（SAFE）線図" },
+    sample: {"title": "ためし：回転数を動かすとジグザグが伸び縮みし、本物の共振だけ輪が付く", "fb": 3000, "nDefault": 36, "nsDefault": 23, "rpmDefault": 15000, "caption": "初期設定では周波数だけなら 31 交点、節直径まで合うのは 2 件。"},
+  
   },
   {
     name: "mistuning",
     title: "ミスチューニング（翼ごとのばらつきと応答の増幅）",
-    status: "experimental",
+    status: "stable",
     summary: "N 翼の周期鎖に乱数ばらつき。局在化と増幅率、Whitehead 限界。",
     component: Mistuning,
-    sample: { title: "ためし：ミスチューニング（翼ごとのばらつきと応答の増幅）" },
+    sample: {"title": "ためし：ばらつきが揺れを1枚に集める", "nDefault": 24, "sigmaDefault": 2, "couplingDefault": 0.1, "zetaDefault": 0.5, "eoDefault": 3, "caption": "σ を 0 から上げると臙脂の1本だけが破線（同じ翼のとき）を越える。「振り直す」で個体差も見える。"},
+  
   },
   {
     name: "friction-damper",
     title: "摩擦ダンパ（押し付け力と等価減衰）",
-    status: "experimental",
+    status: "stable",
     summary: "クーロン摩擦のヒステリシスと最適押し付け力。",
     component: FrictionDamper,
-    sample: { title: "ためし：摩擦ダンパ（押し付け力と等価減衰）" },
+    sample: {"title": "ためし：押し付け力には最適値がある", "normalDefault": 0.3, "muDefault": 0.3, "kdDefault": 0.5, "forceDefault": 0.02, "caption": "N を 0 から上げると共振振幅は谷を作り、その先で固着して平らになる。"},
+  
   },
   {
     name: "haigh-diagram",
     title: "Haigh（Goodman）線図",
-    status: "experimental",
+    status: "stable",
     summary: "平均応力（遠心）と振動応力の組合せで疲労余裕を判定。",
     component: HaighDiagram,
-    sample: { title: "ためし：Haigh（Goodman）線図" },
+    sample: {"title": "ためし：遠心力を上げると許される振動が減る", "presetDefault": "ti64", "mDefault": 0.4, "aDefault": 0.6, "caption": "平均応力を右へ動かすと運転点が Goodman 線の外へ出ます。材料ピルで軸が MPa になります。"},
+  
   },
   {
     name: "flutter",
     title: "フラッタ（空力減衰と翼間位相角）",
-    status: "experimental",
+    status: "stable",
     summary: "翼間位相角ごとの空力減衰。負になればフラッタ。",
     component: Flutter,
-    sample: { title: "ためし：フラッタ（空力減衰と翼間位相角）" },
+    sample: {"title": "ためし：k* を下げると負の領域に点が落ちる", "N": 24, "kDefault": 0.3, "zsDefault": 0.001, "caption": "係数は模式。構造減衰を上げると曲線ごと持ち上がり、ミスチューニングで振れ幅が縮みます。"},
+  
   },
   {
     name: "tip-timing",
     title: "ブレードチップタイミング（1回転1点のサンプリング）",
-    status: "experimental",
+    status: "stable",
     summary: "翼の通過時刻から振動を推定。エイリアシングと複数プローブ。",
     component: TipTiming,
-    sample: { title: "ためし：ブレードチップタイミング（1回転1点のサンプリング）" },
+    sample: {"title": "ためし：f を回転数の整数倍にすると振動が見えなくなる", "N": 12, "omegaDefault": 20, "fDefault": 80, "probesDefault": 2, "caption": "80 Hz = 4×20 Hz（1,200 rpm）は同期振動。各プローブの点が一定値になります。"},
+  
   },
 ];
 

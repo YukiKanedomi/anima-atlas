@@ -6,22 +6,24 @@ import { Wordmark } from "../components/Wordmark";
 
 const BOOK_DIR = "data/books/rotordynamics";
 const W = 800;
-const H = 560;
+const H = 620;
 const PADX = 70;
 const PADY = 56;
 
 // 経路の制御点（正規化：x右・y下）。基礎の浜（左下）→ 実機の頂（右上）への蛇行。
 const NODES = [
-  { x: 0.10, y: 0.90 },
-  { x: 0.26, y: 0.84 },
-  { x: 0.40, y: 0.72 },
-  { x: 0.34, y: 0.58 },
-  { x: 0.20, y: 0.48 },
-  { x: 0.34, y: 0.40 },
-  { x: 0.52, y: 0.40 },
-  { x: 0.60, y: 0.30 },
-  { x: 0.50, y: 0.20 },
-  { x: 0.66, y: 0.13 },
+  { x: 0.08, y: 0.92 },
+  { x: 0.30, y: 0.90 },
+  { x: 0.56, y: 0.86 },
+  { x: 0.77, y: 0.73 },
+  { x: 0.54, y: 0.63 },
+  { x: 0.30, y: 0.59 },
+  { x: 0.13, y: 0.50 },
+  { x: 0.24, y: 0.39 },
+  { x: 0.48, y: 0.36 },
+  { x: 0.70, y: 0.31 },
+  { x: 0.62, y: 0.21 },
+  { x: 0.70, y: 0.13 },
   { x: 0.86, y: 0.10 },
 ];
 
@@ -76,12 +78,45 @@ export default function Home() {
 
     const chapters = outline?.chapters ?? [];
     const n = chapters.length;
-    const pins = chapters.map((ch, i) => {
+    const base = chapters.map((ch, i) => {
       const f = n > 1 ? i / (n - 1) : 0.5;
       const p = at(f);
-      const side: "left" | "right" = p.x > W * 0.6 ? "left" : "right";
       const done = ch.sections.filter((s) => visited.has(s.id)).length;
-      return { ch, x: p.x, y: p.y, side, index: i, last: i === n - 1, done, total: ch.sections.length };
+      return { ch, x: p.x, y: p.y, index: i, last: i === n - 1, done, total: ch.sections.length };
+    });
+
+    // ラベルの自動配置：上→下→右→左の順に試し、置いたラベルやピン本体と重ならない最初の位置を採る。
+    // 章が増えて経路上でピンが詰まっても、手で座標を調整せずに済む。
+    type Box = { x: number; y: number; w: number; h: number };
+    const hit = (a: Box, b: Box) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+    const textW = (t: string) => [...t].reduce((w, c) => w + (c.charCodeAt(0) < 0x2e80 ? 10 : 18.5), 0);
+    const obstacles: Box[] = base.map((p) => ({ x: p.x - 16, y: p.y - 46, w: 32, h: 52 }));
+    // 先頭ピンの足元には START バッジがある
+    if (base[0]) obstacles.push({ x: base[0].x - 36, y: base[0].y + 4, w: 72, h: 34 });
+    // 最後のピンの頭の右上には頂上の旗がある
+    const top = base[base.length - 1];
+    if (top) obstacles.push({ x: top.x + 4, y: top.y - 80, w: 40, h: 40 });
+    const placed: Box[] = [];
+    const pins = base.map((p, pi) => {
+      const w = Math.max(textW(p.ch.title), 60);
+      const h = 40;
+      const headY = p.y - 30;
+      const cands: { pos: "above" | "below" | "right" | "left"; box: Box }[] = [
+        { pos: "above", box: { x: p.x - w / 2, y: headY - 52, w, h } },
+        { pos: "below", box: { x: p.x - w / 2, y: p.y + 8, w, h } },
+        { pos: "right", box: { x: p.x + 20, y: headY - 22, w, h } },
+        { pos: "left", box: { x: p.x - 20 - w, y: headY - 22, w, h } },
+      ];
+      const ok = cands.find(
+        (c) =>
+          c.box.x >= 4 &&
+          c.box.x + c.box.w <= W - 4 &&
+          !obstacles.some((o, oi) => oi !== pi && hit(o, c.box)) &&
+          !placed.some((o) => hit(o, c.box))
+      );
+      const pick = ok ?? cands[0];
+      placed.push(pick.box);
+      return { ...p, label: pick.pos };
     });
     return { routeD, pins };
   }, [outline, visited]);
@@ -151,8 +186,13 @@ export default function Home() {
           {/* 章ピン */}
           {pins.map((pin) => {
             const headY = pin.y - 30;
-            const labelX = pin.side === "right" ? pin.x + 24 : pin.x - 24;
-            const anchor = pin.side === "right" ? "start" : "end";
+            // ラベルはピンの真上/真下に中央揃え。章が増えて同じ区間に並ぶ隣同士が
+            // 重ならないよう、偶数は頭の上・奇数は足元の下と帯を分ける。
+            const L = pin.label;
+            const labelX = L === "right" ? pin.x + 20 : L === "left" ? pin.x - 20 : pin.x;
+            const anchor = L === "right" ? "start" : L === "left" ? "end" : "middle";
+            const titleY = L === "above" ? headY - 36 : L === "below" ? pin.y + 24 : headY - 4;
+            const subY = titleY + 18;
             return (
               <g
                 key={pin.ch.id}
@@ -170,19 +210,13 @@ export default function Home() {
                 }}
               >
                 {/* 当たり判定（ピン＋ラベルを覆う透明矩形） */}
-                <rect
-                  x={pin.side === "right" ? pin.x - 22 : labelX - 150}
-                  y={headY - 22}
-                  width={172}
-                  height={62}
-                  fill="transparent"
-                />
+                <rect x={pin.x - 110} y={headY - 50} width={220} height={pin.y - headY + 98} fill="transparent" />
 
                 {/* ラベル（スマホでは非表示→地図下のチップ一覧が代役） */}
-                <text className="aa-pin-text aa-pin-label font-serif" x={labelX} y={headY - 3} fontSize="18.5" fill="var(--ink)" textAnchor={anchor}>
+                <text className="aa-pin-text aa-pin-label font-serif" x={labelX} y={titleY} fontSize="18.5" fill="var(--ink)" textAnchor={anchor}>
                   {pin.ch.title}
                 </text>
-                <text x={labelX} y={headY + 15} fontSize="13" fill="var(--mut)" textAnchor={anchor} className="aa-pin-text font-ui">
+                <text x={labelX} y={subY} fontSize="13" fill="var(--mut)" textAnchor={anchor} className="aa-pin-text font-ui">
                   {pin.last ? "実機の頂・" : ""}
                   {pin.done > 0 ? `${pin.done}/${pin.total}節` : `${pin.total}節`}
                 </text>
