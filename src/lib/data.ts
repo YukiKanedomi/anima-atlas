@@ -23,6 +23,7 @@ export type SectionRef = {
   file: string;
   status?: string;
   level?: "basic" | "advanced"; // 省略時 basic。advanced は目次に「発展」バッジ。
+  part?: string; // 大きな章の中の「部」見出し（目次で区切りを示す。例 "I 翼はなぜ揺れるか"）。
 };
 
 export type Outline = {

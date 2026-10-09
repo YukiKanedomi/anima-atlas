@@ -213,6 +213,115 @@
       ]
     },
     {
+      "id": "ch-blade",
+      "title": "翼振動",
+      "sections": [
+        {
+          "id": "blade-intro",
+          "title": "翼振動の歩き方——板ばね一枚からZZENF線図まで",
+          "file": "sections/blade-intro.md"
+        },
+        {
+          "id": "blade-single",
+          "title": "一枚の板ばねから始める——翼の固有振動数とモード",
+          "file": "sections/blade-single.md",
+          "part": "I 翼はなぜ揺れるか"
+        },
+        {
+          "id": "blade-stiffening",
+          "title": "回ると硬くなる——遠心力と固有振動数",
+          "file": "sections/blade-stiffening.md",
+          "part": "I 翼はなぜ揺れるか"
+        },
+        {
+          "id": "blade-excitation",
+          "title": "翼を叩く手は誰か——ノズル後流と部分噴射",
+          "file": "sections/blade-excitation.md",
+          "part": "I 翼はなぜ揺れるか"
+        },
+        {
+          "id": "blade-campbell",
+          "title": "翼のCampbell線図——扇のように広がる励起線",
+          "file": "sections/blade-campbell.md",
+          "part": "I 翼はなぜ揺れるか"
+        },
+        {
+          "id": "bladed-disk-nd",
+          "title": "翼は一枚では揺れない——翼付き円盤と節直径",
+          "file": "sections/bladed-disk-nd.md",
+          "part": "II 一枚から円盤へ"
+        },
+        {
+          "id": "traveling-waves",
+          "title": "立つ波と走る波——回転系で見た励起",
+          "file": "sections/traveling-waves.md",
+          "part": "II 一枚から円盤へ"
+        },
+        {
+          "id": "family-curves",
+          "title": "周波数 vs 節直径——モード族の曲線",
+          "file": "sections/family-curves.md",
+          "part": "II 一枚から円盤へ"
+        },
+        {
+          "id": "eo-folding",
+          "title": "N枚の翼が空間でサンプリングする——励起次数の折り返し",
+          "file": "sections/eo-folding.md",
+          "part": "III ZZENF線図"
+        },
+        {
+          "id": "zzenf-reading",
+          "title": "ZZENF線図を読む——共振の二重条件",
+          "file": "sections/zzenf-reading.md",
+          "part": "III ZZENF線図"
+        },
+        {
+          "id": "zzenf-design",
+          "title": "ZZENF線図で設計する——ノズル数と翼数の選び方",
+          "file": "sections/zzenf-design.md",
+          "part": "III ZZENF線図"
+        },
+        {
+          "id": "mistuning",
+          "title": "同じ翼は二枚とない——ミスチューニング",
+          "file": "sections/mistuning.md",
+          "part": "IV 実機の翼"
+        },
+        {
+          "id": "blade-damping",
+          "title": "揺れを減らす——減衰とダンパ",
+          "file": "sections/blade-damping.md",
+          "part": "IV 実機の翼"
+        },
+        {
+          "id": "blade-hcf",
+          "title": "壊れるのは何回目か——高サイクル疲労とGoodman線図",
+          "file": "sections/blade-hcf.md",
+          "part": "IV 実機の翼"
+        },
+        {
+          "id": "flutter",
+          "title": "翼自身が励起源になるとき——フラッタ",
+          "file": "sections/flutter.md",
+          "part": "IV 実機の翼",
+          "level": "advanced"
+        },
+        {
+          "id": "tip-timing",
+          "title": "翼の振動をどう測るか——ひずみゲージとブレードチップタイミング",
+          "file": "sections/tip-timing.md",
+          "part": "IV 実機の翼",
+          "level": "advanced"
+        },
+        {
+          "id": "turbopump-exercise",
+          "title": "ロケットターボポンプのタービンを設計する——通し演習",
+          "file": "sections/turbopump-exercise.md",
+          "part": "V 通し演習"
+        }
+      ]
+    },
+    {
       "id": "ch-appendix",
       "title": "付録",
       "sections": [

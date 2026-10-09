@@ -4,25 +4,243 @@
     "note": "記号の正典。本文は記号をキー参照し、将来ホバー定義と記号一覧を自動生成する（仕組みは後で）。原典で表記が違う場合はここに正規化し、注記する。"
   },
   "symbols": [
-    { "key": "Omega", "glyph": "Ω", "read": "オメガ", "name": "回転角速度", "unit": "rad/s" },
-    { "key": "omega_n", "glyph": "ωn", "read": "オメガ・エヌ", "name": "固有角振動数", "unit": "rad/s" },
-    { "key": "zeta", "glyph": "ζ", "read": "ゼータ", "name": "減衰比", "unit": "-" },
-    { "key": "e", "glyph": "e", "read": "イー", "name": "不釣り合い偏心量（重心の軸中心からのずれ）", "unit": "m" },
-    { "key": "R", "glyph": "R", "read": "アール", "name": "ロータの振れ回り半径", "unit": "m" },
-    { "key": "r_ratio", "glyph": "r", "read": "アール", "name": "回転数比 Ω/ωn", "unit": "-" },
-    { "key": "k", "glyph": "k", "read": "ケー", "name": "軸の硬さ（ばね定数）", "unit": "N/m" },
-    { "key": "m", "glyph": "m", "read": "エム", "name": "円板の質量", "unit": "kg" },
-    { "key": "phi", "glyph": "φ", "read": "ファイ", "name": "位相（重い点と揺れの向きのズレ）", "unit": "度" },
-    { "key": "c", "glyph": "c", "read": "シー", "name": "減衰係数（揺れのエネルギーを吸い取る強さ）", "unit": "N·s/m" },
-    { "key": "q", "glyph": "q", "read": "キュー", "name": "クロスカップリング剛性（変位と直角向きの力を生む係数。油膜・シール・翼端すきま由来）", "unit": "N/m" },
-    { "key": "sigma", "glyph": "σ", "read": "シグマ", "name": "成長率（振幅が e^{σt} で育つ速さ。正なら不安定）", "unit": "1/s" },
-    { "key": "gamma", "glyph": "γ", "read": "ガンマ", "name": "円板の扁平さ（極慣性/直径慣性の比 Ip/Id。ジャイロ効果の強さ）", "unit": "-" },
-    { "key": "alpha", "glyph": "α", "read": "アルファ", "name": "影響係数（おもり1単位が振動をどれだけ動かすか。複素数）", "unit": "-" },
-    { "key": "G", "glyph": "G", "read": "ジー", "name": "釣り合い品質等級（許容残留偏心×角速度。ISO 21940-11）", "unit": "mm/s" },
-    { "key": "rms", "glyph": "RMS", "read": "アールエムエス", "name": "実効値（波形の2乗平均の平方根。振動の大きさの標準的な物差し）", "unit": "-" },
-    { "key": "fs", "glyph": "fs", "read": "エフエス", "name": "サンプリング周波数（1秒に値を拾う回数）", "unit": "Hz" },
-    { "key": "Delta_f", "glyph": "Δf", "read": "デルタ・エフ", "name": "周波数分解能（スペクトルの目盛りの細かさ＝1/記録長）", "unit": "Hz" },
-    { "key": "T_rec", "glyph": "T", "read": "ティー", "name": "記録の長さ（窓の時間幅）", "unit": "s" },
-    { "key": "order_1x", "glyph": "1×", "read": "いちエックス", "name": "次数（回転数を1とする物差し。1×＝回転と同じ速さ、2×＝2倍、0.43×＝油膜の旋回）", "unit": "-" }
+    {
+      "key": "Omega",
+      "glyph": "Ω",
+      "read": "オメガ",
+      "name": "回転角速度",
+      "unit": "rad/s"
+    },
+    {
+      "key": "omega_n",
+      "glyph": "ωn",
+      "read": "オメガ・エヌ",
+      "name": "固有角振動数",
+      "unit": "rad/s"
+    },
+    {
+      "key": "zeta",
+      "glyph": "ζ",
+      "read": "ゼータ",
+      "name": "減衰比",
+      "unit": "-"
+    },
+    {
+      "key": "e",
+      "glyph": "e",
+      "read": "イー",
+      "name": "不釣り合い偏心量（重心の軸中心からのずれ）",
+      "unit": "m"
+    },
+    {
+      "key": "R",
+      "glyph": "R",
+      "read": "アール",
+      "name": "ロータの振れ回り半径",
+      "unit": "m"
+    },
+    {
+      "key": "r_ratio",
+      "glyph": "r",
+      "read": "アール",
+      "name": "回転数比 Ω/ωn",
+      "unit": "-"
+    },
+    {
+      "key": "k",
+      "glyph": "k",
+      "read": "ケー",
+      "name": "軸の硬さ（ばね定数）",
+      "unit": "N/m"
+    },
+    {
+      "key": "m",
+      "glyph": "m",
+      "read": "エム",
+      "name": "円板の質量",
+      "unit": "kg"
+    },
+    {
+      "key": "phi",
+      "glyph": "φ",
+      "read": "ファイ",
+      "name": "位相（重い点と揺れの向きのズレ）",
+      "unit": "度"
+    },
+    {
+      "key": "c",
+      "glyph": "c",
+      "read": "シー",
+      "name": "減衰係数（揺れのエネルギーを吸い取る強さ）",
+      "unit": "N·s/m"
+    },
+    {
+      "key": "q",
+      "glyph": "q",
+      "read": "キュー",
+      "name": "クロスカップリング剛性（変位と直角向きの力を生む係数。油膜・シール・翼端すきま由来）",
+      "unit": "N/m"
+    },
+    {
+      "key": "sigma",
+      "glyph": "σ",
+      "read": "シグマ",
+      "name": "成長率（振幅が e^{σt} で育つ速さ。正なら不安定）",
+      "unit": "1/s"
+    },
+    {
+      "key": "gamma",
+      "glyph": "γ",
+      "read": "ガンマ",
+      "name": "円板の扁平さ（極慣性/直径慣性の比 Ip/Id。ジャイロ効果の強さ）",
+      "unit": "-"
+    },
+    {
+      "key": "alpha",
+      "glyph": "α",
+      "read": "アルファ",
+      "name": "影響係数（おもり1単位が振動をどれだけ動かすか。複素数）",
+      "unit": "-"
+    },
+    {
+      "key": "G",
+      "glyph": "G",
+      "read": "ジー",
+      "name": "釣り合い品質等級（許容残留偏心×角速度。ISO 21940-11）",
+      "unit": "mm/s"
+    },
+    {
+      "key": "rms",
+      "glyph": "RMS",
+      "read": "アールエムエス",
+      "name": "実効値（波形の2乗平均の平方根。振動の大きさの標準的な物差し）",
+      "unit": "-"
+    },
+    {
+      "key": "fs",
+      "glyph": "fs",
+      "read": "エフエス",
+      "name": "サンプリング周波数（1秒に値を拾う回数）",
+      "unit": "Hz"
+    },
+    {
+      "key": "Delta_f",
+      "glyph": "Δf",
+      "read": "デルタ・エフ",
+      "name": "周波数分解能（スペクトルの目盛りの細かさ＝1/記録長）",
+      "unit": "Hz"
+    },
+    {
+      "key": "T_rec",
+      "glyph": "T",
+      "read": "ティー",
+      "name": "記録の長さ（窓の時間幅）",
+      "unit": "s"
+    },
+    {
+      "key": "order_1x",
+      "glyph": "1×",
+      "read": "いちエックス",
+      "name": "次数（回転数を1とする物差し。1×＝回転と同じ速さ、2×＝2倍、0.43×＝油膜の旋回）",
+      "unit": "-"
+    },
+    {
+      "key": "N_b",
+      "glyph": "N",
+      "read": "エヌ",
+      "name": "翼の枚数（1列の動翼の数）",
+      "unit": "枚"
+    },
+    {
+      "key": "N_s",
+      "glyph": "Nₛ",
+      "read": "エヌ・エス",
+      "name": "静翼（ノズル）の枚数。励起の主な次数はこの整数倍",
+      "unit": "枚"
+    },
+    {
+      "key": "EO",
+      "glyph": "k",
+      "read": "ケー（励起次数）",
+      "name": "励起次数（Engine Order）。回転1周あたり何回叩かれるか。励起振動数 = k×回転数",
+      "unit": "-"
+    },
+    {
+      "key": "ND",
+      "glyph": "n",
+      "read": "エヌ（節直径）",
+      "name": "節直径数（Nodal Diameter）。円盤のモード形が持つ『動かない直径』の本数。0 ≤ n ≤ N/2",
+      "unit": "本"
+    },
+    {
+      "key": "f_b",
+      "glyph": "f_b",
+      "read": "エフ・ビー",
+      "name": "翼単体（静止・固定根元）の固有振動数",
+      "unit": "Hz"
+    },
+    {
+      "key": "kappa",
+      "glyph": "κ",
+      "read": "カッパ",
+      "name": "遠心剛性化の係数（Southwell 係数）。f² = f0² + κΩ²",
+      "unit": "-"
+    },
+    {
+      "key": "sigma_m",
+      "glyph": "σm",
+      "read": "シグマ・エム",
+      "name": "平均応力（遠心力による一定の引張）",
+      "unit": "MPa"
+    },
+    {
+      "key": "sigma_a",
+      "glyph": "σa",
+      "read": "シグマ・エー",
+      "name": "応力振幅（振動で増減する応力の片振幅）",
+      "unit": "MPa"
+    },
+    {
+      "key": "sigma_e",
+      "glyph": "σe",
+      "read": "シグマ・イー",
+      "name": "疲労限度（この振幅以下なら何回繰り返しても壊れないとみなす応力）",
+      "unit": "MPa"
+    },
+    {
+      "key": "sigma_u",
+      "glyph": "σu",
+      "read": "シグマ・ユー",
+      "name": "引張強さ（Goodman 線図の右端）",
+      "unit": "MPa"
+    },
+    {
+      "key": "IBPA",
+      "glyph": "σ",
+      "read": "シグマ（翼間位相角）",
+      "name": "翼間位相角（Interblade Phase Angle）。隣の翼との振動の位相差 = 2πn/N",
+      "unit": "rad"
+    },
+    {
+      "key": "k_red",
+      "glyph": "k*",
+      "read": "ケー・スター",
+      "name": "無次元振動数（reduced frequency）= ωc/V。翼の振動の速さを流れが翼を通る時間で測った値",
+      "unit": "-"
+    },
+    {
+      "key": "epsilon",
+      "glyph": "ε",
+      "read": "イプシロン",
+      "name": "部分噴射率（ノズルが並ぶ弧の長さ ÷ 全周）",
+      "unit": "-"
+    },
+    {
+      "key": "Q",
+      "glyph": "Q",
+      "read": "キュー（Q値）",
+      "name": "共振の鋭さ（Q値）= 1/(2ζ)。共振時の振幅倍率",
+      "unit": "-"
+    }
   ]
 }

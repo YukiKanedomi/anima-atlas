@@ -31,6 +31,19 @@ import StandardsMap from "./StandardsMap";
 import VibrationGauge from "./VibrationGauge";
 import WhirlInstability from "./WhirlInstability";
 import Nomenclature from "./Nomenclature";
+import BladeModes from "./BladeModes";
+import BladeCampbell from "./BladeCampbell";
+import ExcitationHarmonics from "./ExcitationHarmonics";
+import NodalDiameter from "./NodalDiameter";
+import TravelingWave from "./TravelingWave";
+import FamilyCurves from "./FamilyCurves";
+import EoFolding from "./EoFolding";
+import Zzenf from "./Zzenf";
+import Mistuning from "./Mistuning";
+import FrictionDamper from "./FrictionDamper";
+import HaighDiagram from "./HaighDiagram";
+import Flutter from "./Flutter";
+import TipTiming from "./TipTiming";
 
 // ブロック部品の「型契約」とレジストリ。
 // ・本文（Markdown）は :::ブロック名 でここに登録された部品を呼ぶ。
@@ -543,6 +556,110 @@ export const blocks: BlockDef[] = [
     summary: "symbols.json から記号一覧を自動生成。本文の [[key]] ポップと同じ正典を使う。",
     component: Nomenclature,
     sample: { title: "記号一覧（※本編の節で記号データとともに表示）" },
+  },
+  {
+    name: "blade-modes",
+    title: "翼の固有モード（片持ちの 1F/2F/1T）",
+    status: "experimental",
+    summary: "片持ち翼のモード形と振動数比。叩いて測る→1F/2F/1T。",
+    component: BladeModes,
+    sample: { title: "ためし：翼の固有モード（片持ちの 1F/2F/1T）" },
+  },
+  {
+    name: "blade-campbell",
+    title: "翼のCampbell線図（遠心剛性化＋励起次数の扇）",
+    status: "experimental",
+    summary: "f²=f0²+κΩ² の固有振動数と EO 線の扇。運転範囲と余裕。",
+    component: BladeCampbell,
+    sample: { title: "ためし：翼のCampbell線図（遠心剛性化＋励起次数の扇）" },
+  },
+  {
+    name: "excitation-harmonics",
+    title: "励起の次数分解（ノズル後流・部分噴射）",
+    status: "experimental",
+    summary: "ノズル数と噴射弧からパルス列を作りフーリエ分解。どの次数が強いか。",
+    component: ExcitationHarmonics,
+    sample: { title: "ためし：励起の次数分解（ノズル後流・部分噴射）" },
+  },
+  {
+    name: "nodal-diameter",
+    title: "節直径（翼付き円盤のモード形）",
+    status: "experimental",
+    summary: "N 枚の翼に cos(nθ) のパターン。立つ波/走る波の再生。",
+    component: NodalDiameter,
+    sample: { title: "ためし：節直径（翼付き円盤のモード形）" },
+  },
+  {
+    name: "traveling-wave",
+    title: "進行波（静止系の固定パターンが回転系で走る）",
+    status: "experimental",
+    summary: "静止ノズル列のパターンを回転座標から見ると kΩ の進行波。",
+    component: TravelingWave,
+    sample: { title: "ためし：進行波（静止系の固定パターンが回転系で走る）" },
+  },
+  {
+    name: "family-curves",
+    title: "モード族の曲線（周波数 vs 節直径）",
+    status: "experimental",
+    summary: "円盤支配族と翼支配族、veering。bladedDisk.ts の 2×2 モデル。",
+    component: FamilyCurves,
+    sample: { title: "ためし：モード族の曲線（周波数 vs 節直径）" },
+  },
+  {
+    name: "eo-folding",
+    title: "励起次数の折り返し（空間エイリアシング）",
+    status: "experimental",
+    summary: "N 枚の翼が cos(kθ) をサンプリング。ND=fold(k,N) でジグザグが生まれる。",
+    component: EoFolding,
+    sample: { title: "ためし：励起次数の折り返し（空間エイリアシング）" },
+  },
+  {
+    name: "zzenf",
+    title: "ZZENF（SAFE）線図",
+    status: "experimental",
+    summary: "周波数 vs 節直径に族曲線とジグザグ励起線。共振の二重条件を判定。",
+    component: Zzenf,
+    sample: { title: "ためし：ZZENF（SAFE）線図" },
+  },
+  {
+    name: "mistuning",
+    title: "ミスチューニング（翼ごとのばらつきと応答の増幅）",
+    status: "experimental",
+    summary: "N 翼の周期鎖に乱数ばらつき。局在化と増幅率、Whitehead 限界。",
+    component: Mistuning,
+    sample: { title: "ためし：ミスチューニング（翼ごとのばらつきと応答の増幅）" },
+  },
+  {
+    name: "friction-damper",
+    title: "摩擦ダンパ（押し付け力と等価減衰）",
+    status: "experimental",
+    summary: "クーロン摩擦のヒステリシスと最適押し付け力。",
+    component: FrictionDamper,
+    sample: { title: "ためし：摩擦ダンパ（押し付け力と等価減衰）" },
+  },
+  {
+    name: "haigh-diagram",
+    title: "Haigh（Goodman）線図",
+    status: "experimental",
+    summary: "平均応力（遠心）と振動応力の組合せで疲労余裕を判定。",
+    component: HaighDiagram,
+    sample: { title: "ためし：Haigh（Goodman）線図" },
+  },
+  {
+    name: "flutter",
+    title: "フラッタ（空力減衰と翼間位相角）",
+    status: "experimental",
+    summary: "翼間位相角ごとの空力減衰。負になればフラッタ。",
+    component: Flutter,
+    sample: { title: "ためし：フラッタ（空力減衰と翼間位相角）" },
+  },
+  {
+    name: "tip-timing",
+    title: "ブレードチップタイミング（1回転1点のサンプリング）",
+    status: "experimental",
+    summary: "翼の通過時刻から振動を推定。エイリアシングと複数プローブ。",
+    component: TipTiming,
+    sample: { title: "ためし：ブレードチップタイミング（1回転1点のサンプリング）" },
   },
 ];
 

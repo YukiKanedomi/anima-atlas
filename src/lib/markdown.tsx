@@ -4,6 +4,7 @@ import { getBlock, UnknownBlock } from "./blocks/registry";
 import { BlockMath, InlineMath } from "./Math";
 import { BlockBoundary } from "../components/BlockBoundary";
 import { TermPop } from "../components/TermPop";
+import { asset } from "./data";
 
 // ごく小さな Markdown＋ディレクティブ描画。
 // 対応：# / ## / ###、段落、**強調**、箇条書き(-)、
@@ -23,6 +24,7 @@ type Node =
   | { kind: "block"; name: string; config: unknown }
   | { kind: "block-error"; name: string; raw: string }
   | { kind: "disclosure"; variant: string; label: string; children: Node[] }
+  | { kind: "image"; src: string; alt: string; caption: string }
   | { kind: "math"; tex: string };
 
 // 「容れ物」ディレクティブ＝中身をMarkdownとして畳む折りたたみ。
@@ -30,6 +32,8 @@ type Node =
 // ここに名前を足すだけで色違いの折りたたみが増やせる（新構文は不要）。
 const CONTAINERS: Record<string, { chip: string }> = {
   deep: { chip: "深掘り" },
+  history: { chip: "歴史" }, // 人物・事故・系譜の余談
+  field: { chip: "実務" }, // 現場の落とし穴・設計の勘所
 };
 
 function parse(src: string): Node[] {
@@ -116,6 +120,14 @@ function parse(src: string): Node[] {
       continue;
     }
 
+    // 画像：![代替テキスト](パス "キャプション")。パスは book フォルダ相対（data/books/… 起点）。
+    const im = line.match(/^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)\s*$/);
+    if (im) {
+      nodes.push({ kind: "image", src: im[2], alt: im[1], caption: im[3] ?? "" });
+      i++;
+      continue;
+    }
+
     // 見出し
     const h = line.match(/^(#{1,3})\s+(.*)$/);
     if (h) {
@@ -149,6 +161,7 @@ function parse(src: string): Node[] {
       !/^:::/.test(lines[i]) &&
       !/^\$\$/.test(lines[i].trim()) &&
       !/^#{1,3}\s/.test(lines[i]) &&
+      !/^!\[/.test(lines[i]) &&
       !/^\s*-\s+/.test(lines[i])
     ) {
       buf.push(lines[i]);
@@ -240,6 +253,15 @@ function renderNodes(nodes: Node[]): ReactNode {
             );
           case "math":
             return <BlockMath key={idx} tex={n.tex} />;
+          case "image":
+            return (
+              <figure key={idx} className="my-6 overflow-hidden rounded-lg border border-line bg-white shadow-card">
+                <img src={asset(n.src)} alt={n.alt} loading="lazy" className="block w-full" />
+                {n.caption ? (
+                  <figcaption className="px-4 py-2.5 text-sm leading-relaxed text-mut">{inline(n.caption)}</figcaption>
+                ) : null}
+              </figure>
+            );
           case "block": {
             const def = getBlock(n.name);
             if (!def) return <UnknownBlock key={idx} name={n.name} />;

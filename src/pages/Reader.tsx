@@ -78,8 +78,13 @@ export default function Reader() {
         <div key={ch.id}>
           <div className="text-xs font-semibold tracking-wide text-mut">{ch.title}</div>
           <ul className="mt-1 space-y-1">
-            {ch.sections.map((s) => (
+            {ch.sections.map((s, si) => (
               <li key={s.id}>
+                {s.part && s.part !== ch.sections[si - 1]?.part ? (
+                  <div className="mb-1 mt-2 border-t border-line pt-1.5 font-serif text-[11px] tracking-wide text-accent/80">
+                    {s.part}
+                  </div>
+                ) : null}
                 <button
                   onClick={() => go(s.id)}
                   className={
