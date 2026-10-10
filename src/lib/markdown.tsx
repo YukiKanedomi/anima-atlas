@@ -275,7 +275,24 @@ function Disclosure({
   );
 }
 
-function renderNodes(nodes: Node[]): ReactNode {
+// 見出しの表示文字から記法を落とす（目次・節内ナビ用）。[[key|語]]→語、[[link:id|語]]→語、**強調**→素の文字。
+function plainText(s: string): string {
+  return s
+    .replace(/\[\[(?:link:)?[^\]|]+\|([^\]]+)\]\]/g, "$1")
+    .replace(/\[\[([^\]|]+)\]\]/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .trim();
+}
+
+// 節内ナビ用：本文の最上位 `## ` 見出しの一覧。id は描画側（renderNodes の top=true）と同じ付番。
+export function extractHeadings(src: string): { id: string; text: string }[] {
+  return parse(src)
+    .filter((n): n is Extract<Node, { kind: "h" }> => n.kind === "h" && n.level === 2)
+    .map((n, i) => ({ id: `h2-${i + 1}`, text: plainText(n.text) }));
+}
+
+function renderNodes(nodes: Node[], top = false): ReactNode {
+  let h2 = 0;
   return (
     <>
       {nodes.map((n, idx) => {
@@ -285,10 +302,14 @@ function renderNodes(nodes: Node[]): ReactNode {
               n.level === 1
                 ? "mt-2 mb-3 text-3xl text-ink"
                 : n.level === 2
-                ? "mt-8 mb-2 clear-both text-2xl text-ink"
+                ? "mt-8 mb-2 clear-both scroll-mt-20 text-2xl text-ink"
                 : "mt-6 mb-2 clear-both text-xl text-ink";
             if (n.level === 1) return <h1 key={idx} className={cls}>{inline(n.text)}</h1>;
-            if (n.level === 2) return <h2 key={idx} className={cls}>{inline(n.text)}</h2>;
+            if (n.level === 2) {
+              // 最上位の h2 だけ id を振る（囲みの中の見出しは節内ナビに出さない）
+              const id = top ? `h2-${++h2}` : undefined;
+              return <h2 key={idx} id={id} className={cls}>{inline(n.text)}</h2>;
+            }
             return <h3 key={idx} className={cls}>{inline(n.text)}</h3>;
           }
           case "p":
@@ -357,5 +378,5 @@ function renderNodes(nodes: Node[]): ReactNode {
 }
 
 export function Markdown({ src }: { src: string }) {
-  return renderNodes(parse(src));
+  return renderNodes(parse(src), true);
 }
