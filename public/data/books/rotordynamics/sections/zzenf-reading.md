@@ -17,6 +17,8 @@
 
 なお「形の一致」は節直径、つまり[[link:traveling-waves|第II部]]で定義した符号付きの折り返し次数 [[q_signed|q]] の絶対値 $|q|$ で判定します。波の走る向き（$q$ の符号）は ZZENF 線図の横軸には現れませんが、どちら向きの進行波が立つかは $q$ の符号を見れば分かります。
 
+![静翼列と動翼列の一段の断面模式図](data/books/rotordynamics/images/zzenf-reading-2.jpg "イメージ図（生成画像・模式）：静止したノズル列（左）が、回る翼車（右）にガスを吹き付ける一段。「揺らす側」と「揺れる側」の組合せが、ZZENF 線図の臙脂と紺に対応する。"){small}
+
 :::predict
 {
   "question": "翼 36 枚の円盤を 15,000 rpm で回し、励起次数 1〜72 の線を Campbell 線図に引くと、固有振動数の線との交点はたくさんできます。そのうち「本物の共振」はどのくらい残ると思いますか？",
@@ -40,6 +42,8 @@
 
 ## 図の読み方
 
+![長さの違う鍵の束](data/books/rotordynamics/images/zzenf-reading-1.jpg "写真：長さも溝も違う鍵の束。ZZENF 線図では、励起が「長さの変わる鍵束」、モードの族が「鍵穴の棚」に当たる（下のたとえ話）。（Wikimedia Commons, Basile Morin, CC BY-SA 4.0）"){right}
+
 まず軸です。**横軸は節直径 n**（0 から N/2 まで）、**縦軸は周波数**です。縦軸は翼単体の固有振動数 [[f_b|f_b]] で割った無次元で目盛りを打ち、右側に f_b = 3,000 Hz としたときの Hz 換算を添えています。
 
 次に、図に描かれている二種類の線を分けて読みます。
@@ -48,7 +52,7 @@
 
 **臙脂の線＝揺らす側（励起）**。回転周波数 $f_\mathrm{rot}$ を決めると、k 次の励起は周波数 $k\,f_\mathrm{rot}$ を持ち、節直径 fold(k, N) に落ちます。k = 1, 2, 3, … の点を順に結ぶと、前の節で見たジグザグが、今度は**縦に引き伸ばされて**現れます。k が大きいほど高く、節直径は 0 と N/2 の間を往復する。回転数を上げるとジグザグは縦に伸び、下げると縮みます。
 
-:::analogy 鍵穴の棚と、長さの変わる鍵束
+:::analogy @key 鍵穴の棚と、長さの変わる鍵束
 紺の点を「壁に並んだ鍵穴」だと思ってください。横の位置（節直径）と高さ（周波数）は機械で決まっていて、動きません。臙脂のジグザグは「鍵束」です。k 番目の鍵は、横の位置が折り返しで決まり、鍵の長さ（高さ）は回転数で伸び縮みします。回転数のつまみを回しても、鍵は**縦にしか動きません**——横の位置は翼の枚数が決めるからです。共振とは、ある鍵がある鍵穴に**横も高さもぴったり**はまることです。高さだけ合って横がずれた鍵は、壁を叩くだけで何も開けません。
 
 この例えの限界：本物の鍵は「はまる／はまらない」の二択ですが、翼では周波数が少しずれていても近ければ応答は大きく、どれだけ大きいかは[[link:blade-damping|減衰]]で決まります。図の ±3% はその「近さ」の目安です。
@@ -62,7 +66,7 @@
 
 ZZENF 線図は、その中から**節直径が合うものだけ**を残します。初期設定では、何十もの交点が数えるほどまで減ります。これが「二重条件の効き目」です。
 
-:::analogy 「同じ時刻」だけで数えると、出会いは多すぎる
+:::analogy @clock 「同じ時刻」だけで数えると、出会いは多すぎる
 駅で友人と待ち合わせるとします。「同じ時刻に駅にいる」だけを条件にすると、その時刻に駅にいる人は何百人もいて、全員が「出会う候補」になってしまいます。Campbell 線図の交点はこの数え方です。ZZENF 線図はそこに「同じホームにいる」という条件を足します。時刻（周波数）とホーム（節直径）の両方が一致して初めて、本当に出会う。候補が何十から数件に減るのは、条件を厳しくしたからではなく、**最初から必要だった二つ目の条件をやっと数えに入れた**からです。
 
 限界：時刻の一致は「必要条件」です。同じ時刻に駅にいなければ出会えないのと同じで、Campbell 線図に交点がなければ ZZENF 線図にも共振はありません。
@@ -118,3 +122,5 @@ $$Q_n = \sum_{j=0}^{N-1} F_j\,\cos(n\theta_j) = F_0 \cos(k\Omega t)\sum_{j=0}^{N
 - Campbell 線図は「リズムが合うか」しか見ていないので、交点を数えすぎます。間違っているのではなく、条件が一つ足りないのです。
 
 **模式・出典について**：図の族の曲線は[[link:family-curves|第II部]]と同じ 2 自由度セクタ模型（bladedDisk.ts）の固有値で、実機の値ではありません。励起点は (fold(k, N), k f_rot) の定義どおり、共振判定は同じ節直径で周波数差 ±3%（運転範囲を指定したときは範囲内に固有振動数 ÷ k が入るか）としています。Campbell 線図の交点数は、節直径を無視して周波数だけ一致する (k, n, 族) の組を数えたものです。出典：Singh, M.P., Vargo, J.J., Schiffer, D.M., Dello, J.D., "SAFE Diagram — A Design and Reliability Tool for Turbine Blading," Proc. 17th Turbomachinery Symposium, Texas A&M, 1988／Singh, M.P., "History of Evolution, Progress and Application of SAFE Diagram for Tuned and Mistuned Systems," Proc. 42nd Turbomachinery Symposium, 2013（https://oaktrust.library.tamu.edu/items/c874fe3d-248b-47b3-a6a1-701d274a74ed ）／ZZENF の名称展開と羽根車の事例：Turbomachinery International, "How to avoid centrifugal impeller structural resonance"（https://www.turbomachinerymag.com/how-to-avoid-to-centrifugal-impeller-structural-resonance/ ）／ANSYS の PLZZ と「翼支配モードは平ら・円盤支配モードは傾く」の記述：ANSYS Mechanical APDL Technology Showcase, "Results and Discussion"（https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_tec/tecmistuningresults.html ）／節直径 0・1 と軸のねじり・曲げの連成：TASK Quarterly 8(1), 2004 および 10(3), 2006 の翼付き円盤–軸連成の論文（https://journal.mostwiedzy.pl/TASKQuarterly/article/view/2487 ）。
+
+- 鍵束の写真：Key ring（Basile Morin, CC BY-SA 4.0）https://commons.wikimedia.org/wiki/File:Key_ring.jpg

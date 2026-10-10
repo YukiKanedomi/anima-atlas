@@ -17,13 +17,15 @@
 
 $$Q = \frac{1}{2\zeta}$$
 
-:::analogy Q 値は「余韻が何回ぶん続くか」
+:::analogy @bell Q 値は「余韻が何回ぶん続くか」
 お寺の鐘を一度つくと、音は長く尾を引きます。鐘は減衰が小さく、Q 値が大きいからです。座布団を叩いても余韻はありません。Q 値が小さいからです。Q 値には便利な読み方があって、**揺れがほぼ消えるまでに、だいたい Q 回ぶん揺れる**と覚えられます（Q 回揺れたときの振幅は最初の 4% ほど）。Q = 100 の翼は、一度揺れ始めると 100 回揺れてやっと静まる——そして共振で押し続けられると、1 回押すごとの揺れが 100 回ぶん積み重なるので、静かに押したときの 100 倍になるわけです。
 
 限界：この「Q 回」は目安で、空力減衰や摩擦減衰のように振幅で変わる減衰では、余韻の減り方が一定になりません。
 :::
 
 減衰比 $\zeta$ が 0.5% なら $Q = 100$。つまり共振では、同じ力で静かに押したときの **100 倍** 揺れます。$\zeta$ が 0.1% なら 500 倍。ここで「倍」は、同じ力でゆっくり押したときの静的なたわみに対する倍率です。実際の振幅の大きさには励振力やモードの質量・形も効きますが、固定した線形の 1 自由度系で「何倍に膨らむか」を決めるのは主に減衰です。翼の減衰はこの程度の小ささなので、共振を踏んだときの振幅は、減衰の見積もりが 2 倍違うだけで 2 倍違います。[[link:transmissibility|伝達率の節]]で「共振の近くでは減衰がすべて」と書いたのは、翼ではなおさら切実です。
+
+![断面展示のタービン翼列](data/books/rotordynamics/images/blade-damping-1.jpg "写真：断面展示の Rolls-Royce Turboméca Adour の 2 段タービン（金色が翼）。翼はもみの木形の根で円盤に差し込まれ、この接触面が摩擦減衰の源の一つになる。航空用の一般的な例。（Wikimedia Commons, Olivier Cleynen, CC BY-SA 3.0）"){right}
 
 翼の減衰には、大きく3つの源があります。
 
@@ -36,6 +38,8 @@ $$Q = \frac{1}{2\zeta}$$
 実測では、実機のタービン翼のモードの $Q$ は 100〜400 程度が「典型」だと、翼振動監視の特許文献（EPRI, US 5,471,880）は述べています（$\zeta$ にして 0.1〜0.5%）。回転中の翼付き円盤で測った例では、減衰比は振幅とともに増え、しかも翼ごとに大きく散らばることが報告されています。一方、翼と円盤を一体にした **ブリスク** には摩擦面がないので、構造減衰は極端に小さく、空力減衰が頼みになります。ロケットターボポンプのタービンは、高温・高圧の水素リッチガスのような特殊な流体の中で回るので、空力減衰を設計で当てにできるかどうかは個別に確かめるほかありません——だから「**減衰を作り足す**」設計が重要になります。
 
 ## 減衰を作り足す道具たち
+
+![シュラウドとレーシングワイヤの模式図](data/books/rotordynamics/images/blade-damping-2.jpg "イメージ図（生成画像・模式）：先端のシュラウドと、途中を貫くレーシングワイヤで隣の翼とつないだ翼列。"){right}
 
 翼に減衰を足す道具は、どれも「**接触面をこすらせる**」か「**翼どうしをつないで形を変える**」かのどちらかです。
 
@@ -50,6 +54,8 @@ $$Q = \frac{1}{2\zeta}$$
 どの道具も、押し付け力の主な源は**遠心力**です（構成によっては、前後の圧力差、組立時の締め代、熱変形も加わります。SSME のダンパは、遠心力と、冷却水素と駆動ガスの圧力差の組合せで押し付けられていました）。ここに落とし穴があります。回転数が上がると押し付けが強くなり（遠心力は回転数の 2 乗に比例するので、回転数が 2 倍なら押し付けは 4 倍）、ある点を超えると**滑らなくなる**。滑らないダンパは、ただの硬い部品です。
 
 ## 摩擦ダンパは「押し付けすぎ」が効かない
+
+![アンダープラットフォームダンパの模式図](data/books/rotordynamics/images/blade-damping-3.jpg "イメージ図（生成画像・模式）：隣り合う翼のプラットフォームの下に置かれたくさび形のアンダープラットフォームダンパ。遠心力（矢印）で押し上げられ、接触面（臙脂）がこすれて揺れのエネルギーを熱に変える。"){right}
 
 摩擦ダンパの振る舞いを最初に設計の言葉で整理したのが J. H. Griffin（1980）です。翼を1自由度のばね・質量とし、そこに「ばねと直列のクーロン摩擦要素」としてダンパを付けると、押し付け力 $N$ に対して共振振幅が**谷の形**になることを示しました。
 
@@ -66,7 +72,7 @@ $$Q = \frac{1}{2\zeta}$$
 }
 :::
 
-:::analogy 手のひらをこすって温めるには、ちょうどよい力加減がある
+:::analogy @hands-rub 手のひらをこすって温めるには、ちょうどよい力加減がある
 寒い日に手のひらをこすり合わせて温めるとき、力を抜きすぎると手は動くのに温まりません。摩擦力が小さくて、熱に変わる仕事がわずかだからです。逆に力いっぱい押し付けると、今度は手が動かなくなり、やはり温まりません。動かなければこすれず、こすれなければ熱は出ません。いちばん温まるのは、**しっかり押し付けつつ、まだ滑る**という中間の力加減です。摩擦ダンパもまったく同じで、押し付け力には谷の底（最適点）があり、押し付けすぎると「動かない手」＝固着になります。
 
 限界：手の場合は自分で動かす力を加減できますが、翼の場合は揺れの振幅が「動かす力」の役で、励振力が小さい運転条件では同じ押し付けでも固着しやすくなります。だから最適点は運転条件ごとに動きます。
@@ -143,3 +149,5 @@ $$2\zeta\omega_r X^2 + \left(\frac{4\mu N}{\pi} - F\right)X - \frac{4\mu N d}{\p
 - 摩擦ダンパは手のひらをこするのと同じで、押し付けすぎると動かなくなって効かない（固着）。SSME の翼が折れた原因もこれでした。
 
 **模式・出典について**：ブロックは Griffin 型（翼を地面につなぐばね直列クーロン要素）の1自由度・1次調和バランスの模式で、ヒステリシスの形・散逸・最適押し付け力の存在は式どおりですが、実機のアンダープラットフォームダンパ（2枚の翼の間に挟まる・接触面の法線方向の分離・微小滑りの分布）は含みません。摩擦ダンパの基礎は J. H. Griffin, "Friction Damping of Resonant Stresses in Gas Turbine Engine Airfoils," ASME Journal of Engineering for Power, 102(2), 329–333, 1980（DOI 10.1115/1.3230256。1979年の ASME 79-GT-109 が初出）。SSME HPFTP の翼折損事故（1977年、試験 902-095 と 901-147）、タービンの翼数（41/63、39/59）、翼寸法・応力・温度・ワーリギグ試験とロックアップの結論は R. E. Biggs, "Space Shuttle Main Engine: The First Ten Years," Part 6 "High Pressure Fuel Turbopump Turbine Blade Failures"（AAS History Series、enginehistory.org 掲載）https://mail.enginehistory.org/Rockets/SSME/SSME6.pdf によります。摩擦ダンパの解析と遠心力による過剰押し付けは R. J. Dominic, "Turbine Blade Friction Damping Study," NASA MSFC Advanced High Pressure O2/H2 Technology Conference, 1985, NTRS 19850018575 https://ntrs.nasa.gov/citations/19850018575 。HPFTP/AT のフェザーシール・ダンパは S. K. Montgomery, "SSME HPFTP/AT Turbine Blade Platform Featherseal Damper Design," AIAA Joint Propulsion Conference, 1999, NTRS 19990102902 https://ntrs.nasa.gov/citations/19990102902 。ブリスクのリングダンパは D. Laxalde, F. Thouverez, J.-J. Sinou, J.-P. Lombard, "Qualitative analysis of forced response of blisks with friction ring dampers," European Journal of Mechanics A/Solids, 26(4), 676–687, 2007（arXiv:0801.4350）。翼の Q 値 100〜400 の目安は米国特許 5,471,880（EPRI、Lang and Leon）の「実機翼の試験経験ではモードの Q は 100〜400 が典型」という記述、回転中の翼の減衰が振幅とともに増え翼ごとに散らばる観察は J. Kellner, V. Zeman, J. Šašek, Z. Kubín, "Identification of damping parameters of bladed disks," Engineering Mechanics 2013（蒸気タービン翼付き円盤の真空回転試験・3000 rpm）https://engmechx.it.cas.cz/improc/2013/017_Kellner_J-FT.pdf によります。これらの数値は機種・条件で大きく変わるため、設計には実測値を使ってください。
+
+- タービン翼列の写真：Turbine of a sectioned Rolls-Royce Turboméca Adour turbofan（Olivier Cleynen, CC BY-SA 3.0）https://commons.wikimedia.org/wiki/File:Turbine_of_a_sectioned_Rolls-Royce_Turbom%C3%A9ca_Adour_turbofan.jpg

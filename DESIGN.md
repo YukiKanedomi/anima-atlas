@@ -74,10 +74,12 @@
 - ネイティブ `<details>`。既定は**閉**。サマリ行＝自前の三角（開くと90°回転）＋「深掘り」チップ（`bg-accent/10 text-accent`）＋手書きタイトル。
 - 開くと中身の左に `border-l-2 border-accent/40`（発展部分を視覚的に括る）。地は `bg-soft/60`。
 - **常に開いた囲み**：`:::analogy タイトル`（チップ「たとえ話」）。`<details>` ではなく `<aside>` で描画し、左に太い紺の罫（`border-l-4 border-l-accent/50`）＋`bg-soft/40`。難所の直前に置く「手すり」で、例えの限界を 1 文添える作法（2026-10-10）。
+- **たとえ話のアイコン**：`:::analogy @swing タイトル` のように見出しの先頭に `@名前` を付けると、`public/data/icons/<名前>.png`（192px 透過 PNG）を囲みの左に 48〜56px で置く（2026-10-10）。アイコンは紺の線画＋臙脂のアクセント 1 点の統一様式で、imagegen の 4×3 グリッド発注→PIL で切り出し・パレット整列（`scratchpad/icons`）。同じ比喩には同じアイコンを使い回す（トランポリン・鍵・時計など）。
 - 同じ容器の色違い：`:::history タイトル`（チップ「歴史」＝人物・事故・系譜の余談）／`:::field タイトル`（チップ「実務」＝現場の勘所）。`markdown.tsx` の `CONTAINERS` に名前を足すだけで増やせる（2026-10-09、翼振動章で導入）。
 
 ### 画像（`![alt](path "caption")`）
 - 1行の画像記法。パスは `data/books/…` 起点（`asset()` で BASE_URL を付ける）。描画は figure（`rounded-lg border border-line bg-white shadow-card`）＋下に `text-sm text-mut` のキャプション。`loading="lazy"`。
+- **小図**（2026-10-10）：末尾に `{right}` を付けると PC（md 以上）で本文の右に回り込む幅 270px の小図、スマホでは中央寄せ（最大 340px）。`{small}` は常に中央寄せ（最大 360px）。キャプションは `text-xs`。見出し・ブロック・囲み（aside/details）には `clear-both` が入っているので、回り込みはそこで必ず切れる。**{right} は直後に通常段落が 2〜3 つ続く場所にだけ置く**（直後が見出しや囲みだと右に空白が残る）。小図は幅 800px・JPEG q80（50〜120KB）。「大きい図を少なく」ではなく「小さい図を頻繁に」が翼振動章の方針。
 - 生成画像（imagegen）は**「イメージ図（生成画像・模式）」とキャプションに明記**し、事実を担う図には使わない。保存は `public/data/books/<book>/images/`、幅 1400px・JPEG q82（250KB 前後）に落としてから置く。様式＝中世紀 NASA 技術マニュアル調の線画、紺×生成り×臙脂の二色刷り（翼振動章の `turbopump-hero.jpg` / `nozzle-wakes.jpg`）。
 
 ### 目次の「部」見出し（`outline.json` の `part`）

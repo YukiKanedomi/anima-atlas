@@ -1,5 +1,7 @@
 # 立つ波と走る波——回転系で見た励起
 
+![スタジアムのウェーブ](data/books/rotordynamics/images/traveling-waves-1.jpg "写真：スタジアムの観客が作るウェーブ（2005 年、フランクフルト）。一人ひとりはその場で立って座るだけなのに、波は走る。（Wikimedia Commons, Florian K, CC BY-SA 3.0）"){right}
+
 スタジアムで観客が作る「ウェーブ」を思い浮かべてください。ひとりひとりは、その場で立って座るだけです。それなのに、スタンド全体を見ると波が**走って**いきます。隣の人が自分より少しだけ早く立ち、自分はその少し後に立つ——この**位相のずれ**が、動かない人々の上に走る波を作ります。
 
 翼付き円盤の揺れも同じです。前の節で見た $\cos(n\theta)$ の花びら模様は、翼それぞれがその場で揺れているだけなのに、模様が円盤の上を回っていくことがありました。**進行波**です。そしてこの節で見るように、回っているタービンを揺らす力そのものが、翼から見ると**走る波の形**をしています。立つ波と走る波の関係を押さえると、「誰が、どんなリズムで、どんなパターンで翼を叩くのか」が一本の式にまとまります。
@@ -27,7 +29,7 @@ $$\cos(n\theta)\cos(\omega t) = \tfrac{1}{2}\cos(n\theta - \omega t) + \tfrac{1}
 
 言葉にすると、「全員がその場で同じリズムで上下する模様」は、「右へ走る波」と「左へ走る波」を半分ずつ重ねたものと、見た目がまったく同じになる、ということです。
 
-:::analogy 向かい合う二つのウェーブ
+:::analogy @stadium 向かい合う二つのウェーブ
 スタンドの右端と左端から、同時にウェーブを出して正面衝突させてみます。すると、席によっては二つの波が重なって大きく立ち上がり、別の席では「片方が立てと言い、もう片方が座れと言う」ので、まったく立てなくなります。その結果、スタンド全体には**走らない**膨らみとへこみの模様——定在波——が現れ、立てない席が「節」です。逆向きに走る二つの波を重ねると立つ波になる、というのはこういうことです。ただし本物のウェーブは「立つ・座る」の 2 段階ですが、円盤の波は連続的に膨らんだりへこんだりします。
 :::
 
@@ -37,7 +39,9 @@ $$\cos(n\theta)\cos(\omega t) = \tfrac{1}{2}\cos(n\theta - \omega t) + \tfrac{1}
 
 ここで記号を一つ決めておきます。回転の速さは、1 秒あたりの回転数である**[[f_rot|回転周波数]]** $f_\mathrm{rot}$（Hz。rpm を 60 で割った値）と、角速度 $\Omega = 2\pi f_\mathrm{rot}$（rad/s）の 2 通りで表します。翼が 1 秒に叩かれる回数、つまり**励起周波数**は $f_\mathrm{exc} = k\,f_\mathrm{rot}$（Hz）、角周波数で書けば $k\Omega$ です。以下の式では角周波数 $k\Omega$ を使いますが、Campbell 線図や ZZENF 線図の縦軸に Hz で打つときは $k\,f_\mathrm{rot}$ です。節直径には $n$ を使い、回転の速さには使いません。
 
-:::analogy メリーゴーラウンドから見た親たち
+![メリーゴーラウンド](data/books/rotordynamics/images/traveling-waves-2.jpg "写真：メリーゴーラウンド（フランス・サント）。乗っている側から見ると、止まっている親たちのほうが回って見える。（Wikimedia Commons, Norbert Nagel, CC BY-SA 4.0）"){small}
+
+:::analogy @carousel メリーゴーラウンドから見た親たち
 メリーゴーラウンドに乗った子どもから見ると、柵の外に並んで手を振っている親たちは、止まっているのに**逆向きにぐるぐる回って**見えます。親たちの並びに「混んでいる所・空いている所」のむらがあれば、子どもにはそのむらが逆向きに流れてくる波に見えます。ノズルの後流も同じで、静止系では固定された強弱の模様なのに、翼に乗ると逆向きに走る波になります。親たちは「立っているだけ」で何も動いていない、というのが大事な点です。
 :::
 
@@ -69,6 +73,8 @@ $N = 24$、$k = 20$ の例では $q = -4$ で、節直径は $k = 4$ のとき�
 
 ## 励起の正体は「振動数」と「パターン」の 2 つ
 
+![翼車の周りを走る波の模式](data/books/rotordynamics/images/traveling-waves-3.jpg "イメージ図（生成画像・模式）：翼の変位の模様（臙脂）が円周に沿って走っていく進行波。"){right}
+
 ここが本節の核心です。翼 $j$ が受ける力を式にすると
 
 $$F_j(t) = F_0 \cos\!\big(k(\theta_j + \Omega t)\big) = F_0 \cos\!\left(k\Omega t + \frac{2\pi k j}{N}\right)$$
@@ -90,7 +96,7 @@ Campbell 線図は 1 の情報しか使っていません。だから「固有�
 
 逆に、翼ごとに小さな違いがある（**mistuned** な）円盤では、双子の振動数がわずかに割れ、進行波の応答が崩れて一部の翼に揺れが集中することがあります。この話は第IV部の[[link:mistuning|ミスチューニングの節]]で詳しく扱います。
 
-:::analogy 全員が同じ身のこなしなら、ウェーブはきれいに走る
+:::analogy @stadium 全員が同じ身のこなしなら、ウェーブはきれいに走る
 観客全員が同じ速さで立ち座りできれば、ウェーブはなめらかに走り続けます。これが「tuned な円盤に進行波の力を与えると、進行波の応答だけが立つ」という状態です。ところが数人、立つのが遅い人が混じっていると、そこで波がつまずき、前後の人が余計に大きく動いたり、波が途切れて「その場で上下する」だけになったりします。翼の小さな個体差が応答を崩す話は、この「つまずき」の話です。
 :::
 
@@ -115,3 +121,5 @@ $$\cos\!\big(n(\theta - \Omega t) + \omega_n t\big) = \cos\!\big(n\theta - (n\Om
 - 共振には、リズムが合うだけでなく並びも合うことが要る。これが次の部で ZZENF 線図になる。
 
 **模式・出典について**：図のパターンは $\cos(k\theta)$ の 1 項で描いた模式です。実際のノズル後流は幅の狭いくぼみ（パルス）に近く、高調波を含みます。その次数分解は[[link:blade-excitation|翼を叩く手は誰か]]の節で扱っています。翼 $j$ が受ける力 $F_j(t) = F_0 \cos(k\Omega t + 2\pi k j/N)$、翼間位相角 $\sigma = 2\pi k / N$、静止系で見た進行波の角速度 $\Omega - \omega_n/n$ は、いずれも本文の式から導かれます。符号付きの折り返し次数 $q$ と「$q$ の符号が進行波の向き」の対応も、翼の位置での三角関数の等式から導いたもので、「$\sigma > 0$ ＝後ろ向き進行波」という符号の約束はこの本の定義です。進行波励起（traveling-wave excitation）の試験法については、たとえば L. Carassale & E. Rizzetto, "Experimental Investigation on a Bladed Disk with Traveling Wave Excitation," Sensors, Vol. 21, No. 12, 3966, 2021（https://www.mdpi.com/1424-8220/21/12/3966/htm）および J. Aerospace Engineering "Next Generation Traveling-Wave Excitation System for Integrally Bladed Rotors"（https://ascelibrary.com/doi/abs/10.1061/%28ASCE%29AS.1943-5525.0000493）を参照しました。Campbell の 1924 年の仕事は W. Campbell, "Protection of Steam Turbine Disk Wheels from Axial Vibration," General Electric Co., 1924（Texas A&M 図書館の書誌 https://libcat.library.tamu.edu/Record/in00000351273）と、その内容を要約した ASME GT2011-45165（https://torroja.dmt.upm.es/congresos/asme_2011/data/pdfs/trk-24/GT2011-45165.pdf）に基づきます。
+- https://commons.wikimedia.org/wiki/File:Confed-Cup_2005_-_Laolawelle.JPG （写真：スタジアムのウェーブ、Florian K、CC BY-SA 3.0）
+- https://commons.wikimedia.org/wiki/File:Carousel_La_Belle.jpg （写真：メリーゴーラウンド、Norbert Nagel、CC BY-SA 4.0）

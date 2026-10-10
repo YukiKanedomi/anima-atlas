@@ -1,10 +1,14 @@
 # 壊れるのは何回目か——高サイクル疲労とGoodman線図
 
+![疲労で破断したボルトの破面](data/books/rotordynamics/images/blade-hcf-1.jpg "写真：疲労で破断したボルトの破面。疲労破面では典型的に、なめらかな領域が小さな力の繰り返しで少しずつ進んだ亀裂、粗い領域が最後に一気に割れた部分に当たる。（Wikimedia Commons, Wang Hui-li・Qin Si-feng, CC BY 4.0）"){right}
+
 針金を手で曲げて折ろうとするとき、一度に力いっぱい引っ張っても切れませんが、同じところを何度も曲げ伸ばしすると、やがてポキッと折れます。しかも最後の一回は、それまでと同じ、ささやかな力です。金属は「一回の大きさ」ではなく「くり返しの回数」でも壊れる——これが**疲労**です。
 
 翼にとって、この話は他人事ではありません。前の節までで見てきたとおり、翼は運転中ずっと揺れ続けています。1回の揺れで生じる応力は、翼を引きちぎるにはまるで足りません。けれど、kHz 級の振動は数分で百万回、数億回に達します。壊れるかどうかは「どれだけ大きく揺れるか」ではなく、「**何回まで耐えられるか**」で決まるのです。
 
 ## 回数を数えてみる
+
+![断面展示のタービン円盤と翼](data/books/rotordynamics/images/blade-hcf-2.jpg "写真：断面展示の Rolls-Royce Dart の初段タービン円盤と翼。翼はもみの木形の根で保持される。航空用の一般的な例で、SSME のタービンではない。（Wikimedia Commons, Olivier Cleynen, CC BY-SA 3.0）"){right}
 
 まず、翼がどれほどの回数を経験するのか、桁の感覚をつかんでおきましょう。
 
@@ -36,13 +40,15 @@ $$8{,}500\ \text{Hz} \times 510\ \text{s} \approx 4.3 \times 10^{6}\ \text{回}$
 
 時間で見ると、応力は $\sigma(t) = \sigma_m + \sigma_a \sin(2\pi f t)$ のように、一定の土台の上で揺れています。疲労を決めるのは主に揺れの幅 $\sigma_a$ ですが、土台 $\sigma_m$ が高いほど、同じ揺れ幅でも早く壊れる——これが実験で確かめられてきた事実です。引っ張った状態で揺らされた金属は、小さなき裂が開きっぱなしになり、閉じて休む暇がないから、と考えると腑に落ちます。
 
-:::analogy 輪ゴムを引いたまま、小刻みに震わせる
+![もみの木形翼根の断面模式図](data/books/rotordynamics/images/blade-hcf-3.jpg "イメージ図（生成画像・模式）：もみの木形の翼根と円盤の溝。遠心力は臙脂で示した接触面で受けられ、ここに平均応力が集中し、振動が重なるとフレッティング疲労の起点になりやすい。"){small}
+
+:::analogy @rubber-band 輪ゴムを引いたまま、小刻みに震わせる
 輪ゴムを両手で少し伸ばして持ち、そのまま片手を小刻みに震わせてみてください。震えの幅は同じでも、ゴムを強く引いた状態で震わせるほど、早く切れそうな気がするはずです。この「どれだけ引いているか」が平均応力、「震えの幅」が応力振幅です。翼では遠心力が「引く手」、振動が「震える手」にあたります。ただし金属は輪ゴムのように目に見えて伸びるわけではなく、震えもごく小さいので、切れるまでに何百万回もかかる——そこが疲労の厄介さです。
 :::
 
 ## S-N 曲線と疲労限度
 
-:::analogy 厚紙を折る深さと回数
+:::analogy @fold-card 厚紙を折る深さと回数
 厚紙を同じ場所で折り返して切ろうとするとき、深く折り曲げれば数回で切れ、浅く曲げるだけなら何百回も持ちます。「折りの深さ」と「切れるまでの回数」を表にしたものが、金属でいう S-N 曲線です。そして、ある浅さより浅い折りなら紙がいつまでも切れない——その境目が疲労限度にあたります。紙と違って金属には、この「いつまでも切れない境目」がはっきり現れる材料と、現れない材料があります（すぐ下で触れます）。
 :::
 
@@ -54,7 +60,7 @@ $$8{,}500\ \text{Hz} \times 510\ \text{s} \approx 4.3 \times 10^{6}\ \text{回}$
 
 さて、設計で知りたいのは「平均応力 $\sigma_m$ のとき、応力振幅 $\sigma_a$ はいくつまで許されるか」です。横軸に $\sigma_m$、縦軸に $\sigma_a$ を取って、安全な領域の境界線を引いた図を **Haigh 線図**といいます。Haigh 線図は図の形式の名前で、そこに引く境界線の流儀の一つが **Goodman 線**です（慣用的に「Goodman 線図」とまとめて呼ばれることもあります）。
 
-:::analogy 材料の「体力」を二つの用途に割り振る
+:::analogy @scale-balance 材料の「体力」を二つの用途に割り振る
 材料が耐えられる力を、一日の体力だと思ってください。遠心力による一定の引張は、朝から持ち続ける「重い荷物」で、振動は「その上で走ったり跳ねたりする」分です。荷物が重いほど、跳ねるのに回せる体力は減ります。Haigh 線図は、横軸に荷物の重さ、縦軸に跳ねる余力を取った「体力の割り振り表」で、線の内側なら一日もつ、外側なら途中で倒れる、と読みます。線の引き方に流儀があるのは、「荷物を持つと跳ねる余力がどれだけ減るか」が材料によって単純な比例ではないからです。
 :::
 
@@ -103,6 +109,8 @@ $$\frac{n\,\sigma_a}{\sigma_e} + \frac{n\,\sigma_m}{\sigma_u} = 1 \quad\Longrigh
 
 ここまでの話が机上のものでないことを、実機の記録で確かめておきましょう。
 
+![疲労亀裂の破面の記録写真](data/books/rotordynamics/images/blade-hcf-4.jpg "写真：米陸軍 Watertown Arsenal の資料にある疲労亀裂の破面（圧力容器の試験片）。亀裂は小さな力の繰り返しで、1 回ごとに目に見えないほど進む。（Wikimedia Commons / DPLA, U.S. Army Materials Research Agency, パブリックドメイン）"){small}
+
 :::history 1977年、スペースシャトルのエンジンで起きたこと
 SSME の開発初期、1977年11月17日と12月1日、わずか2週間の間に2回、高圧燃料ターボポンプのタービン翼が運転中に折れました。1回目は70%出力で、翼が1枚折れて両段の翼列を傷つけました。2回目は80%強の出力で、折れた翼の破片でロータが固着し、燃料流が止まって酸素過多の燃焼が起きるという深刻なものでした。
 
@@ -142,3 +150,6 @@ SSME の開発初期、1977年11月17日と12月1日、わずか2週間の間に
 - Goodman・Gerber・Soderberg の各式：Wikipedia "Goodman relation"（J. Goodman, Mechanics Applied to Engineering, 1899 を引用）https://en.wikipedia.org/wiki/Goodman_relation
 - Inconel 718 の材料値：Special Metals, "INCONEL alloy 718" 技術資料 https://www.specialmetals.com/documents/technical-bulletins/inconel/inconel-alloy-718.pdf
 - Ti-6Al-4V の仕様範囲：AMS4928 の仕様値（引張 900–1000 MPa、耐力 862–910 MPa）および疲労限の二次資料（450–590 MPa at 10⁷ cycles）。
+- ボルト破面の写真：Bolt-fatigue-fracture（Wang Hui-li, Qin Si-feng, CC BY 4.0）https://commons.wikimedia.org/wiki/File:Bolt-fatigue-fracture.jpg
+- タービン円盤の写真：Turbine disc and blades of sectioned Rolls-Royce Dart turboprop（Olivier Cleynen, CC BY-SA 3.0）https://commons.wikimedia.org/wiki/File:Turbine_disc_and_blades_of_sectioned_Rolls-Royce_Dart_turboprop.jpg
+- 疲労破面の記録写真：Fractured surface of thumbnail fatigue crack（U.S. Army Materials Research Agency, パブリックドメイン）https://commons.wikimedia.org/wiki/File:Fractured_surface_of_thumbnail_fatigue_crack_-_DPLA_-_014514a4d5cfc0d697db7e9f5eaa04be.jpg

@@ -23,8 +23,8 @@ type Node =
   | { kind: "ul"; items: string[] }
   | { kind: "block"; name: string; config: unknown }
   | { kind: "block-error"; name: string; raw: string }
-  | { kind: "disclosure"; variant: string; label: string; children: Node[] }
-  | { kind: "image"; src: string; alt: string; caption: string }
+  | { kind: "disclosure"; variant: string; label: string; icon?: string; children: Node[] }
+  | { kind: "image"; src: string; alt: string; caption: string; size?: "right" | "small" }
   | { kind: "math"; tex: string };
 
 // 「容れ物」ディレクティブ＝中身をMarkdownとして畳む折りたたみ。
@@ -50,7 +50,14 @@ function parse(src: string): Node[] {
     const cm = line.match(/^:::\s*([a-z0-9-]+)\s+(.*)$/i);
     if (cm && CONTAINERS[cm[1].toLowerCase()]) {
       const variant = cm[1].toLowerCase();
-      const label = cm[2].trim();
+      let label = cm[2].trim();
+      // 先頭の @名前 は小さな挿絵アイコン（public/data/icons/<名前>.png）。たとえ話の見出しに添える。
+      let icon: string | undefined;
+      const ic = label.match(/^@([a-z0-9-]+)\s+(.*)$/);
+      if (ic) {
+        icon = ic[1];
+        label = ic[2].trim();
+      }
       const buf: string[] = [];
       let depth = 1;
       i++;
@@ -68,7 +75,7 @@ function parse(src: string): Node[] {
         buf.push(l);
         i++;
       }
-      nodes.push({ kind: "disclosure", variant, label, children: parse(buf.join("\n")) });
+      nodes.push({ kind: "disclosure", variant, label, icon, children: parse(buf.join("\n")) });
       continue;
     }
 
@@ -130,10 +137,11 @@ function parse(src: string): Node[] {
       continue;
     }
 
-    // 画像：![代替テキスト](パス "キャプション")。パスは book フォルダ相対（data/books/… 起点）。
-    const im = line.match(/^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)\s*$/);
+    // 画像：![代替テキスト](パス "キャプション"){right|small}。パスは book フォルダ相対（data/books/… 起点）。
+    // 末尾の {right} は PC で右に回り込む小図、{small} は中央寄せの小図。無印は全幅の図。
+    const im = line.match(/^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)(?:\{(right|small)\})?\s*$/);
     if (im) {
-      nodes.push({ kind: "image", src: im[2], alt: im[1], caption: im[3] ?? "" });
+      nodes.push({ kind: "image", src: im[2], alt: im[1], caption: im[3] ?? "", size: im[4] as "right" | "small" | undefined });
       i++;
       continue;
     }
@@ -215,22 +223,46 @@ function inline(text: string): ReactNode {
 
 // 深掘り（折りたたみ）。既定は閉。やさしい本文を濁さず、専門は要るとき開く。
 // ネイティブ <details> なので状態管理なし・キーボード操作可。中に :::block も置ける。
-function Disclosure({ variant, label, children }: { variant: string; label: string; children: ReactNode }) {
+function Disclosure({
+  variant,
+  label,
+  icon,
+  children,
+}: {
+  variant: string;
+  label: string;
+  icon?: string;
+  children: ReactNode;
+}) {
   const meta = CONTAINERS[variant] ?? CONTAINERS.deep;
   // 常に開いた囲み（たとえ話）：読み飛ばしやすいよう左に太い罫、チップは同じ作法。
+  // @アイコン付きなら、左に小さな挿絵（紺の線画・透過PNG）を置いて「何の話か」を一目で示す。
   if (meta.open) {
+    const head = (
+      <div className="mb-1 flex items-center gap-2 text-sm">
+        <span className="rounded bg-accent/10 px-1.5 py-0.5 text-xs font-semibold text-accent">{meta.chip}</span>
+        <span className="font-serif text-ink/90">{label}</span>
+      </div>
+    );
     return (
-      <aside className="aa-analogy my-5 rounded-lg border border-line border-l-4 border-l-accent/50 bg-soft/40 px-4 pb-1 pt-3">
-        <div className="mb-1 flex items-center gap-2 text-sm">
-          <span className="rounded bg-accent/10 px-1.5 py-0.5 text-xs font-semibold text-accent">{meta.chip}</span>
-          <span className="font-serif text-ink/90">{label}</span>
-        </div>
+      <aside className="aa-analogy my-5 clear-both rounded-lg border border-line border-l-4 border-l-accent/50 bg-soft/40 px-4 pb-1 pt-3">
+        {icon ? (
+          <img
+            src={asset(`data/icons/${icon}.png`)}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            className="float-left mb-1 mr-3 mt-0.5 h-16 w-16 select-none sm:h-20 sm:w-20"
+          />
+        ) : null}
+        {head}
         {children}
+        <div className="clear-both" />
       </aside>
     );
   }
   return (
-    <details className="aa-deep my-5 overflow-hidden rounded-lg border border-line bg-soft/60">
+    <details className="aa-deep my-5 clear-both overflow-hidden rounded-lg border border-line bg-soft/60">
       <summary className="flex cursor-pointer select-none items-center gap-2 px-4 py-2.5 text-sm hover:bg-soft">
         <svg className="aa-deep-tri shrink-0 text-accent" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true">
           <path d="M3 1.5l5 4-5 4z" fill="currentColor" />
@@ -253,8 +285,8 @@ function renderNodes(nodes: Node[]): ReactNode {
               n.level === 1
                 ? "mt-2 mb-3 text-3xl text-ink"
                 : n.level === 2
-                ? "mt-8 mb-2 text-2xl text-ink"
-                : "mt-6 mb-2 text-xl text-ink";
+                ? "mt-8 mb-2 clear-both text-2xl text-ink"
+                : "mt-6 mb-2 clear-both text-xl text-ink";
             if (n.level === 1) return <h1 key={idx} className={cls}>{inline(n.text)}</h1>;
             if (n.level === 2) return <h2 key={idx} className={cls}>{inline(n.text)}</h2>;
             return <h3 key={idx} className={cls}>{inline(n.text)}</h3>;
@@ -275,23 +307,32 @@ function renderNodes(nodes: Node[]): ReactNode {
             );
           case "math":
             return <BlockMath key={idx} tex={n.tex} />;
-          case "image":
+          case "image": {
+            // 小図：{right} は PC で本文の右に回り込み（幅 270px）、スマホでは中央寄せの小図。{small} は常に中央寄せ。
+            const figCls =
+              n.size === "right"
+                ? "my-4 mx-auto w-full max-w-[340px] md:float-right md:clear-right md:ml-6 md:mb-2 md:mr-0 md:w-[270px] overflow-hidden rounded-lg border border-line bg-white shadow-card"
+                : n.size === "small"
+                ? "my-5 mx-auto w-full max-w-[360px] overflow-hidden rounded-lg border border-line bg-white shadow-card"
+                : "my-6 clear-both overflow-hidden rounded-lg border border-line bg-white shadow-card";
+            const capCls = n.size ? "px-3 py-2 text-xs leading-relaxed text-mut" : "px-4 py-2.5 text-sm leading-relaxed text-mut";
             return (
-              <figure key={idx} className="my-6 overflow-hidden rounded-lg border border-line bg-white shadow-card">
+              <figure key={idx} className={figCls}>
                 <img src={asset(n.src)} alt={n.alt} loading="lazy" className="block w-full" />
-                {n.caption ? (
-                  <figcaption className="px-4 py-2.5 text-sm leading-relaxed text-mut">{inline(n.caption)}</figcaption>
-                ) : null}
+                {n.caption ? <figcaption className={capCls}>{inline(n.caption)}</figcaption> : null}
               </figure>
             );
+          }
           case "block": {
             const def = getBlock(n.name);
             if (!def) return <UnknownBlock key={idx} name={n.name} />;
             const C = def.component;
             return (
-              <BlockBoundary key={idx} name={n.name}>
-                <C config={n.config} />
-              </BlockBoundary>
+              <div key={idx} className="clear-both">
+                <BlockBoundary name={n.name}>
+                  <C config={n.config} />
+                </BlockBoundary>
+              </div>
             );
           }
           case "block-error":
@@ -305,7 +346,7 @@ function renderNodes(nodes: Node[]): ReactNode {
             );
           case "disclosure":
             return (
-              <Disclosure key={idx} variant={n.variant} label={n.label}>
+              <Disclosure key={idx} variant={n.variant} label={n.label} icon={n.icon}>
                 {renderNodes(n.children)}
               </Disclosure>
             );
