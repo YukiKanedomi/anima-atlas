@@ -32,6 +32,8 @@ import VibrationGauge from "./VibrationGauge";
 import WhirlInstability from "./WhirlInstability";
 import Nomenclature from "./Nomenclature";
 import BladeModes from "./BladeModes";
+import GyroTop from "./GyroTop";
+import JournalBearing from "./JournalBearing";
 import BladeCampbell from "./BladeCampbell";
 import ExcitationHarmonics from "./ExcitationHarmonics";
 import NodalDiameter from "./NodalDiameter";
@@ -159,7 +161,7 @@ export const blocks: BlockDef[] = [
   },
   {
     name: "campbell",
-    title: "Campbell線図（危険速度マップ）",
+    title: "Campbell線図（回転速度–周波数線図）",
     status: "stable",
     summary: "回転数で固有振動数が前向き/後ろ向きに分離。1×励起線との交点＝危険速度。γと運転点を操作。",
     component: Campbell,
@@ -324,7 +326,7 @@ export const blocks: BlockDef[] = [
       title: "ためし：剛体でも2つのモードを持つ",
       asymDefault: 1,
       rhoDefault: 0.4,
-      caption: "対称(k₂/k₁=1)なら 1次=並進・2次=傾きに分離。非対称にすると両者が混ざり（連成）、節の位置が動きます。",
+      caption: "対称(k₂/k₁=1)なら並進と傾きに分離。η=I/(mc²)<1 では 1次=並進・2次=傾き、η>1 で順序が入れ替わります。非対称にすると両者が混ざり（連成）、節の位置が動きます。",
     },
   },
   {
@@ -332,13 +334,13 @@ export const blocks: BlockDef[] = [
     title: "曲げモード形状（連続体の軸）",
     status: "stable",
     summary:
-      "軸の複数の曲げモードをアニメ表示。モード1/2/3と支持（単純支持/自由）を切替。n次は (n−1) 個の節を持ち、危険速度は単純支持で 1:4:9。",
+      "軸の複数の曲げモードをアニメ表示。モード1/2/3と支持（単純支持/自由）を切替。節の数は単純支持で n−1 個、自由-自由の第 n 弾性モードで n+1 個。危険速度の比は単純支持で 1:4:9、自由-自由で 1:2.76:5.40。",
     component: ModeShape,
     sample: {
       title: "ためし：モードと支持を切り替える",
       maxMode: 3,
       boundaryDefault: "pinned",
-      caption: "モードを上げると節（動かない点）が増える。支持を自由-自由にすると形が変わり、危険速度の比も変わります。",
+      caption: "モードを上げると節（動かない点）が増える（単純支持は n−1 個、自由-自由は n+1 個）。支持を自由-自由にすると形が変わり、危険速度の比も 1:4:9 から 1:2.76:5.40 に変わります。",
     },
   },
   {
@@ -395,21 +397,21 @@ export const blocks: BlockDef[] = [
       title: "ためし：偏心させると、直角の横押し力が現れる",
       eDefault: 0.6,
       tDefault: 0.7,
-      caption: "偏心 e とトルクを動かすと、臙脂の「横押し力」が比例して育ちます。向きはいつも変位の90°先——前向き振れ回りを育てる向きです。",
+      caption: "偏心 e とトルクを動かすと、臙脂の「横押し力」が比例して育ちます。係数 β が正なら向きは変位の90°先——前向き振れ回りを育てる向きです（β が負の段では逆向き）。",
     },
   },
   {
     name: "stability-chart",
-    title: "安定性チャート（q–c 平面の安定マップ）",
+    title: "安定性チャート（q̂–ĉ 平面の安定マップ）",
     status: "stable",
     summary:
-      "横軸c・縦軸qの平面を安定域(緑)/不安定域(臙脂)に塗り分け、境界 q=c と成長率σの等値線の上で運転点を動かす俯瞰図。対策（cを増やす/qを減らす）が地図上の移動として見える。whirl-instability と link で運転点を共有可。",
+      "横軸c・縦軸qの平面を安定域(緑)/不安定域(臙脂)に塗り分け、境界 q̂=ĉ（無次元。次元つきなら q=c·ωn） と成長率σの等値線の上で運転点を動かす俯瞰図。対策（cを増やす/qを減らす）が地図上の移動として見える。whirl-instability と link で運転点を共有可。",
     component: StabilityChart,
     sample: {
-      title: "ためし：境界 q = c をまたぐと判定が変わる",
+      title: "ためし：境界 q̂ = ĉ をまたぐと判定が変わる",
       qDefault: 0.35,
       cDefault: 0.2,
-      caption: "運転点を動かして境界をまたいでみてください。不安定側では、安定域へ戻る2つの道（右=減衰を増やす、下=qを減らす）が金の矢印で出ます。",
+      caption: "運転点を動かして境界をまたいでみてください。不安定側では、安定域へ戻る2つの道（右=減衰を増やす、下=q̂を減らす）が金の矢印で出ます。",
     },
   },
   {
@@ -434,10 +436,10 @@ export const blocks: BlockDef[] = [
       "運動方程式を RK4 積分。変位に直角な力（クロスカップリング q）が減衰 c を超えると前向き振れ回りが発散。しきい値 q=c·ωn。オイルホワール/シール/アルフォードの共通機構。",
     component: WhirlInstability,
     sample: {
-      title: "ためし：q が c を超えると渦巻きが発散する",
+      title: "ためし：q̂ が ĉ を超えると渦巻きが発散する",
       qDefault: 0.15,
       cDefault: 0.25,
-      caption: "q を上げて c を超えると、収束する渦巻き（安定）が発散する渦巻き（自励不安定）に変わります。色も赤に。",
+      caption: "q̂（=q/k）を上げて ĉ（=c/(mωn)）を超えると、収束する渦巻き（安定）が発散する渦巻き（自励不安定）に変わります。色も赤に。ちょうど境界では振幅一定。",
     },
   },
   {
@@ -556,6 +558,22 @@ export const blocks: BlockDef[] = [
     summary: "symbols.json から記号一覧を自動生成。本文の [[key]] ポップと同じ正典を使う。",
     component: Nomenclature,
     sample: { title: "記号一覧（※本編の節で記号データとともに表示）" },
+  },
+  {
+    name: "journal-bearing",
+    title: "すべり軸受の中の軸の位置（偏心率と姿勢角）",
+    status: "stable",
+    summary: "短軸受（Ocvirk）理論の閉形式で回転数÷荷重から偏心率 ε と姿勢角 φ を逆算し、半ゾンマーフェルト条件の圧力分布をローブで描く。軸は荷重の真下でなく回転方向へ φ だけ逃げる＝クロスカップリングの起源。すきまは誇張した模式。",
+    component: JournalBearing,
+    sample: {"title": "ためし：荷重を増やすと沈み、回転を上げると浮く", "nDefault": 1, "wDefault": 1, "caption": "荷重 W と回転数を動かすと、偏心率 ε・姿勢角 φ・最小すきまが変わります。軸の中心が荷重線から回転方向へ斜めに逃げる点に注目。"},
+  },
+  {
+    name: "gyro-top",
+    title: "回る円板を押す（歳差と章動）",
+    status: "stable",
+    summary: "小傾きの対称コマを軸端の位置 ψ で書いた Id ψ̈ − i Ip Ω ψ̇ = M（M は軸端を押す力が作るモーメントの大きさ。ベクトルは押す向きと直角）を数値積分（速度 RK4＋位置台形則）。Ω=0 で押した向きへ倒れ、Ω 大でモーメントの向き＝押した向きの直角へ一定速度（歳差）＋小さな輪（章動）。",
+    component: GyroTop,
+    sample: {"title": "ためし：Ω を上げると、軸端は押した向きの直角へ逃げる", "omegaDefault": 4, "momentDefault": 0.6, "caption": "臙脂の矢印は軸端を押す力の向き。Ω = 0 で押した向きへ倒れ、Ω を上げると直角（モーメントのベクトルの向き）へ進む。傾きが限界の円に達すると止まる。"},
   },
   {
     name: "blade-modes",

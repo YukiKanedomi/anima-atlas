@@ -192,7 +192,7 @@ export default function RigidRotor2DOF({ config }: { config: RigidRotor2DOFConfi
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <Slider label="支持の非対称 k₂ / k₁" value={asym} min={0.3} max={3} step={0.01} onChange={setAsym} />
-        <Slider label="ロータの慣性 I /(m c²)" value={rho} min={0.1} max={1.5} step={0.01} onChange={setRho} />
+        <Slider label="ロータの慣性 η = I /(m c²)（1 を境に並進と傾きの順序が入れ替わる）" value={rho} min={0.1} max={1.5} step={0.01} onChange={setRho} />
       </div>
 
       <div className="mt-3 tabular-nums text-sm text-mut">

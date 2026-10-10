@@ -8,7 +8,7 @@ import { useInstanceId, useSharedParams } from "../linkStore";
 // 減衰 c に打ち勝つと前向き振れ回りが発散する（自励不安定）。
 //   m z̈ + c ż + (k − i q) z = 0    （z=x+iy）
 //   ⇔ ẍ = −(k x + q y + c ẋ)/m,  ÿ = (q x − k y − c ẏ)/m
-//   安定限界 q = c·ωn（k=m=1で q=c）。q<c 収束渦巻き／q>c 発散渦巻き。
+//   安定限界 q = c·ωn。k=m=1 の無次元量 q̂=q/k, ĉ=c/(mωn) では q̂=ĉ。q̂<ĉ 収束渦巻き／q̂>ĉ 発散渦巻き／q̂=ĉ 中立（振幅一定）。
 //   不安定の振れ回りは「前向き・振動数≈ωn」。オイルホワール/シール/アルフォードの共通機構。
 // ※ 運動方程式を実際に RK4 積分。形・しきい値は式どおりの模式。
 
@@ -73,7 +73,7 @@ export default function WhirlInstability({ config }: { config: WhirlInstabilityC
     if (sim < 0) { sre = -sre; sim = -sim; } // 前向き(ω>0)の根
     const sigma = (-c + sre) / 2;
     const omega = sim / 2;
-    return { pts, scale, sigma, omega, unstable: sigma > 1e-4 };
+    return { pts, scale, sigma, omega, unstable: sigma > 2e-3 };
   }, [q, c]);
 
   useEffect(() => {
@@ -90,6 +90,7 @@ export default function WhirlInstability({ config }: { config: WhirlInstabilityC
     return () => { if (raf.current) cancelAnimationFrame(raf.current); };
   }, [running, pts.length]);
 
+  const neutral = !unstable && Math.abs(sigma) <= 2e-3; // ちょうど境界：振幅一定
   const col = unstable ? HEAVY : "var(--accent)";
   const sx = (x: number) => CC + x * scale;
   const sy = (y: number) => CC - y * scale;
@@ -114,17 +115,17 @@ export default function WhirlInstability({ config }: { config: WhirlInstabilityC
 
         <div>
           <div className={"inline-flex rounded-full px-2.5 py-0.5 text-sm font-semibold " + (unstable ? "bg-[#9b2d3a]/10 text-[#9b2d3a]" : "bg-accent/10 text-accent")}>
-            {unstable ? "不安定：発散（自励振れ回り）" : "安定：収束"}
+            {unstable ? "不安定：発散（自励振れ回り）" : neutral ? "中立：振幅一定（ちょうど境界）" : "安定：収束"}
           </div>
           <div className="mt-2 tabular-nums text-sm text-mut">
-            しきい値 <b className="text-ink">q = c</b>（×ωₙ）／ いま q={q.toFixed(2)}, c={c.toFixed(2)}
+            しきい値 <b className="text-ink">q̂ = ĉ</b>（無次元。次元つきなら q = c·ωₙ）／ いま q̂={q.toFixed(2)}, ĉ={c.toFixed(2)}
             <br />
-            成長率 σ = <b className="text-ink">{sigma.toFixed(3)}</b>（{sigma > 0 ? "＞0 発散" : "＜0 減衰"}）／ 振れ回り <b className="text-ink">前向き</b>・振動数 ≈ <b className="text-ink">{omega.toFixed(2)}</b> ωₙ
+            成長率 σ = <b className="text-ink">{sigma.toFixed(3)}</b>（{unstable ? "＞0 発散" : neutral ? "≈0 一定" : "＜0 減衰"}）／ 振れ回り <b className="text-ink">前向き</b>・振動数 ≈ <b className="text-ink">{omega.toFixed(2)}</b> ωₙ
           </div>
 
           <div className="mt-3 space-y-3">
-            <Slider label="クロスカップリング q（変位に直角な力）" value={q} min={0} max={0.6} step={0.01} onChange={(v) => setParam("q", v)} />
-            <Slider label="減衰 c" value={c} min={0} max={0.6} step={0.01} onChange={(v) => setParam("c", v)} />
+            <Slider label="クロスカップリング q̂ = q/k（変位に直角な力）" value={q} min={0} max={0.6} step={0.01} onChange={(v) => setParam("q", v)} />
+            <Slider label="減衰 ĉ = c/(mωₙ)" value={c} min={0} max={0.6} step={0.01} onChange={(v) => setParam("c", v)} />
           </div>
 
           <div className="mt-3">

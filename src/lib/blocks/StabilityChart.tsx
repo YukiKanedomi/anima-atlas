@@ -5,7 +5,7 @@ import { useInstanceId, useSharedParams } from "../linkStore";
 // ドメイン部品：q–c 平面の安定性チャート（安定の地図）。
 // whirl-instability が「1点の運転状態の軌道」を見せたのに対し、こちらは平面全体を俯瞰する。
 //   m z̈ + c ż + (k − i q) z = 0（m=k=1）の前向き固有値 λ=σ+iω、
-//   σ = (−c + Re√(c²−4+4qi)) / 2。安定限界は q = c（下三角が安定域）。
+//   σ = (−c + Re√(c²−4+4qi)) / 2。安定限界は無次元量で q̂ = ĉ（q̂=q/k, ĉ=c/(mωn)。次元つきなら q = c·ωn。下三角が安定域）。
 //   等値線は解析式 q(c,σ) = (c+2σ)·√(1+σc+σ²) で描く（σ=0 で q=c に一致、Node検証済み）。
 // 対策は地図上の移動：減衰を増やす＝右へ／クロスカップリングを減らす＝下へ。
 // link のキーは whirl-instability と同じ "q","c" なので、同じ link 名で運転点を共有できる。
@@ -48,7 +48,8 @@ export default function StabilityChart({ config }: { config: StabilityChartConfi
   const { q, c } = vals;
 
   const { sigma } = eigen(c, q);
-  const unstable = sigma > 1e-4;
+  const unstable = sigma > 2e-3;
+  const neutral = !unstable && Math.abs(sigma) <= 2e-3; // ちょうど境界：振幅一定
 
   const sx = (cv: number) => ML + (cv / PMAX) * PW;
   const sy = (qv: number) => MT + (1 - qv / PMAX) * PH;
@@ -113,8 +114,8 @@ export default function StabilityChart({ config }: { config: StabilityChartConfi
               <text x={ML - 7} y={sy(t) + 3.5} textAnchor="end" fontSize={10} fill="var(--mut)">{t.toFixed(1)}</text>
             </g>
           ))}
-          <text x={ML + PW / 2} y={H - 6} textAnchor="middle" fontSize={11} fill="var(--mut)">減衰 c →</text>
-          <text x={12} y={MT + PH / 2} textAnchor="middle" fontSize={11} fill="var(--mut)" transform={`rotate(-90 12 ${MT + PH / 2})`}>クロスカップリング q →</text>
+          <text x={ML + PW / 2} y={H - 6} textAnchor="middle" fontSize={11} fill="var(--mut)">減衰 ĉ = c/(mωₙ) →</text>
+          <text x={12} y={MT + PH / 2} textAnchor="middle" fontSize={11} fill="var(--mut)" transform={`rotate(-90 12 ${MT + PH / 2})`}>クロスカップリング q̂ = q/k →</text>
 
           {/* 成長率の等値線（σ=±0.05, ±0.1）と境界 σ=0（q=c） */}
           {contours.map(({ s, d, label }) => (
@@ -128,7 +129,7 @@ export default function StabilityChart({ config }: { config: StabilityChartConfi
             </g>
           ))}
           <line x1={sx(0)} y1={sy(0)} x2={sx(PMAX)} y2={sy(PMAX)} stroke="var(--accent)" strokeWidth={2} />
-          <text x={sx(0.44)} y={sy(0.44) - 6} textAnchor="middle" fontSize={10} fill="var(--accent)" transform={`rotate(-43.3 ${sx(0.44)} ${sy(0.44) - 6})`}>安定限界 q = c（σ = 0）</text>
+          <text x={sx(0.44)} y={sy(0.44) - 6} textAnchor="middle" fontSize={10} fill="var(--accent)" transform={`rotate(-43.3 ${sx(0.44)} ${sy(0.44) - 6})`}>安定限界 q̂ = ĉ（σ = 0）</text>
 
           {/* 領域ラベル */}
           <text x={sx(0.13)} y={sy(0.52)} textAnchor="middle" fontSize={11} fill={HEAVY} opacity={0.85}>不安定（発散）</text>
@@ -142,13 +143,13 @@ export default function StabilityChart({ config }: { config: StabilityChartConfi
           {arrowRight ? (
             <g>
               <line x1={px + 8} y1={arrowRight.y2} x2={arrowRight.x2 + 8} y2={arrowRight.y2} stroke={GOLD} strokeWidth={1.8} markerEnd={`url(#${instId}-ah)`} />
-              <text x={px + 12} y={arrowRight.y2 - 6} fontSize={9.5} fill={GOLD}>c を増やす</text>
+              <text x={px + 12} y={arrowRight.y2 - 6} fontSize={9.5} fill={GOLD}>ĉ を増やす</text>
             </g>
           ) : null}
           {arrowDown ? (
             <g>
               <line x1={arrowDown.x2} y1={py + 8} x2={arrowDown.x2} y2={arrowDown.y2 + 8} stroke={GOLD} strokeWidth={1.8} markerEnd={`url(#${instId}-ah)`} />
-              <text x={arrowDown.x2 + 5} y={py + 20} fontSize={9.5} fill={GOLD}>q を減らす</text>
+              <text x={arrowDown.x2 + 5} y={py + 20} fontSize={9.5} fill={GOLD}>q̂ を減らす</text>
             </g>
           ) : null}
 
@@ -158,17 +159,17 @@ export default function StabilityChart({ config }: { config: StabilityChartConfi
 
         <div>
           <div className={"inline-flex rounded-full px-2.5 py-0.5 text-sm font-semibold " + (unstable ? "bg-[#9b2d3a]/10 text-[#9b2d3a]" : "bg-[#1f7a4f]/10 text-[#1f7a4f]")}>
-            {unstable ? "不安定：発散（自励振れ回り）" : "安定：収束"}
+            {unstable ? "不安定：発散（自励振れ回り）" : neutral ? "中立：振幅一定（ちょうど境界）" : "安定：収束"}
           </div>
           <div className="mt-2 tabular-nums text-sm text-mut">
-            成長率 σ = <b className="text-ink">{sigma.toFixed(3)}</b>（{sigma > 0 ? "＞0 発散" : "＜0 減衰"}）
+            成長率 σ = <b className="text-ink">{sigma.toFixed(3)}</b>（{unstable ? "＞0 発散" : neutral ? "≈0 一定" : "＜0 減衰"}）
             <br />
-            境界までの余裕 c − q = <b className="text-ink">{(c - q).toFixed(2)}</b>
+            境界までの余裕 ĉ − q̂ = <b className="text-ink">{(c - q).toFixed(2)}</b>（次元つきなら c·ωₙ − q）
           </div>
 
           <div className="mt-3 space-y-3">
-            <Slider label="減衰 c（右へ動く）" value={c} min={0} max={PMAX} step={0.01} onChange={(v) => setParam("c", v)} />
-            <Slider label="クロスカップリング q（上下に動く）" value={q} min={0} max={PMAX} step={0.01} onChange={(v) => setParam("q", v)} />
+            <Slider label="減衰 ĉ = c/(mωₙ)（右へ動く）" value={c} min={0} max={PMAX} step={0.01} onChange={(v) => setParam("c", v)} />
+            <Slider label="クロスカップリング q̂ = q/k（上下に動く）" value={q} min={0} max={PMAX} step={0.01} onChange={(v) => setParam("q", v)} />
           </div>
         </div>
       </div>

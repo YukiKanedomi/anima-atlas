@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Slider } from "../../components/Slider";
 import { useInstanceId, useSharedParams } from "../linkStore";
 
-// ドメイン部品：Campbell線図（危険速度マップ）。
+// ドメイン部品：Campbell線図（回転速度–周波数線図）。
 // 単一円板ロータのジャイロ効果の標準モデル（無次元、静止固有振動数 ω0=1 で規格化）。
 //   前向き枝 ω_f(u) = (γ/2)u + √((γu/2)² + 1)   … 回転で上がる（ジャイロ剛性化）
 //   後ろ向き枝 ω_b(u) = −(γ/2)u + √((γu/2)² + 1) … 回転で下がる（ジャイロ軟化）
@@ -58,7 +58,7 @@ export default function Campbell({ config }: { config: CampbellConfig }) {
 
   const margin =
     !Number.isFinite(uCr)
-      ? "前向き危険速度なし（γ≥1：高速ロータの性質）"
+      ? "前向きの同期（1×）危険速度なし（γ≥1：平たい円板。このモデルの範囲で）"
       : uop < uCr - 0.04
       ? "危険速度の手前（亜臨界）"
       : uop > uCr + 0.04

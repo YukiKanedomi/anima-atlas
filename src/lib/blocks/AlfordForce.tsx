@@ -52,9 +52,10 @@ export default function AlfordForce({ config }: { config: AlfordForceConfig }) {
     });
   }, [off, kappa, t]);
 
-  // 正味の力（検証済み：+y、大きさ ∝ e×t）
+  // 正味の力（検証済み：+y、大きさ ∝ e×t）。矢印の長さは大きさに比例させ、偏心ゼロでは消す。
   const netMag = (NB * t * kappa) / 2;
-  const netLen = 30 + netMag * 22;
+  const netLen = netMag * 38;
+  const showNet = netMag > 0.08;
 
   return (
     <figure className="my-6 rounded-lg border border-line bg-white p-4 shadow-card">
@@ -120,10 +121,18 @@ export default function AlfordForce({ config }: { config: AlfordForceConfig }) {
           <text x={CC + off / 2 + 6} y={CC + 16} fontSize="11" fill={GOLD} textAnchor="middle">
             変位 e
           </text>
-          <line x1={CC + off} y1={CC} x2={CC + off} y2={CC - netLen} stroke={HEAVY} strokeWidth={3.4} markerEnd="url(#alford-arrow-heavy)" />
-          <text x={CC + off + 8} y={CC - netLen - 6} fontSize="11.5" fill={HEAVY} fontWeight={700}>
-            正味の横押し力
-          </text>
+          {showNet ? (
+            <>
+              <line x1={CC + off} y1={CC} x2={CC + off} y2={CC - netLen} stroke={HEAVY} strokeWidth={3.4} markerEnd="url(#alford-arrow-heavy)" />
+              <text x={CC + off + 8} y={CC - netLen - 6} fontSize="11.5" fill={HEAVY} fontWeight={700}>
+                正味の横押し力
+              </text>
+            </>
+          ) : (
+            <text x={CC + off + 8} y={CC - 10} fontSize="11" fill="var(--mut)">
+              正味の横押し力 ≈ 0
+            </text>
+          )}
         </svg>
 
         <div className="min-w-0">
@@ -134,7 +143,7 @@ export default function AlfordForce({ config }: { config: AlfordForceConfig }) {
           </div>
           <div className="mt-2 text-sm text-mut">
             横押し力の目安 ∝ <b className="tabular-nums text-ink">偏心 × トルク = {(e * t).toFixed(2)}</b>
-            <span className="ml-1">（回転と同じ向き＝前向き振れ回りを育てる）</span>
+            <span className="ml-1">（係数 β が正の場合。回転と同じ向き＝前向き振れ回りを育てる。β が負なら逆向き）</span>
           </div>
           <div className="mt-3 space-y-3">
             <Slider label="偏心 e（見やすく誇張した模式）" value={e} min={0} max={1} step={0.01} onChange={(v) => setParam("e", v)} />
