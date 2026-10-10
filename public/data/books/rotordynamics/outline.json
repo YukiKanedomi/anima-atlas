@@ -318,6 +318,12 @@
           "title": "ロケットターボポンプのタービンを設計する——通し演習",
           "file": "sections/turbopump-exercise.md",
           "part": "V 通し演習"
+        },
+        {
+          "id": "blade-summary",
+          "title": "翼振動の総括——数式抜きで、何が大切で何を考えるべきか",
+          "file": "sections/blade-summary.md",
+          "part": "V 通し演習"
         }
       ]
     },

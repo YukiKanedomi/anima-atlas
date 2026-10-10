@@ -98,6 +98,8 @@ $$8{,}500\ \text{Hz} \times 510\ \text{s} \approx 4.3 \times 10^{6}\ \text{回}$
 
 $$\frac{n\,\sigma_a}{\sigma_e} + \frac{n\,\sigma_m}{\sigma_u} = 1 \quad\Longrightarrow\quad n_G = \frac{1}{\dfrac{\sigma_a}{\sigma_e} + \dfrac{\sigma_m}{\sigma_u}}$$
 
+言葉にすると、繰り返しの振幅を疲労限で測った「使った体力」と、平均応力を引張強さで測った「使った体力」を足し、全体の体力を 1 としたときにあと何倍の余裕があるか、ということです。
+
 です。降伏に対しては $n_y = \sigma_y/(\sigma_m + \sigma_a)$。図ではこの2つの小さいほうを「余裕」として表示しています。
 
 「遠心力は回転数で決まっていて変わらない。変わるのは振動だけ」と考えるなら、荷重線は原点からではなく、横軸上の点 $(\sigma_m, 0)$ から真上に伸ばすべきです。そのときの許容振幅は $\sigma_{a,\text{allow}} = \sigma_e\,(1 - \sigma_m/\sigma_u)$ で、安全率は $\sigma_{a,\text{allow}}/\sigma_a$ になります。どちらの流儀を使うかは設計基準しだいですが、**平均応力は固定・振幅だけが不確か**という状況では後者のほうが実態に近く、翼の HCF 評価ではよく使われます。

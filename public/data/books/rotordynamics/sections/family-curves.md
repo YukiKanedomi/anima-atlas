@@ -90,9 +90,13 @@ ZZENF 線図は、本節の図（縦軸：振動数、横軸：節直径）を�
 
 $$\begin{pmatrix} m_d & 0 \\ 0 & m_b \end{pmatrix}\begin{pmatrix}\ddot x_d \\ \ddot x_b\end{pmatrix} + \begin{pmatrix} k_b + k_{d,n} & -k_b \\ -k_b & k_b \end{pmatrix}\begin{pmatrix} x_d \\ x_b\end{pmatrix} = \mathbf 0$$
 
+言葉にすると、円盤片は「ハブへのばね＋隣との結合（節直径で決まる硬さ）」と「翼へのばね」に挟まれて動き、翼はその円盤片の上でばね 1 本につながれて動く、という二段重ねの運動だ、ということです。
+
 $x = X e^{i\omega t}$ とおき $\lambda = \omega^2$ とすると、特性方程式は
 
 $$m_d m_b\,\lambda^2 - \big[(k_b + k_{d,n})\,m_b + k_b\, m_d\big]\lambda + k_{d,n}\,k_b = 0$$
+
+言葉にすると、二段重ねの揺れ方は 2 通りしかなく、その 2 つの速さ（低い族と高い族）がこの 2 次方程式の 2 つの根として出てくる、ということです。
 
 の 2 次方程式で、2 根が低い族・高い族です。固有ベクトルは 2 行目から $x_d / x_b = 1 - \lambda m_b / k_b$ と求まり、翼の運動エネルギー割合 $e_b = m_b x_b^2 / (m_b x_b^2 + m_d x_d^2)$ が図の点の色です。$\lambda \approx k_b / m_b$（翼単体）なら $x_d \approx 0$ で翼支配、$\lambda$ がそれから遠いほど円盤が動きます。
 

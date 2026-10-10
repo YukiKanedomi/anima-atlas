@@ -4,6 +4,7 @@ import { fetchJson, fetchText, type Outline, type SectionRef } from "../lib/data
 import { Markdown } from "../lib/markdown";
 import { markVisited } from "../lib/progress";
 import { SymbolsContext, type Sym } from "../lib/symbols";
+import { MathFoldContext } from "../lib/Math";
 
 const BOOK_DIR = "data/books/rotordynamics";
 
@@ -15,6 +16,25 @@ export default function Reader() {
   const [error, setError] = useState<string>("");
   const [symbols, setSymbols] = useState<Record<string, Sym>>({});
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // 数式をたたむ設定（端末ごとに記憶）
+  const [foldMath, setFoldMath] = useState<boolean>(() => {
+    try {
+      // URL の ?fold=1 でも入れる（共有用）。それ以外は端末の記憶に従う。
+      if (new URLSearchParams(window.location.search).get("fold") === "1") return true;
+      return localStorage.getItem("aa-foldmath") === "1";
+    } catch {
+      return false;
+    }
+  });
+  const toggleFold = () => {
+    const v = !foldMath;
+    setFoldMath(v);
+    try {
+      localStorage.setItem("aa-foldmath", v ? "1" : "0");
+    } catch {
+      // 書けなくても表示は妨げない
+    }
+  };
 
   // 目次（背骨）と記号正典を読む
   useEffect(() => {
@@ -147,10 +167,28 @@ export default function Reader() {
           </div>
         </div>
 
+        {/* 読み方の切替：数式をたたむ（式につまずいたら、まず言葉だけで一周） */}
+        <div className="mb-2 flex justify-end">
+          <button
+            onClick={toggleFold}
+            aria-pressed={foldMath}
+            className={
+              "rounded-full border px-3 py-1 text-xs transition-colors " +
+              (foldMath
+                ? "border-accent bg-accent/10 text-accent"
+                : "border-line bg-white text-mut hover:border-accent hover:text-accent")
+            }
+          >
+            {foldMath ? "数式をたたんでいます（開く）" : "数式をたたむ"}
+          </button>
+        </div>
+
         {/* 本文（記号正典を配って [[key]] のポップ定義を有効化） */}
         <article className="max-w-content">
           <SymbolsContext.Provider value={symbols}>
-            {body ? <Markdown src={body} /> : <p className="text-mut">読み込み中…</p>}
+            <MathFoldContext.Provider value={foldMath}>
+              {body ? <Markdown src={body} /> : <p className="text-mut">読み込み中…</p>}
+            </MathFoldContext.Provider>
           </SymbolsContext.Provider>
         </article>
 

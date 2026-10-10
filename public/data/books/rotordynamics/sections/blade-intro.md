@@ -51,7 +51,7 @@
 
 ![翼と円盤を一体で削り出した圧縮機ブリスク](data/books/rotordynamics/images/blade-intro-2.jpg "写真：翼と円盤を一体で削り出した圧縮機のブリスク（航空エンジンの展示品。ロケット用ではない一般的な例）。差込み翼と違い、根元に摩擦で揺れを食う界面がない。（Wikimedia Commons, Olivier Cleynen, CC BY-SA 3.0）"){small}
 
-2020 年に H3 ロケットの LE-9 エンジンで見つかったターボポンプのタービン翼の疲労亀裂も、報道によれば JAXA は「共振」が原因と説明し、運転範囲内で共振しうる固有値をすべて除くようタービンを再設計して翼の振動試験で確認する、と述べています。翼振動は過去の話ではなく、いま現役の設計課題です。
+2020 年には H3 ロケットの第 1 段エンジン LE-9 で、液体水素ターボポンプのタービン第 2 段動翼 76 枚のうち 2 枚に疲労破面が見つかりました。JAXA の報告によれば原因は「当初有意な影響があると評価したモード以外の共振」で、励振源は翼列の後流、つまり本節でいう「風の影」でした。全翼を設計変更して共振を追い出すと、今度は初段のディスク部にフラッタが現れ、減衰の強化と剛性の向上で対処しています（経緯は[[link:blade-summary|総括]]の歴史の囲みに資料つきでまとめました）。翼振動は過去の話ではなく、いま現役の設計課題です。
 
 ## 読み方のコツ
 
@@ -80,11 +80,13 @@
 
 それでは、一枚の板ばねから始めましょう。
 
-**模式・出典について**：冒頭の SSME 高圧燃料ターボポンプの数値は NASA KSC の設計指針 PD-ED-1268 "High Performance Liquid Hydrogen Turbopumps"（85,000 馬力・37,000 rpm・600 rev/s・髪の毛状の亀裂と 0.100 インチの臨界深さ・定期分解検査。なお出力と回転数は出力レベルやポンプの世代で幅があり、他の資料では 71,000〜74,000 馬力・35,000〜36,600 rpm とも書かれます）、ノズル 41 枚・翼 63 枚と「後流の圧力パルスが翼の高サイクル疲労を起こす」「開発初期の3回の初段翼破損は過大振動による高サイクル疲労」は NASA の摩擦ダンパ研究報告（NTRS 19850018575）によります。「毎秒 25,000 回」は 41 × 617 rev/s の単純計算です。翼材 MAR-M-246 Hf(DS) と水素脆化は NASA TM-100327（Lee, 1988。こちらは翼根のもみの木形取付部の亀裂を扱い、水素の影響を受けた低サイクル疲労と判定）の記述。LE-5B-2 の部分噴射起因 HCF と LE-5B-3 の全周噴射化は EUCASS2017-189（JAXA/IHI）。LE-9 の翼亀裂と共振説明は SpaceNews の報道（2020 年）に基づき、一次資料の確認が取れていない部分は「報道によれば」と書いています。
+**模式・出典について**：冒頭の SSME 高圧燃料ターボポンプの数値は NASA KSC の設計指針 PD-ED-1268 "High Performance Liquid Hydrogen Turbopumps"（85,000 馬力・37,000 rpm・600 rev/s・髪の毛状の亀裂と 0.100 インチの臨界深さ・定期分解検査。なお出力と回転数は出力レベルやポンプの世代で幅があり、他の資料では 71,000〜74,000 馬力・35,000〜36,600 rpm とも書かれます）、ノズル 41 枚・翼 63 枚と「後流の圧力パルスが翼の高サイクル疲労を起こす」「開発初期の3回の初段翼破損は過大振動による高サイクル疲労」は NASA の摩擦ダンパ研究報告（NTRS 19850018575）によります。「毎秒 25,000 回」は 41 × 617 rev/s の単純計算です。翼材 MAR-M-246 Hf(DS) と水素脆化は NASA TM-100327（Lee, 1988。こちらは翼根のもみの木形取付部の亀裂を扱い、水素の影響を受けた低サイクル疲労と判定）の記述。LE-5B-2 の部分噴射起因 HCF と LE-5B-3 の全周噴射化は EUCASS2017-189（JAXA/IHI）。LE-9 の翼の疲労破面（76 枚中 2 枚）、原因の推定、翼列の後流が励振源であること、フラッタの発生と対策は、JAXA が文部科学省の部会に提出した公開資料（2020 年 9 月 17 日、2022 年 1 月 21 日、2022 年 10 月 5 日）によります。
 - https://extapps.ksc.nasa.gov/Reliability/Documents/Preferred_Practices/1268.pdf
 - https://ntrs.nasa.gov/api/citations/19850018575/downloads/19850018575.pdf
 - https://ntrs.nasa.gov/api/citations/19890015064/downloads/19890015064.pdf
 - https://www.eucass.eu/doi/EUCASS2017-189.pdf
-- https://spacenews.com/?p=123224
+- https://www.mext.go.jp/kaigisiryo/content/20200917-mxt_uchukai01-000009833_2.pdf
+- https://www.jaxa.jp/press/2022/01/files/20220121-1.pdf
+- https://www.mext.go.jp/content/20221005-mxt_uchukai01-000025347_3.pdf
 - https://commons.wikimedia.org/wiki/File:Shuttle_Main_Engine_Readied_for_Display_at_Stennis_(97-056-5).jpeg （写真：SSME、NASA Stennis、パブリックドメイン）
 - https://commons.wikimedia.org/wiki/File:Compressor_blisk_on_display_(1).jpg （写真：ブリスク、Olivier Cleynen、CC BY-SA 3.0）
