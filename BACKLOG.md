@@ -96,3 +96,10 @@ ISO評価ゲージ → G等級セレクタ → 安定性チャート。本文で
 - **全体総括節** `book-summary`（新章「おわりに」、付録の直前）：数式ゼロ、十の要点・設計者と現場の順番・よくある誤解 12・機械の顔ぶれ・この先の地図・道しるべ 18 行。
 - **オフライン対応（PWA）**：vite-plugin-pwa（Workbox）。precache 177 件 3.9MB（本体・KaTeX woff2・全節 md・outline/symbols・アイコン）、写真は runtime cache、「図もオフラインに保存」ピル。検証は headless **Edge** で（Chrome headless はこの PC で CacheStorage が内部エラー）。
 - 残：長い節 7（sensors・blade-excitation・mistuning・blade-damping・blade-hcf・turbopump-exercise・book-summary が 1.1〜1.3 万字）、Codex の利用上限に当たったため本日の再レビューは無し。残課題：ねじりの実測例（テレメトリ付き軸・クランクプーリダンパの実写）、章をまたぐ総括節（翼振動章の blade-summary 相当）を他章にも置くか。
+
+## 2026-10-11 新3章：歯車とロータ・電磁力と回転子・磁気軸受
+- ねじり振動と翼振動のあいだに 3 章 12 節を追加（全 16 章・71 節）。**歯車とロータ**（かみ合いと伝達誤差・曲げとねじりの連成・遊星歯車の変調と側帯波・歯車の診断：側帯波・同期平均・ケプストラム）、**電磁力と回転子**（不平衡磁気吸引力と負の剛性・電気がつくる振動：2 f_line/スロット/インバータ・2 極発電機の回転子：非対称剛性と横溝・Newkirk/Morton 効果・電気と機械がつながる：SSR/Mohave/ERCOT/共通母線）、**磁気軸受**（Earnshaw と負の剛性・PD/PID と位相進み・非コロケーション・ISO 14839/API 617・バックアップ軸受・応用：ターボ分子ポンプ/フライホイール/海底圧縮機/血液ポンプ）。合計 約11.0万字、小図 55 枚（うち生成図 17）、たとえ話 35。
+- 新部品 5：gear-mesh（かみ合い剛性の矩形モデルと側帯波、共通尺度の FFT）・planetary（Willis 式、遊星通過の変調、位相条件 m+Z_r≡0 (mod N_p) のガイド線）・ump-airgap（偏心→磁気圧力のローブ→負の剛性と危険速度の低下）・asymmetric-shaft（回転座標の固有値で不安定帯、2× 応答は閉形式）・amb-levitate（1 自由度の浮上、制御なし/PD、電流飽和の表示）。Torsional の比スライダー下限 0.1。
+- アイコン +12（horseshoe-magnet, levitating-ball, broom-balance, wind-turbine, maglev-train, iron-filings, planet-gears, bicycle-chain, power-lines, lightbulb, heart-pump, centrifuge。計 96）。symbols.json +15（f_mesh・Z・N_p・g_air・B_gap・k_s・k_i・i_b・mu_0・TE・eps_c・K_sync・f_e など、計 53）。規約：k_s は負の剛性の大きさ（正）、k_eff = k − k_s、閉ループ剛性 k_i k_p − k_s。
+- レビュー：Claude fork 章別 41 件＋Codex 章別 24+26+25=75 件、ほぼ全件採用。主な訂正：遊星の速度比の向き、組立条件を満たさない例（24/70）→ 25/71、順次位相型では側帯波列が f_mesh からずれる、風車は キャリア入力→太陽出力、SSR の f_e = f_line − f_er（LC 共振は f_er）、2 極の力波は空間 2p 次、Maxwell 応力 B²/2μ0 は油膜面圧の「同程度〜数分の一」（一桁以上小さい、は誤り）、制御力の遅れ＝負減衰（進み＝正減衰）、位相進み要素は高周波ゲインを上げる、ISO 14839-2 は変位と電流/電圧の両方、血液ポンプの起点は Akamatsu 1992・Streamliner 1998。未確認のまま注記した事項：NREL 故障統計の数値、ERCOT 事故後の実効補償度 75%、API 617 附属書の本文、ISO 14839-1:2018 の内容。
+- 残課題：GearMesh のスライダーは組立不能な歯数の組も選べる（警告表示のみ）。planetary が 1.07 万字で長め。序章・総括節・故障の指紋・次数の読み方・ねじりの励起源に新章への橋リンクを足した。

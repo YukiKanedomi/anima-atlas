@@ -170,7 +170,7 @@ export default function Torsional({ config }: { config: TorsionalConfig }) {
       </div>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
-        <Slider label="慣性比 I₂ / I₁" value={ratio} min={0.3} max={3} step={0.01} onChange={setRatio} />
+        <Slider label="慣性比 I₂ / I₁" value={ratio} min={0.1} max={3} step={0.01} onChange={setRatio} />
         <Slider label="ねじり剛性 kt" value={kt} min={0.5} max={2} step={0.01} onChange={setKt} />
       </div>
 

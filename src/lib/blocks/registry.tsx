@@ -42,6 +42,11 @@ import SensorBands from "./SensorBands";
 import FaultSpectra from "./FaultSpectra";
 import Holzer from "./Holzer";
 import MotorStartTorsion from "./MotorStartTorsion";
+import GearMesh from "./GearMesh";
+import Planetary from "./Planetary";
+import UmpAirgap from "./UmpAirgap";
+import AsymmetricShaft from "./AsymmetricShaft";
+import AmbLevitate from "./AmbLevitate";
 import FamilyCurves from "./FamilyCurves";
 import EoFolding from "./EoFolding";
 import Zzenf from "./Zzenf";
@@ -727,6 +732,46 @@ export const blocks: BlockDef[] = [
     summary: "突極形同期電動機の始動中の脈動トルク周波数 f_e = 2·s·f_line が 2 f_line から 0 へ一直線に下がり、ねじり固有振動数 f_n を横切る（上段、交点を臙脂で表示）。下段は 1 自由度ねじり系 θ̈+2ζωnθ̇+ωn²θ=ωn² sin φ(t) を RK4 で数値積分した応答の包絡線（静的ねじれ角＝1）。起動時間を長くすると山が定常値 1/(2ζ) に近づき、短いと低いまま通過。電源 50/60 Hz 切替。脈動トルク一定・一様加速の模式。",
     component: MotorStartTorsion,
     sample: {"title": "ためし：起動の途中で、必ず一度は共振を横切る", "tStartDefault": 8, "fnDefault": 25, "zetaDefault": 0.02, "fLineDefault": 50, "caption": "上段の斜線が脈動トルクの周波数、金の破線がねじり固有振動数、臙脂の点が横切る瞬間。下段はそのときのねじれ角の包絡線。起動時間を 2 秒と 20 秒で比べてください。"},
+  },
+  {
+    name: "gear-mesh",
+    title: "歯車のかみ合い（かみ合い剛性の刻み → 伝達誤差 → かみ合い周波数と側帯波）",
+    status: "stable",
+    summary: "平歯車の対（台形歯の模式、Z₁・Z₂ スライダー、再生/停止）、かみ合い剛性 k(θ)（1 組で 1、2 組で 1.8 の矩形変動、2 組の割合 = ε − 1）と一定トルクでのたわみ＝伝達誤差 ∝ 1/k、その波形（ピニオン 32 回転・256 点/回転）を Hann 窓＋本物の FFT にかけた振幅スペクトル（横軸ピニオン次数、条件によらず共通の尺度）。f_mesh = Z₁× と 2 f_mesh に金の破線。ピニオン偏心で ±1×、歯車偏心で ±Z₁/Z₂× の側帯波。剛性の矩形変動と変調の大きさは模式。",
+    component: GearMesh,
+    sample: {"title": "ためし：かみ合い率で山の高さが変わり、偏心を入れると側帯波が並ぶ", "z1Default": 20, "z2Default": 37, "epsDefault": 1.5, "eccPinionDefault": 0.5, "eccGearDefault": 0, "caption": "下段の金の破線が f_mesh = Z₁×。ピニオンの偏心で両脇に ±1× の側帯波、歯車の偏心に切り替えると間隔が Z₁/Z₂× になります。かみ合い率 ε を動かすと、矩形モデルでは山は 1.5 付近で最も高く、1 や 2 に近づくと低くなる。模式。"},
+  },
+  {
+    name: "planetary",
+    title: "遊星歯車（速度比・かみ合い周波数・遊星通過の側帯波）",
+    status: "stable",
+    summary: "太陽 Z_s・リング Z_r（Z_p=(Z_r−Z_s)/2）・遊星 N_p の遊星歯車を、固定部材（リング／キャリア／太陽）の切替で速度比・各部材の角速度・かみ合い周波数 Z_r|f_r−f_c|・遊星通過周波数 N_p|f_c|・組立条件 (Z_s+Z_r)/N_p を表示し、ピッチ円をアニメ。下段はリングのケーシングに固定したセンサが見る信号の模式（各遊星のかみ合い振動 cos(2πf_mesh t+φ_p)、φ_p=2πZ_r p/N_p にコサイン窓の重み）を Hann 窓＋本物の FFT で描き、f_mesh + m·f_c（m + Z_r が N_p の倍数）の側帯波と、Z_r/N_p が整数でないとき f_mesh が打ち消されて列がずれる現象（McFadden & Smith 1985）を見せる。歯と力の波形は模式。",
+    component: Planetary,
+    sample: {"title": "ためし：太陽 25・リング 71 にすると、かみ合い周波数の山が消える", "zsDefault": 24, "zrDefault": 72, "npDefault": 3, "fixedDefault": "ring", "caption": "上段は各部材のピッチ円（紺＝太陽とリング、金＝キャリア、臙脂＝遊星、灰＝固定した部材）。下段はケーシングのセンサが見る模式信号の本物の FFT。側帯波の間隔は遊星の数 × キャリア回転数。位相がずれる型では列全体が f_mesh からずれる。"},
+  },
+  {
+    name: "ump-airgap",
+    title: "不平衡磁気吸引力（偏心 → 磁気圧力の偏り → 負の剛性）",
+    status: "stable",
+    summary: "回転子が固定子の中心から ε=e/g だけ偏ると、ギャップ磁束密度 B(θ)=B₀/(1−ε cosθ)、磁気圧力 ∝ B² が狭い側で勝ち、合力 F ∝ ε/(1−ε²)^{3/2} が偏った向きへ働く（臙脂のローブと矢印、磁束線は狭い側ほど太い）。小さな偏心では F≈k_s·e＝負の剛性。下段は k_s/k のスライダーで有効剛性 k_eff/k=1−k_s/k と危険速度の比 √(k_eff/k) を表示し、1 を超えると「吸い付く（静的に不安定）」。2 次元・一様磁化・飽和なし・打ち消しなしの模式、すきまは誇張。",
+    component: UmpAirgap,
+    sample: {"title": "ためし：偏ると、狭い側の磁気圧力が勝つ", "epsDefault": 0.3, "ksDefault": 0.3, "caption": "偏心率を上げると狭い側のローブが太り、合力が偏った向きへ伸びます。k_s/k を 1 に近づけると危険速度が急に落ち、1 を超えると回転子は固定子に吸い付きます。すきまは誇張した模式。"},
+  },
+  {
+    name: "asymmetric-shaft",
+    title: "剛性が非対称な軸（2× 応答と不安定帯）",
+    status: "stable",
+    summary: "回転座標で一定の非対称剛性 k₁・k₂ を静止座標の周期係数 K(t)=k_m I + Δk[[cos2Ωt, sin2Ωt],[sin2Ωt, −cos2Ωt]] として Jeffcott に入れ、回転座標の定係数モデルで解析的に解く（m=1、k_m=1、静的たわみ=1）。上段：軸と回る硬さの楕円（臙脂＝硬い向き）と、静止座標で見た縦の硬さが 2 回/回転でうねる波形（再生／停止）。下段：Ω を掃引して自重下の 2× 応答振幅（Ω=ωₙ/2 で山、金の破線）と、回転座標の固有値の実部で判定した不安定帯（臙脂の塗り。破線枠は無減衰の解析帯 √k₂〜√k₁）。減衰で帯が狭まり、非対称率 0 で山も帯も消える。ジャイロ・多モード・軸受異方性は含まない模式。",
+    component: AsymmetricShaft,
+    sample: {"title": "ためし：非対称率を上げると、Ω = ωₙ/2 の山と不安定帯が現れる", "asymDefault": 0.2, "zetaDefault": 0.02, "omegaDefault": 0.45, "caption": "上段左の楕円が軸と一緒に回り、右の波形は静止座標で見た縦の硬さ（1 回転に 2 回）。下段の山が自重による 2× 応答、臙脂の帯が揺れの育つ回転数。減衰比を上げると帯が狭まります。"},
+  },
+  {
+    name: "amb-levitate",
+    title: "能動磁気軸受の 1 自由度模型（負の剛性と PD 制御）",
+    status: "stable",
+    summary: "向かい合う 2 個の電磁石（F = k_m i²/g²、k_m = μ₀N²A/4）のあいだの回転子（質量 2 kg）。バイアス電流 i_b と公称ギャップ g₀ から電流剛性 k_i = 4k_m i_b/g₀² と変位剛性 k_s = 4k_m i_b²/g₀³ を表示。「制御なし」では負の剛性で 50 μm のずれが指数関数的に育ちバックアップ軸受（ギャップの半分）に当たる時刻を表示、「PD 制御」では i_c = −(k_p x + k_d ẋ) を RK4 で積分し、閉ループ剛性 k_i k_p − k_s・減衰 k_i k_d・fₙ・ζ を表示。20 ms の応答を 4 秒のスローモーションで再生。1 自由度・線形化の模式、増幅器・センサの遅れなし。",
+    component: AmbLevitate,
+    sample: {"title": "ためし：負の剛性だけでは落ち、見て直せば浮く", "ibDefault": 1.5, "g0Default": 0.5, "kpDefault": 8000, "kdDefault": 3, "caption": "「制御なし」では 50 μm のずれが数ミリ秒でバックアップ軸受に当たる。「PD 制御」で k_p を下げて k_i·k_p が k_s を割ると制御があっても落ち、k_d を 0 にすると戻っても止まらない。"},
   },
 ];
 

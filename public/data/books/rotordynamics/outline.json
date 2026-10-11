@@ -263,6 +263,84 @@
       ]
     },
     {
+      "id": "ch-gear",
+      "title": "歯車とロータ",
+      "sections": [
+        {
+          "id": "gear-mesh",
+          "title": "歯がかみ合うたびに——かみ合い周波数と伝達誤差",
+          "file": "sections/gear-mesh.md"
+        },
+        {
+          "id": "gear-coupled",
+          "title": "歯車は曲げとねじりをつなぐ——かみ合い力と連成",
+          "file": "sections/gear-coupled.md"
+        },
+        {
+          "id": "planetary",
+          "title": "遊星歯車——遊星の通過がつくる変調と側帯波",
+          "file": "sections/planetary.md"
+        },
+        {
+          "id": "gear-diagnosis",
+          "title": "歯車の診断——側帯波・同期平均・ケプストラム",
+          "file": "sections/gear-diagnosis.md"
+        }
+      ]
+    },
+    {
+      "id": "ch-electro",
+      "title": "電磁力と回転子",
+      "sections": [
+        {
+          "id": "ump",
+          "title": "磁気は偏りを引き寄せる——不平衡磁気吸引力と負の剛性",
+          "file": "sections/ump.md"
+        },
+        {
+          "id": "electric-excitation",
+          "title": "電気がつくる振動——電源周波数の2倍・すべり・インバータ",
+          "file": "sections/electric-excitation.md"
+        },
+        {
+          "id": "generator-rotor",
+          "title": "2極発電機の回転子——剛性の非対称と2×振動",
+          "file": "sections/generator-rotor.md"
+        },
+        {
+          "id": "electromech-coupling",
+          "title": "電気と機械がつながる——軸系と電力系統の相互作用",
+          "file": "sections/electromech-coupling.md"
+        }
+      ]
+    },
+    {
+      "id": "ch-amb",
+      "title": "磁気軸受",
+      "sections": [
+        {
+          "id": "amb-intro",
+          "title": "磁石で軸を浮かせる——能動磁気軸受の仕組みと負の剛性",
+          "file": "sections/amb-intro.md"
+        },
+        {
+          "id": "amb-control",
+          "title": "落ちないように制御する——PD・PID と位相進み",
+          "file": "sections/amb-control.md"
+        },
+        {
+          "id": "amb-rotordynamics",
+          "title": "磁気軸受のロータダイナミクス——剛性を設計で決める・ISO 14839",
+          "file": "sections/amb-rotordynamics.md"
+        },
+        {
+          "id": "amb-applications",
+          "title": "磁気軸受はどこにいるか——ターボ分子ポンプ・フライホイール・圧縮機",
+          "file": "sections/amb-applications.md"
+        }
+      ]
+    },
+    {
       "id": "ch-blade",
       "title": "翼振動",
       "sections": [
