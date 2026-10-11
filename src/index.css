@@ -12,6 +12,15 @@
   --line: #e1e5ec;     /* 罫線 */
   --soft: #eef1f6;     /* うすい面 */
   --soft2: #e7ebf2;
+  /* 同じ色の RGB 三つ組（Tailwind の透明度修飾 bg-accent/10 等に必要。上の値を変えたらここも揃える） */
+  --bg-rgb: 246 247 249;
+  --ink-rgb: 27 36 51;
+  --mut-rgb: 92 102 120;
+  --accent-rgb: 31 58 95;
+  --accent-d-rgb: 21 41 74;
+  --line-rgb: 225 229 236;
+  --soft-rgb: 238 241 246;
+  --soft2-rgb: 231 235 242;
 }
 
 html,

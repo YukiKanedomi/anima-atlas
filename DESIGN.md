@@ -22,6 +22,7 @@
 | `--soft` | `#eef1f6` | `soft` | うすい面（パネル背景） |
 | `--soft2` | `#e7ebf2` | `soft2` | やや濃いうすい面（スライダー溝など） |
 
+- **透明度修飾（`bg-accent/10` など）を効かせるため、各色に RGB 三つ組の変数 `--accent-rgb: 31 58 95` 等を併置し、Tailwind 側は `rgb(var(--accent-rgb) / <alpha-value>)` で参照する**（2026-10-11。それまでは Tailwind 3 が `/10` 付きの class を黙って捨てており、バッジの地やドロワーの暗幕が効いていなかった）。色を変えるときは hex と三つ組の両方を直す。
 - カードや図の地は**白 `#fff`**（`bg-white`）。地の `--bg` とわずかに差をつけて浮かせる。
 - 透明度つきは Tailwind の `/` 記法で：選択バッジ＝`bg-accent/10 text-accent`、フォーカスリング＝`rgba(31,58,95,.18)`。
 
@@ -81,6 +82,11 @@
 - 本文上部の右寄せピル「数式をたたむ」で、表示数式（`$$`）を `<details>`（破線枠・`bg-soft/40`・サマリ「数式を見る」）に畳む。インライン数式はそのまま。設定は `localStorage` の `aa-foldmath`、URL の `?fold=1` でも入る（2026-10-10、「数式が並ぶと難しい」への手すり）。
 - 前提の作法：**表示数式の直後には必ず「言葉にすると、〜」の段落を置く**。畳んだときに言葉だけで一周できるのはこの約束があるから。
 
+### 図のタップ拡大（`components/Lightbox.tsx`、2026-10-11）
+- 本はピンチ拡大を止めているので、本文の図（写真・生成図）はタップで**ライトボックス**に開く。黒地 `#0f1420/95`、上に倍率か操作ヒント、右上に×、下にキャプション（白 70%）。
+- 操作は自前（html の `touch-action: pan-x pan-y` と `gesturestart` 抑止の中でも動くよう Pointer Events で実装）：二本指で拡大（1〜5 倍）、拡大中はドラッグで移動、ダブルタップ／ダブルクリックで 2.5 倍と等倍の切替、PC はホイール、Esc・×・等倍時の地のタップで閉じる。
+- 入口は `markdown.tsx` の `Figure`（`<button class="cursor-zoom-in">` で img を包む）。`LightboxHost` は `App.tsx` に一つ。部品（SVG）は対象外。
+
 ### 画像（`![alt](path "caption")`）
 - 1行の画像記法。パスは `data/books/…` 起点（`asset()` で BASE_URL を付ける）。描画は figure（`rounded-lg border border-line bg-white shadow-card`）＋下に `text-sm text-mut` のキャプション。`loading="lazy"`。
 - **小図**（2026-10-10）：末尾に `{right}` を付けると PC（md 以上）で本文の右に回り込む幅 270px の小図、スマホでは中央寄せ（最大 340px）。`{small}` は常に中央寄せ（最大 360px）。キャプションは `text-xs`。見出し・ブロック・囲み（aside/details）には `clear-both` が入っているので、回り込みはそこで必ず切れる。**{right} は直後に通常段落が 2〜3 つ続く場所にだけ置く**（直後が見出しや囲みだと右に空白が残る）。小図は幅 800px・JPEG q80（50〜120KB）。「大きい図を少なく」ではなく「小さい図を頻繁に」が翼振動章の方針。
@@ -98,6 +104,16 @@
 - `vite-plugin-pwa`（Workbox、`registerType: "autoUpdate"`、manifest は `public/manifest.webmanifest` をそのまま使用）。**precache**＝アプリ本体・KaTeX の woff2・節の本文 md・outline/symbols・たとえ話アイコン（約 4MB）。**写真と小図（`data/books/**/images/`、約 15MB）は precache しない**で、見た節のぶんだけ runtime cache `aa-images`（CacheFirst、600 件・180 日）に残す。フォントは `aa-fonts`。
 - 「図もオフラインに保存」ピル（`components/OfflineButton.tsx`、`lib/offline.ts`）：Reader の道具行の右端、「数式をたたむ」の隣。全節の md から画像パスを集めて 4 並列で fetch し runtime cache を温める。進捗は「図を保存中 n/N」、完了は localStorage `aa-offline-images`=1 で「保存済み（再保存）」。service worker が無い環境では描画しない。
 - 更新：新しいビルドを配信すると次回の読み込みで自動更新（通知は出さない）。
+
+### スマホの上部の帯（`Reader.tsx`、2026-10-11）
+- 読んでいる最中の画面上部は**細い帯 1 本だけ**（参考：Apple Developer の文書は細い 1 本、Ciechanowski・Distill は何も残さない）。全体ヘッダー（ワードマーク・ナビ）は普通にスクロールで消え、帯は `sticky top-0`・高さ 44px・`bg-paper/90 backdrop-blur`。
+- 帯の中身：目次ボタン（≡）・「章 ▸ 節」（タップでも目次）・「…」メニュー（**数式をたたむ**と**図もオフラインに保存**をここに収める。たたみ中は「…」が紺）。帯の下端に**読み位置の線**（`h-[2px] bg-accent/70` を `scaleX(進行率)`、rAF で間引き）。
+- PC は従来どおりピルを本文上に並べる（`hidden md:flex`）。
+
+### 目次の畳み方と読了の印（`Reader.tsx`、2026-10-11）
+- 章は**いま読んでいる章だけ開き**、他は「番号・章名・節数（読了なら ✓、途中なら n/N）・▸」の 1 行に畳む。▸ で手開きでき、節を移ると畳み直す。
+- 節の行頭に小さな丸：いまの節＝紺、読んだ節＝紺 45%、未読＝白に罫。未読の文字は `text-ink/60`、読了は `/80`。足あとは `lib/progress.ts`（localStorage）。
+- Home には最後に開いた節への**「続きから読む」**カードを地図の上に置く（`getLastRead()`、初めての人には出ない）。
 
 ### 節内ナビと部の進行バー（`Reader.tsx`、2026-10-10）
 - **節内ナビ**：本文の最上位 `## ` 見出しを `extractHeadings()`（`markdown.tsx`）で拾い、PC は左目次の「いま読んでいる節」の下に `text-xs text-mut` の小見出し列（左罫 `border-l border-line`）、スマホは本文冒頭の `<details>`「この節の流れ（n 見出し）」。見出しは `id="h2-n"`＋`scroll-mt-20`、クリックは `scrollIntoView`（HashRouter なので `href="#…"` は使わない）。囲みの中の見出しは対象外。

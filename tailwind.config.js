@@ -4,15 +4,16 @@ export default {
   theme: {
     extend: {
       // 配色トークンは index.css の CSS変数を参照（テーマ差し替えしやすく）
+      // <alpha-value> を通すため RGB 三つ組の変数を使う（bg-accent/10 のような透明度修飾が効く）
       colors: {
-        paper: "var(--bg)",
-        ink: "var(--ink)",
-        mut: "var(--mut)",
-        accent: "var(--accent)",
-        "accent-d": "var(--accent-d)",
-        line: "var(--line)",
-        soft: "var(--soft)",
-        soft2: "var(--soft2)",
+        paper: "rgb(var(--bg-rgb) / <alpha-value>)",
+        ink: "rgb(var(--ink-rgb) / <alpha-value>)",
+        mut: "rgb(var(--mut-rgb) / <alpha-value>)",
+        accent: "rgb(var(--accent-rgb) / <alpha-value>)",
+        "accent-d": "rgb(var(--accent-d-rgb) / <alpha-value>)",
+        line: "rgb(var(--line-rgb) / <alpha-value>)",
+        soft: "rgb(var(--soft-rgb) / <alpha-value>)",
+        soft2: "rgb(var(--soft2-rgb) / <alpha-value>)",
       },
       fontFamily: {
         // 見出し＝セリフ（A案）、UI/ラベル＝サンセリフ

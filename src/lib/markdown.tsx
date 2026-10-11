@@ -4,6 +4,7 @@ import { getBlock, UnknownBlock } from "./blocks/registry";
 import { BlockMath, InlineMath } from "./Math";
 import { BlockBoundary } from "../components/BlockBoundary";
 import { TermPop } from "../components/TermPop";
+import { useLightbox } from "../components/Lightbox";
 import { asset } from "./data";
 
 // ごく小さな Markdown＋ディレクティブ描画。
@@ -328,22 +329,8 @@ function renderNodes(nodes: Node[], top = false): ReactNode {
             );
           case "math":
             return <BlockMath key={idx} tex={n.tex} />;
-          case "image": {
-            // 小図：{right} は PC で本文の右に回り込み（幅 270px）、スマホでは中央寄せの小図。{small} は常に中央寄せ。
-            const figCls =
-              n.size === "right"
-                ? "my-4 mx-auto w-full max-w-[340px] md:float-right md:clear-right md:ml-6 md:mb-2 md:mr-0 md:w-[270px] overflow-hidden rounded-lg border border-line bg-white shadow-card"
-                : n.size === "small"
-                ? "my-5 mx-auto w-full max-w-[360px] overflow-hidden rounded-lg border border-line bg-white shadow-card"
-                : "my-6 clear-both overflow-hidden rounded-lg border border-line bg-white shadow-card";
-            const capCls = n.size ? "px-3 py-2 text-xs leading-relaxed text-mut" : "px-4 py-2.5 text-sm leading-relaxed text-mut";
-            return (
-              <figure key={idx} className={figCls}>
-                <img src={asset(n.src)} alt={n.alt} loading="lazy" className="block w-full" />
-                {n.caption ? <figcaption className={capCls}>{inline(n.caption)}</figcaption> : null}
-              </figure>
-            );
-          }
+          case "image":
+            return <Figure key={idx} n={n} />;
           case "block": {
             const def = getBlock(n.name);
             if (!def) return <UnknownBlock key={idx} name={n.name} />;
@@ -374,6 +361,33 @@ function renderNodes(nodes: Node[], top = false): ReactNode {
         }
       })}
     </>
+  );
+}
+
+// 小図：{right} は PC で本文の右に回り込み（幅 270px）、スマホでは中央寄せの小図。{small} は常に中央寄せ。
+// タップ／クリックでライトボックスに拡大（本はピンチ拡大を止めているため、細部はここで見る）。
+function Figure({ n }: { n: Extract<Node, { kind: "image" }> }) {
+  const openLightbox = useLightbox();
+  const figCls =
+    n.size === "right"
+      ? "my-4 mx-auto w-full max-w-[340px] md:float-right md:clear-right md:ml-6 md:mb-2 md:mr-0 md:w-[270px] overflow-hidden rounded-lg border border-line bg-white shadow-card"
+      : n.size === "small"
+      ? "my-5 mx-auto w-full max-w-[360px] overflow-hidden rounded-lg border border-line bg-white shadow-card"
+      : "my-6 clear-both overflow-hidden rounded-lg border border-line bg-white shadow-card";
+  const capCls = n.size ? "px-3 py-2 text-xs leading-relaxed text-mut" : "px-4 py-2.5 text-sm leading-relaxed text-mut";
+  const src = asset(n.src);
+  return (
+    <figure className={figCls}>
+      <button
+        type="button"
+        onClick={() => openLightbox({ src, alt: n.alt, caption: n.caption ? inline(n.caption) : undefined })}
+        aria-label={`${n.alt || "図"}を拡大`}
+        className="block w-full cursor-zoom-in focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+      >
+        <img src={src} alt={n.alt} loading="lazy" className="block w-full" />
+      </button>
+      {n.caption ? <figcaption className={capCls}>{inline(n.caption)}</figcaption> : null}
+    </figure>
   );
 }
 

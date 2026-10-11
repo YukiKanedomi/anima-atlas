@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchJson, fetchText, type Outline, type SectionRef } from "../lib/data";
 import { Markdown, extractHeadings } from "../lib/markdown";
 import { OfflineButton } from "../components/OfflineButton";
-import { markVisited } from "../lib/progress";
+import { getVisited, markVisited } from "../lib/progress";
 import { SymbolsContext, type Sym } from "../lib/symbols";
 import { MathFoldContext } from "../lib/Math";
 
@@ -17,7 +17,14 @@ export default function Reader() {
   const [error, setError] = useState<string>("");
   const [symbols, setSymbols] = useState<Record<string, Sym>>({});
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // 目次で手で開いた章（いま読んでいる章は常に開く）
+  const [openChapters, setOpenChapters] = useState<Set<string>>(() => new Set());
+  const [visited, setVisited] = useState<Set<string>>(() => getVisited());
+  // 読み位置（0〜1）。スマホの帯の下に細い線で出す
+  const [progress, setProgress] = useState(0);
   const asideRef = useRef<HTMLElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
   // 数式をたたむ設定（端末ごとに記憶）
   const [foldMath, setFoldMath] = useState<boolean>(() => {
     try {
@@ -85,12 +92,19 @@ export default function Reader() {
     if (!current) return;
     setBody("");
     setDrawerOpen(false);
+    setMenuOpen(false);
     window.scrollTo({ top: 0 });
     markVisited(current.id);
+    setVisited(getVisited());
     fetchText(`${BOOK_DIR}/${current.file}`)
       .then(setBody)
       .catch((e) => setError(String(e)));
   }, [current]);
+
+  // 節が変わったら、目次の手開きは畳み直す（いま読んでいる章だけ開いた状態に戻る）
+  useEffect(() => {
+    setOpenChapters(new Set());
+  }, [currentId]);
 
   // PC の左目次：節が変わったら、目次の中で現在地が見える位置へ（ページはスクロールさせない）
   useEffect(() => {
@@ -101,6 +115,27 @@ export default function Reader() {
     aside.scrollTop = Math.max(0, el.offsetTop - aside.clientHeight / 2);
   }, [currentId, body]);
 
+  // 読み位置：ページ全体に対するスクロール割合（rAF で間引き）
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [body]);
+
   // ドロワーを開いている間は背面スクロールを止める
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
@@ -108,6 +143,16 @@ export default function Reader() {
       document.body.style.overflow = "";
     };
   }, [drawerOpen]);
+
+  // 「…」メニュー：外側のタップで閉じる
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [menuOpen]);
 
   if (error) {
     return <p className="text-mut">読み込みに失敗しました：{error}</p>;
@@ -117,61 +162,121 @@ export default function Reader() {
   }
 
   const go = (id: string) => navigate(`/read/${id}`);
+  const toggleChapter = (id: string) =>
+    setOpenChapters((prevSet) => {
+      const s = new Set(prevSet);
+      if (s.has(id)) s.delete(id);
+      else s.add(id);
+      return s;
+    });
 
-  // 目次本体（PCサイドバー・スマホドロワーで共用）
+  // 目次本体（PCサイドバー・スマホドロワーで共用）。章ごとに畳み、いま読んでいる章だけ開く。
   const toc = (
-    <nav className="space-y-4">
-      {outline.chapters.map((ch) => (
-        <div key={ch.id}>
-          <div className="text-xs font-semibold tracking-wide text-mut">{ch.title}</div>
-          <ul className="mt-1 space-y-1">
-            {ch.sections.map((s, si) => (
-              <li key={s.id}>
-                {s.part && s.part !== ch.sections[si - 1]?.part ? (
-                  <div className="mb-1 mt-2 border-t border-line pt-1.5 font-serif text-[11px] tracking-wide text-accent/80">
-                    {s.part}
-                  </div>
-                ) : null}
-                <button
-                  onClick={() => go(s.id)}
-                  data-current={s.id === currentId ? "1" : undefined}
-                  className={
-                    "text-left text-sm leading-6 transition-colors " +
-                    (s.id === currentId ? "text-accent" : "text-ink/80 hover:text-accent")
-                  }
+    <nav className="space-y-1">
+      {outline.chapters.map((ch, ci) => {
+        const isCurrent = ch.id === currentChapter?.id;
+        const open = isCurrent || openChapters.has(ch.id);
+        const done = ch.sections.filter((s) => visited.has(s.id)).length;
+        const complete = done === ch.sections.length && done > 0;
+        return (
+          <div key={ch.id} className={open ? "pb-2" : ""}>
+            <button
+              onClick={() => (isCurrent ? undefined : toggleChapter(ch.id))}
+              aria-expanded={open}
+              className={
+                "flex w-full items-center gap-1.5 rounded px-1 py-1 text-left text-xs font-semibold tracking-wide transition-colors " +
+                (isCurrent ? "text-accent" : "text-mut hover:text-ink")
+              }
+            >
+              <span className="w-5 shrink-0 text-right tabular-nums text-[11px] opacity-70">{ci + 1}</span>
+              <span className="min-w-0 flex-1 truncate">{ch.title}</span>
+              {complete ? (
+                <svg width="11" height="11" viewBox="0 0 12 12" aria-label="読了" className="shrink-0 text-accent">
+                  <path d="M2 6.5l2.5 2.8L10 3.2" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <span className="shrink-0 text-[10px] font-normal tabular-nums opacity-70">
+                  {done > 0 ? `${done}/${ch.sections.length}` : ch.sections.length}
+                </span>
+              )}
+              {!isCurrent ? (
+                <svg
+                  width="10"
+                  height="10"
+                  viewBox="0 0 10 10"
+                  aria-hidden="true"
+                  className={"shrink-0 opacity-60 transition-transform " + (open ? "rotate-90" : "")}
                 >
-                  {s.title}
-                  {s.level === "advanced" ? (
-                    <span className="ml-1 rounded bg-accent/10 px-1 py-0.5 align-middle text-[10px] font-semibold text-accent">
-                      発展
-                    </span>
-                  ) : null}
-                  {s.status === "draft" ? (
-                    <span className="ml-1 text-xs text-mut">（下書き）</span>
-                  ) : null}
-                </button>
-                {/* いま読んでいる節だけ、本文の見出しを畳まずに並べる（節内ナビ） */}
-                {s.id === currentId && headings.length >= 2 ? (
-                  <ul className="ml-2 mt-1 space-y-0.5 border-l border-line pl-2.5">
-                    {headings.map((h) => (
-                      <li key={h.id}>
-                        <button
-                          onClick={() => jumpTo(h.id)}
-                          className="text-left text-xs leading-5 text-mut transition-colors hover:text-accent"
-                        >
-                          {h.text}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+                  <path d="M3 1.5l4 3.5-4 3.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <span className="w-2.5 shrink-0" />
+              )}
+            </button>
+            {open ? (
+              <ul className="ml-[22px] mt-0.5 space-y-0.5 border-l border-line pl-2.5">
+                {ch.sections.map((s, si) => {
+                  const seen = visited.has(s.id);
+                  const cur = s.id === currentId;
+                  return (
+                    <li key={s.id}>
+                      {s.part && s.part !== ch.sections[si - 1]?.part ? (
+                        <div className="mb-1 mt-2 font-serif text-[11px] tracking-wide text-accent/80">{s.part}</div>
+                      ) : null}
+                      <button
+                        onClick={() => go(s.id)}
+                        data-current={cur ? "1" : undefined}
+                        aria-current={cur ? "page" : undefined}
+                        className={
+                          "flex w-full items-start gap-1.5 text-left text-sm leading-6 transition-colors " +
+                          (cur ? "text-accent" : seen ? "text-ink/80 hover:text-accent" : "text-ink/60 hover:text-accent")
+                        }
+                      >
+                        {/* 読了の印：読んだ節は塗り、未読は輪、いまの節は紺 */}
+                        <span
+                          aria-hidden="true"
+                          className={
+                            "mt-[9px] h-[7px] w-[7px] shrink-0 rounded-full " +
+                            (cur ? "bg-accent" : seen ? "bg-accent/45" : "border border-line bg-white")
+                          }
+                        />
+                        <span className="min-w-0">
+                          {s.title}
+                          {s.level === "advanced" ? (
+                            <span className="ml-1 rounded bg-accent/10 px-1 py-0.5 align-middle text-[10px] font-semibold text-accent">
+                              発展
+                            </span>
+                          ) : null}
+                          {s.status === "draft" ? <span className="ml-1 text-xs text-mut">（下書き）</span> : null}
+                        </span>
+                      </button>
+                      {/* いま読んでいる節だけ、本文の見出しを畳まずに並べる（節内ナビ） */}
+                      {cur && headings.length >= 2 ? (
+                        <ul className="mb-1 ml-[3px] mt-1 space-y-0.5 border-l border-line pl-3">
+                          {headings.map((h) => (
+                            <li key={h.id}>
+                              <button
+                                onClick={() => jumpTo(h.id)}
+                                className="text-left text-xs leading-5 text-mut transition-colors hover:text-accent"
+                              >
+                                {h.text}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : null}
+          </div>
+        );
+      })}
     </nav>
   );
+
+  const foldLabel = foldMath ? "数式をたたんでいます（開く）" : "数式をたたむ";
 
   return (
     <div className="grid gap-8 md:grid-cols-[220px_minmax(0,1fr)]">
@@ -189,31 +294,72 @@ export default function Reader() {
 
       {/* 本文側 */}
       <div className="min-w-0">
-        {/* スマホ用：細い現在地バー＋目次ボタン（本文の上に積もらない） */}
-        <div className="-mt-2 mb-5 flex items-center gap-2 border-b border-line pb-3 md:hidden">
-          <button
-            onClick={() => setDrawerOpen(true)}
-            aria-label="目次を開く"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line bg-white text-ink active:bg-soft"
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-              <path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-          </button>
-          <div className="flex min-w-0 items-center text-sm">
-            {currentChapter ? (
-              <span className="shrink-0 text-mut">{currentChapter.title}</span>
-            ) : null}
-            {current ? (
-              <>
-                <span className="mx-1 shrink-0 text-mut">▸</span>
-                <span className="min-w-0 truncate text-ink">{current.title}</span>
-              </>
-            ) : null}
+        {/* スマホ用：細い現在地の帯（画面上部に留まる）＝目次ボタン・章▸節・「…」メニュー、下端に読み位置の線 */}
+        <div className="sticky top-0 z-30 -mx-4 -mt-8 mb-5 border-b border-line bg-paper/90 backdrop-blur md:hidden">
+          <div className="flex h-11 items-center gap-2 px-3">
+            <button
+              onClick={() => setDrawerOpen(true)}
+              aria-label="目次を開く"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink active:bg-soft"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                <path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className="flex min-w-0 flex-1 items-center text-left text-sm"
+              aria-label="目次を開く"
+            >
+              {currentChapter ? <span className="shrink-0 text-mut">{currentChapter.title}</span> : null}
+              {current ? (
+                <>
+                  <span className="mx-1 shrink-0 text-mut">▸</span>
+                  <span className="min-w-0 truncate text-ink">{current.title}</span>
+                </>
+              ) : null}
+            </button>
+            <div ref={menuRef} className="relative shrink-0">
+              <button
+                onClick={() => setMenuOpen((v) => !v)}
+                aria-label="読み方のメニュー"
+                aria-expanded={menuOpen}
+                className={
+                  "flex h-8 w-8 items-center justify-center rounded-md transition-colors active:bg-soft " +
+                  (foldMath ? "text-accent" : "text-ink")
+                }
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                  <circle cx="4" cy="9" r="1.6" fill="currentColor" />
+                  <circle cx="9" cy="9" r="1.6" fill="currentColor" />
+                  <circle cx="14" cy="9" r="1.6" fill="currentColor" />
+                </svg>
+              </button>
+              {menuOpen ? (
+                <div className="absolute right-0 top-full z-40 mt-1 flex w-64 flex-col items-stretch gap-2 rounded-lg border border-line bg-white p-3 shadow-pop">
+                  <button
+                    onClick={toggleFold}
+                    aria-pressed={foldMath}
+                    className={
+                      "rounded-full border px-3 py-1.5 text-xs transition-colors " +
+                      (foldMath ? "border-accent bg-accent/10 text-accent" : "border-line bg-white text-mut")
+                    }
+                  >
+                    {foldLabel}
+                  </button>
+                  <OfflineButton bookDir={BOOK_DIR} />
+                </div>
+              ) : null}
+            </div>
           </div>
+          <div
+            className="h-[2px] origin-left bg-accent/70"
+            style={{ transform: `scaleX(${progress})` }}
+            aria-hidden="true"
+          />
         </div>
 
-        {/* 部の進行バー（章に部があるとき）＋ 読み方の切替：数式をたたむ */}
+        {/* 部の進行バー（章に部があるとき）＋ 読み方の切替：数式をたたむ（PC。スマホは帯の「…」） */}
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           {parts.length > 0 && current?.part ? (
             <nav aria-label="部の進行" className="flex flex-wrap items-center gap-1">
@@ -244,19 +390,21 @@ export default function Reader() {
           ) : (
             <span />
           )}
-          <button
-            onClick={toggleFold}
-            aria-pressed={foldMath}
-            className={
-              "rounded-full border px-3 py-1 text-xs transition-colors " +
-              (foldMath
-                ? "border-accent bg-accent/10 text-accent"
-                : "border-line bg-white text-mut hover:border-accent hover:text-accent")
-            }
-          >
-            {foldMath ? "数式をたたんでいます（開く）" : "数式をたたむ"}
-          </button>
-          <OfflineButton bookDir={BOOK_DIR} />
+          <div className="hidden items-center gap-2 md:flex">
+            <button
+              onClick={toggleFold}
+              aria-pressed={foldMath}
+              className={
+                "rounded-full border px-3 py-1 text-xs transition-colors " +
+                (foldMath
+                  ? "border-accent bg-accent/10 text-accent"
+                  : "border-line bg-white text-mut hover:border-accent hover:text-accent")
+              }
+            >
+              {foldLabel}
+            </button>
+            <OfflineButton bookDir={BOOK_DIR} />
+          </div>
         </div>
 
         {/* スマホ用：この節の流れ（見出しへ飛ぶ。PC は左目次に出る） */}

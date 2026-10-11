@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchJson, type Outline } from "../lib/data";
-import { getVisited } from "../lib/progress";
+import { getLastRead, getVisited } from "../lib/progress";
 import { Wordmark } from "../components/Wordmark";
 
 const BOOK_DIR = "data/books/rotordynamics";
@@ -129,6 +129,17 @@ export default function Home() {
     return { routeD, pins };
   }, [outline, visited]);
 
+  // 続きから読む：最後に開いた節（端末の記憶）。初めての人には出さない。
+  const resume = useMemo(() => {
+    const id = getLastRead();
+    if (!id || !outline) return null;
+    for (const ch of outline.chapters) {
+      const s = ch.sections.find((x) => x.id === id);
+      if (s) return { ch, s };
+    }
+    return null;
+  }, [outline]);
+
   // 全体の歩数（読了カウンタ）
   const walked = useMemo(() => {
     const all = outline?.chapters.flatMap((c) => c.sections) ?? [];
@@ -143,8 +154,24 @@ export default function Home() {
       </h1>
       <p className="mt-2 text-lg text-mut">生きている知識の地図帳。基礎の浜から実機の頂へ、ピンを辿って旅をする。</p>
 
+      {/* 続きから読む（最後に開いた節へ。地図より先に目に入る位置） */}
+      {resume ? (
+        <Link
+          to={`/read/${resume.s.id}`}
+          className="group mt-5 flex items-center gap-3 rounded-lg border border-line bg-white px-4 py-3 shadow-card transition-colors hover:border-accent"
+        >
+          <span className="shrink-0 rounded bg-accent/10 px-2 py-0.5 text-xs font-semibold text-accent">続きから読む</span>
+          <span className="min-w-0 flex-1 truncate text-sm text-ink">
+            <span className="text-mut">{resume.ch.title}</span>
+            <span className="mx-1 text-mut">▸</span>
+            {resume.s.title}
+          </span>
+          <span className="shrink-0 text-accent">→</span>
+        </Link>
+      ) : null}
+
       {/* 探検の地図 */}
-      <figure className="mt-6 overflow-hidden rounded-xl border border-line shadow-card">
+      <figure className="mt-5 overflow-hidden rounded-xl border border-line shadow-card">
         <svg
           viewBox={`0 0 ${W} ${H}`}
           className="block w-full"
