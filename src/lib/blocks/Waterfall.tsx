@@ -8,7 +8,8 @@ import { useInstanceId, useSharedParams } from "../linkStore";
 //   ・立った壁   ＝ 固有振動数に固定された成分（オイルホイップ＝自励）
 // この「斜め／縦」を一目で見分けるのがウォーターフォールの真骨頂。
 // ※ 各回転数のスペクトルは成分のローレンツ・ピークを解析合成した模式。
-//   ピーク中心（f=Ω・2Ω・ωn）と 1× の共振（Ω=1）は式どおり。
+//   軸はどちらも固有振動数 fn で割った比（横 f/fn、奥行き f_rot/fn）。ピーク中心（f=f_rot・2f_rot・fn）と 1× の共振（f_rot=fn）は式どおり。
+//   ホイップの立ち上がり 1/0.47≈2.13（ホワール比 0.47 が fn に追いつく回転数）とその先の飽和は模式。
 
 export type WaterfallConfig = {
   title?: string;
@@ -29,7 +30,7 @@ const OMIN = 0.2;
 const OMAX = 3.2; // 回転数スイープ（ωn単位）
 const ZETA = 0.06; // 共振の鋭さ
 const GAMMA = 0.055; // ピーク幅
-const WHIP_TH = 2.0; // ホイップ立ち上がり（危険速度の2倍）
+const WHIP_TH = 1 / 0.47; // ホイップ立ち上がり（ホワール比 0.47 が固有振動数に追いつく回転数 ≈ 2.13、模式）
 const HEAVY = "#9b2d3a";
 const GOLD = "#c08a2e";
 const GREEN = "#1f7a4f"; // 運転点（現在地）
@@ -48,7 +49,7 @@ const lor = (f: number, f0: number, h: number) => (h * GAMMA * GAMMA) / ((f - f0
 
 function amps(o: number, unb: number, mis: number, whip: number) {
   return {
-    a1: unb * R1(o), // 1×不釣り合い（Ω=1で共振）
+    a1: unb * R1(o), // 1×不釣り合い（f_rot=fn で共振）
     a2: mis * (0.4 + 0.6 * R1(2 * o)), // 2×：基底＋2Ωが固有を叩くと共振
     aw: whip * 3.5 * smooth((o - WHIP_TH) / 0.5), // ホイップ：しきい値超で固有に固定して急成長
   };
@@ -120,7 +121,7 @@ export default function Waterfall({ config }: { config: WaterfallConfig }) {
           strokeDasharray="3 4"
         />
         <text x={xAt(1, 0)} y={baseY(0) - 5} fontSize="10.5" fill="var(--mut)" textAnchor="middle">
-          ωₙ
+          fₙ
         </text>
 
         {/* カスケード本体：奥（低回転）→手前（高回転）の順で、不透明塗りで隠線消去 */}
@@ -158,15 +159,15 @@ export default function Waterfall({ config }: { config: WaterfallConfig }) {
           </g>
         ))}
         <text x={xAt(FMAX / 2, NR - 1)} y={baseY(NR - 1) + 34} fontSize="12" fill="var(--mut)" textAnchor="middle">
-          周波数 f / ωₙ
+          周波数 f / fₙ
         </text>
 
         {/* 回転数軸（左の傾いた縁） */}
         <line x1={xAt(0, 0)} y1={baseY(0)} x2={xAt(0, NR - 1)} y2={baseY(NR - 1)} stroke="var(--ink)" strokeWidth={1} />
         <text x={28} y={baseY(NR - 1) - 6} fontSize="12" fill="var(--mut)" transform={`rotate(-90 28 ${baseY(NR - 1) - 6})`}>
-          回転数 Ω（昇速）→
+          回転周波数 f_rot / fₙ（昇速）→
         </text>
-        {/* 危険速度 Ω=1 の段 */}
+        {/* 危険速度 f_rot=fₙ の段 */}
         {(() => {
           const ic = Math.round(((1 - OMIN) / (OMAX - OMIN)) * (NR - 1));
           return (
@@ -189,14 +190,14 @@ export default function Waterfall({ config }: { config: WaterfallConfig }) {
         ) : null}
         {wall.length > 1 ? (
           <text x={wall[wall.length - 1][0] - 4} y={wall[wall.length - 1][1] - 7} fontSize="11.5" fill={HEAVY} fontWeight={600} textAnchor="middle">
-            オイルホイップ（ωₙに固定）
+            オイルホイップ（fₙに固定）
           </text>
         ) : null}
       </svg>
 
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-mut">
         <span>
-          運転点 <b className="tabular-nums text-[#1f7a4f]">Ω = {op.toFixed(2)} ωₙ</b>
+          運転点 <b className="tabular-nums text-[#1f7a4f]">f_rot = {op.toFixed(2)} fₙ</b>
         </span>
         <span>
           1×{oa.a1 > 0.05 ? "あり" : "なし"} ／ 2×{oa.a2 > 0.05 ? "あり" : "なし"} ／ ホイップ

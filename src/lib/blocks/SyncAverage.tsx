@@ -5,8 +5,9 @@ import { useInstanceId, useSharedParams } from "../linkStore";
 // ドメイン部品：回転同期平均。FFT章⑥（回転機械ならではの読み方）。
 // キーフェイザ（1回転1パルスの基準）に合わせて1回転ぶんの波形をM回重ねて平均すると、
 // 回転に同期した成分（1×・2×）は残り、同期しない成分（0.43×のホワール等）は
-// 位相がばらけて 1/√M で消えていく——回転成分だけを取り出す時間領域のフィルタ。
-//   検証済み: 非同期の残留RMS 0.43(M=1)→0.07(M=4)→0.006(M=16)、1×振幅は1.0を保持
+// 位相がばらけて消えていく——回転成分だけを取り出す時間領域のフィルタ。
+//   減り方：ランダムなノイズは 1/√M、決定論的な非同期トーン（0.43×）は |sin(πMq)/(M sin πq)|（おおむね 1/M 包絡）
+//   検証済み: 残留RMS 0.485(M=1)→0.102(M=4)→0.027(M=16)→0.014(M=64)、1×振幅は1.0を保持
 // 乱数（測定ノイズ）は seed 固定＝再現可能。
 
 export type SyncAverageConfig = {
@@ -114,7 +115,7 @@ export default function SyncAverage({ config }: { config: SyncAverageConfig }) {
         </span>
         <span className="w-full text-mut sm:w-auto">
           平均 <b className="tabular-nums text-ink">{M}</b> 回転 ／ 非同期の残り（RMS）=
-          <b className="tabular-nums text-ink"> {residual.toFixed(3)}</b>（1/√M で減る）
+          <b className="tabular-nums text-ink"> {residual.toFixed(3)}</b>（ノイズは 1/√M、非同期の正弦波はおおむね 1/M で減る）
         </span>
       </div>
 

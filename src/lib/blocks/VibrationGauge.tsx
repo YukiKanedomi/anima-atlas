@@ -152,7 +152,7 @@ export default function VibrationGauge({ config }: { config: VibrationGaugeConfi
         </span>
         <span className="text-mut">
           {zi === 0 && "出荷・受け入れ時に期待される水準です。"}
-          {zi === 1 && "このまま長期の連続運転ができます。"}
+          {zi === 1 && "通常は制限なしの長期運転に適すると評価される水準です。"}
           {zi === 2 && "短期はしのげますが、原因を調べて早めの対策を。"}
           {zi === 3 && "損傷を起こしうる水準。運転継続は危険です。"}
         </span>

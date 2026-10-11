@@ -7,7 +7,8 @@ import { useInstanceId, useSharedParams } from "../linkStore";
 // α=影響係数＝おもり1gあたりの振動応答）。試しおもり T を付けて V1=V0+αT を測れば
 // α=(V1−V0)/T が分かり、補正おもり C=−V0/α=−U で残留振動はゼロになる。
 // 肝：補正は「振動の高い向き」の真逆ではない。影響係数の位相 ψ ぶん回る。
-// ※ 値・幾何は式どおりの模式（線形・1面・1×を仮定）。
+// ※ 値・幾何は式どおりの模式（線形・1面・1×を仮定）。重い点・試し・補正はすべて同じ半径に付けるものとして g で扱う
+//   （不釣り合いは質量×半径なので、図でも同じ半径 0.82R に描く）。
 
 export type BalancingConfig = {
   title?: string;
@@ -84,11 +85,12 @@ export default function Balancing({ config }: { config: BalancingConfig }) {
     </g>
   );
 
-  const Weight = ({ deg, rr, color, r, label }: { deg: number; rr: number; color: string; r: number; label: string }) => (
+  const Weight = ({ deg, rr, color, r, label, inner }: { deg: number; rr: number; color: string; r: number; label: string; inner?: boolean }) => (
     <g>
       <line x1={CX} y1={CY} x2={fx(deg, rr)} y2={fy(deg, rr)} stroke={color} strokeWidth={1.4} opacity={0.5} />
       <circle cx={fx(deg, rr)} cy={fy(deg, rr)} r={r} fill={color} />
-      <text x={fx(deg, rr + 14)} y={fy(deg, rr + 14) + 4} fontSize="10" fill={color} textAnchor="middle">{label}</text>
+      {/* ラベルは外側に。試しおもりだけ内側に出して、重い点と角度が近いときの重なりを避ける */}
+      <text x={fx(deg, inner ? rr - 18 : rr + 14)} y={fy(deg, inner ? rr - 18 : rr + 14) + 4} fontSize="10" fill={color} textAnchor="middle">{label}</text>
     </g>
   );
 
@@ -123,13 +125,13 @@ export default function Balancing({ config }: { config: BalancingConfig }) {
           <text x={fx(v0Ang, RIM * 0.6)} y={fy(v0Ang, RIM * 0.6)} fontSize="9" fill="var(--mut)">振動の向き</text>
           {/* 重い点・試し・補正 */}
           <Weight deg={U_ANG} rr={RIM * 0.82} color={HEAVY} r={6} label="重い点" />
-          {m.enough ? <Weight deg={phit} rr={RIM * 0.6} color={BLUE} r={5} label="試し" /> : null}
+          {m.enough ? <Weight deg={phit} rr={RIM * 0.82} color={BLUE} r={5} label="試し" inner /> : null}
           <Weight deg={cAng} rr={RIM * 0.82} color={GREEN} r={6} label="補正" />
         </svg>
       </div>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
-        <Slider label="試しおもり 大きさ（g）" value={wt} min={0} max={12} step={0.1} onChange={(v) => setParam("wt", v)} />
+        <Slider label="試しおもり 大きさ（g、同じ半径）" value={wt} min={0} max={12} step={0.1} onChange={(v) => setParam("wt", v)} />
         <Slider label="試しおもり 角度（°）" value={phit} min={0} max={360} step={1} onChange={(v) => setParam("phit", v)} />
         <Slider label="影響係数の位相 ψ（応答の遅れ°）" value={psi} min={0} max={180} step={1} onChange={(v) => setParam("psi", v)} />
       </div>

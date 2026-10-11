@@ -38,6 +38,8 @@ import BladeCampbell from "./BladeCampbell";
 import ExcitationHarmonics from "./ExcitationHarmonics";
 import NodalDiameter from "./NodalDiameter";
 import TravelingWave from "./TravelingWave";
+import SensorBands from "./SensorBands";
+import FaultSpectra from "./FaultSpectra";
 import FamilyCurves from "./FamilyCurves";
 import EoFolding from "./EoFolding";
 import Zzenf from "./Zzenf";
@@ -200,7 +202,7 @@ export const blocks: BlockDef[] = [
       k2: 3,
       a2: 0.5,
       fDefault: 2,
-      caption: "探りが成分と同じ速さになると、掛け算の緑（正）が勝って平均が立ち上がります。違う速さでは緑と赤が打ち消してゼロ。",
+      caption: "探りが成分と同じ速さになると、掛け算の緑（正）が勝って平均が立ち上がります。違う速さでは（整数周期ぶん平均すれば）緑と赤が打ち消してゼロ。",
     },
   },
   {
@@ -208,7 +210,7 @@ export const blocks: BlockDef[] = [
     title: "エイリアシング（サンプリングの罠）",
     status: "stable",
     summary:
-      "速い波を粗く測ると点列が「別の遅い波」に完全一致してしまう。左＝ストロボで見た回転円板（止まる・逆回り）、右＝波形とサンプル点＋見かけの波。境界 fs=2f。",
+      "速い波を粗く測ると点列が「別の遅い波」に完全一致してしまう。左＝ストロボで見た回転円板（止まる・逆回り）、右＝波形とサンプル点＋見かけの波。境界 fs=2f（等号は含まず、境界上は判定不能）。",
     component: Aliasing,
     sample: {
       title: "ためし：点滅を遅くすると、回転が止まって見える",
@@ -222,10 +224,10 @@ export const blocks: BlockDef[] = [
     title: "窓とリーケージ（切り取り方の作法）",
     status: "stable",
     summary:
-      "DFTは窓の中身が繰り返すとみなす。整数個ぴったり入らないと、つなぎ目の段差が偽の広がり（リーケージ）に化ける。Hann窓で端を絞ると裾が激減（山は少し太る）。本物のFFT。",
+      "DFTは窓の中身が繰り返すとみなす。整数個ぴったり入らないと、つなぎ目の段差や折れが偽の広がり（リーケージ）に化ける。Hann窓で端を絞ると裾が激減（山は少し太る）。本物のFFT。",
     component: Leakage,
     sample: {
-      title: "ためし：つなぎ目の段差が、にじみに化ける",
+      title: "ためし：つなぎ目の段差や折れが、にじみに化ける",
       fDefault: 8.5,
       caption: "スライダーを整数（8や9）に合わせると1本にすっと立ち、半端（8.5）にするとにじみます。Hann窓に切り替えると、段差が消えて裾が沈みます。",
     },
@@ -247,7 +249,7 @@ export const blocks: BlockDef[] = [
     title: "回転同期平均（キーフェイザ基準の平均）",
     status: "stable",
     summary:
-      "1回転1パルスの基準（キーフェイザ）に合わせて波形をM回転ぶん平均。同期成分（1×・2×）は残り、非同期（0.43×ホワール・ノイズ）は1/√Mで消える。回転成分の抽出フィルタ。",
+      "1回転1パルスの基準（キーフェイザ）に合わせて波形をM回転ぶん平均。同期成分（1×・2×）は残り、ノイズは 1/√M、非同期の正弦波（0.43×ホワールなど）はおおむね 1/M で消える。回転成分の抽出フィルタ。",
     component: SyncAverage,
     sample: {
       title: "ためし：平均するほど、回転の声だけが残る",
@@ -284,7 +286,7 @@ export const blocks: BlockDef[] = [
       misDefault: 0.25,
       whipDefault: 0.5,
       opDefault: 2.5,
-      caption: "1×は回転数に比例して右へ動く斜めの尾根。Ω=1で危険速度を叩いて大きくなる。ホイップを上げると、固有振動数に立つ縦の壁が現れます。",
+      caption: "1×は回転数に比例して右へ動く斜めの尾根。f_rot = fₙ で危険速度を叩いて大きくなる。ホイップを上げると、固有振動数に立つ縦の壁が現れます（出始めは危険速度の 2 倍強、模式）。",
     },
   },
   {
@@ -691,6 +693,22 @@ export const blocks: BlockDef[] = [
     component: TipTiming,
     sample: {"title": "ためし：f を回転数の整数倍にすると振動が見えなくなる", "N": 12, "omegaDefault": 20, "fDefault": 80, "probesDefault": 2, "caption": "80 Hz = 4×20 Hz（1,200 rpm）は同期振動。各プローブの点が一定値になります。"},
   
+  },
+  {
+    name: "sensor-bands",
+    title: "変位・速度・加速度：同じ振動を三つのものさしで見る",
+    status: "stable",
+    summary: "正弦振動 x = X sin 2πft の変位 X・速度 2πfX・加速度 (2πf)²X を、各量の 100 Hz での値に対する比（両対数）で 3 本の線に描く。単位の違う三量を同じ目盛で比べず、傾き（0／±1／±2）を見る図。周波数カーソルの位置では単位付きの実振幅を表示。「一定に保つ量」を切り替えると傾きが入れ替わる。10〜1,000 Hz の帯は速度実効値で評価する規格の典型帯域の目安。値は式どおり。",
+    component: SensorBands,
+    sample: {"title": "ためし：速度を一定にすると、低い周波数では変位が、高い周波数では加速度が大きく見える", "modeDefault": "vel", "fDefault": 50, "caption": "三本の線は変位・速度・加速度を、それぞれ自分の 100 Hz での値を 1 とした比で描いたもの。線どうしの上下は比べず、傾きを見ます。一定に保つ量を切り替えると三本の傾きが入れ替わり、下の読み取り値は単位付きの実振幅です。帯は速度の実効値で評価する規格の典型帯域（10〜1,000 Hz）の目安。"},
+  },
+  {
+    name: "fault-spectra",
+    title: "故障の指紋（種類を選ぶとスペクトルと波形が切り替わる）",
+    status: "stable",
+    summary: "故障の種類（不釣り合い／ミスアライメント／機械的な緩み／ラビング／オイルホワール／転がり軸受外輪傷／歯車かみ合い）をボタンで切り替えると、教科書的な典型成分で合成した信号を Hann 窓＋本物の FFT（NF=2048・32 回転・分解能 1/32 次）でスペクトルと時間波形に描く。緩み・ラビングは波形のクリップで非線形を模式化、軸受は 6205 の BPFO≈3.58× とその倍数、歯車は 20× と ±1×・±2× の側帯波。縦軸は正規化、直流分は除去。成分の配合は模式。",
+    component: FaultSpectra,
+    sample: {"title": "ためし：故障の種類を切り替える", "faultDefault": "bearing", "caption": "整数倍にならない 3.58× の列が転がり軸受の指紋。ボタンで他の故障と見比べてください。縦軸は正規化、成分の配合は模式です。"},
   },
 ];
 

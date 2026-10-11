@@ -8,7 +8,7 @@ import { useInstanceId, useSharedParams } from "../linkStore";
 //   見かけの周波数 f' = f − round(f/fs)·fs（符号が負なら逆向き）
 //   エイリアス波はサンプル点を厳密に通る（誤差~1e-13、Node検証済み）
 // 左＝ストロボで見た回転円板（点滅ごとのマーカー残像→止まる/逆回り）、
-// 右＝波形とサンプル点＋点列に合う見かけの波。境界は fs = 2f（標本化定理）。
+// 右＝波形とサンプル点＋点列に合う見かけの波。境界は fs = 2f（標本化定理。等号は含まず、境界上は位相依存で判定不能）。
 
 export type AliasingConfig = {
   title?: string;
@@ -65,6 +65,8 @@ export default function Aliasing({ config }: { config: AliasingConfig }) {
   const fApp = f - k * fs; // 見かけの周波数（符号つき）
   const aliased = Math.abs(Math.abs(fApp) - f) > 0.01 || fApp < 0;
   const stopped = Math.abs(fApp) < 0.02;
+  // ちょうど fs = 2f の境界：位相しだいで標本が全部ゼロになるなど情報が退化し、判定できない
+  const boundary = Math.abs(fs - 2 * f) < 0.051;
 
   // ストロボ円板：現在と残像のマーカー角
   const angles = Array.from({ length: GHOSTS + 1 }, (_, i) => {
@@ -144,11 +146,11 @@ export default function Aliasing({ config }: { config: AliasingConfig }) {
               className={"rounded-full px-2.5 py-0.5 font-semibold text-white"}
               style={{ background: ok ? GREEN : HEAVY }}
             >
-              {ok ? "正しく捕まえた" : stopped ? "止まって見える！" : fApp < 0 ? "エイリアス：逆回りに見える" : "エイリアス：遅い波に化けた"}
+              {ok ? "正しく捕まえた" : boundary ? "境界 fs = 2f：位相しだいで判定できない" : stopped ? "止まって見える！" : fApp < 0 ? "エイリアス：逆回りに見える" : "エイリアス：遅い波に化けた"}
             </span>
             <span className="w-full text-mut sm:w-auto">
               見かけ <b className="tabular-nums text-ink">{Math.abs(fApp).toFixed(2)}</b> Hz
-              {aliased && !stopped ? (fApp < 0 ? "（向きも反転）" : "") : ""}
+              {aliased && !stopped && !boundary ? (fApp < 0 ? "（向きも反転）" : "") : ""}
               ／ 境界 fs = 2f = <b className="tabular-nums text-ink">{(2 * f).toFixed(1)}</b>
             </span>
           </div>

@@ -78,3 +78,9 @@ ISO評価ゲージ → G等級セレクタ → 安定性チャート。本文で
 - 新部品 gyro-top（歳差と章動）・journal-bearing（偏心率と姿勢角）。アイコン +12（計 48）。小図 38 枚。
 - Codex 章別レビュー 59 件を全件反映（GyroTop の力とモーメントの定義、η=I/(mc²) で並進・傾きの順序逆転、API 617 第7版限定、q̂/ĉ の無次元化、ホワールは高粘度側、アルフォード力の β 符号）。
 - 次：第3回＝第6〜8章（フーリエ・計測・現場）。
+
+## 2026-10-11 第2版化 第3回：第6〜8章（14節）
+- 第6章 6 節・第7章 4 節（新節「何で測るか——センサとキーフェイザ」）・第8章 3 節（新節「症状から原因へ——故障の指紋を読む」）。12 節 約2.9万字→14 節 約12.1万字。小図 55 枚（実写 35・生成 20）、たとえ話 44、歴史/実務の囲み 32。
+- 新部品 sensor-bands（変位・速度・加速度の傾き、100 Hz 基準の比）・fault-spectra（故障 7 種の典型スペクトルを本物の FFT で）。アイコン +12（計 60：piano, prism, mixing-bowl, film-strip, curtain-window, stethoscope, fingerprint, magnifier, speedometer, stopwatch, tire-weight, lighthouse）。
+- Codex 章別レビュー 39+31+30=100 件、全件採用（Leakage の段差判定バグ、SyncAverage の非同期トーンは 1/M、Aliasing の fs=2f 境界、SensorBands の次元混在、ISO 20816 の一般化、e_per の単位、N_b→Z、翼通過周波数の静止側/回転側）。symbols.json：f_nyq・f_mesh・BPFO・AF を追加、Delta_f・Q・alpha を更新。
+- 次：第4回＝ねじり振動の 3〜4 節化＋序章・付録。残課題：sensors が 1.1 万字とやや長い、キーフェイザ切り欠きと歯車箱開放の実写は未入手。

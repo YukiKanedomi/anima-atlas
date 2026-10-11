@@ -189,6 +189,11 @@
       "title": "計測と診断",
       "sections": [
         {
+          "id": "sensors",
+          "title": "何で測るか——変位・速度・加速度センサとキーフェイザ",
+          "file": "sections/sensors.md"
+        },
+        {
           "id": "bode-polar",
           "title": "振幅と位相を1枚に——ボード線図とポーラ線図",
           "file": "sections/bode-polar.md"
@@ -223,6 +228,11 @@
           "id": "two-plane-balancing",
           "title": "2面で釣り合わせる——影響係数を行列にする",
           "file": "sections/two-plane-balancing.md"
+        },
+        {
+          "id": "fault-signatures",
+          "title": "症状から原因へ——故障の指紋を読む",
+          "file": "sections/fault-signatures.md"
         }
       ]
     },
