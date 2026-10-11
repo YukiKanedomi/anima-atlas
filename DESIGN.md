@@ -86,6 +86,11 @@
 - **小図**（2026-10-10）：末尾に `{right}` を付けると PC（md 以上）で本文の右に回り込む幅 270px の小図、スマホでは中央寄せ（最大 340px）。`{small}` は常に中央寄せ（最大 360px）。キャプションは `text-xs`。見出し・ブロック・囲み（aside/details）には `clear-both` が入っているので、回り込みはそこで必ず切れる。**{right} は直後に通常段落が 2〜3 つ続く場所にだけ置く**（直後が見出しや囲みだと右に空白が残る）。小図は幅 800px・JPEG q80（50〜120KB）。「大きい図を少なく」ではなく「小さい図を頻繁に」が翼振動章の方針。
 - 生成画像（imagegen）は**「イメージ図（生成画像・模式）」とキャプションに明記**し、事実を担う図には使わない。保存は `public/data/books/<book>/images/`、幅 1400px・JPEG q82（250KB 前後）に落としてから置く。様式＝中世紀 NASA 技術マニュアル調の線画、紺×生成り×臙脂の二色刷り（翼振動章の `turbopump-hero.jpg` / `nozzle-wakes.jpg`）。
 
+### オフライン対応（PWA、2026-10-11）
+- `vite-plugin-pwa`（Workbox、`registerType: "autoUpdate"`、manifest は `public/manifest.webmanifest` をそのまま使用）。**precache**＝アプリ本体・KaTeX の woff2・節の本文 md・outline/symbols・たとえ話アイコン（約 4MB）。**写真と小図（`data/books/**/images/`、約 15MB）は precache しない**で、見た節のぶんだけ runtime cache `aa-images`（CacheFirst、600 件・180 日）に残す。フォントは `aa-fonts`。
+- 「図もオフラインに保存」ピル（`components/OfflineButton.tsx`、`lib/offline.ts`）：Reader の道具行の右端、「数式をたたむ」の隣。全節の md から画像パスを集めて 4 並列で fetch し runtime cache を温める。進捗は「図を保存中 n/N」、完了は localStorage `aa-offline-images`=1 で「保存済み（再保存）」。service worker が無い環境では描画しない。
+- 更新：新しいビルドを配信すると次回の読み込みで自動更新（通知は出さない）。
+
 ### 節内ナビと部の進行バー（`Reader.tsx`、2026-10-10）
 - **節内ナビ**：本文の最上位 `## ` 見出しを `extractHeadings()`（`markdown.tsx`）で拾い、PC は左目次の「いま読んでいる節」の下に `text-xs text-mut` の小見出し列（左罫 `border-l border-line`）、スマホは本文冒頭の `<details>`「この節の流れ（n 見出し）」。見出しは `id="h2-n"`＋`scroll-mt-20`、クリックは `scrollIntoView`（HashRouter なので `href="#…"` は使わない）。囲みの中の見出しは対象外。
 - **部の進行バー**：章に `part` があるとき、本文上部に部のチップ列（現在の部＝`border-accent bg-accent/10 text-accent`、他＝白地）と「n/N 節」。チップで部の先頭節へ。「数式をたたむ」ピルと同じ行の左右配置。

@@ -89,4 +89,10 @@ ISO評価ゲージ → G等級セレクタ → 安定性チャート。本文で
 - ねじり振動の章を 1 節→4 節（入口の増強、「Holzer 法と固有モード」「誰が軸をねじるのか——往復機関・歯車・電動機」「ねじりを測り、抑える」）。序章を題材の顔ぶれ・歴史・読み方・全章の案内・読む道筋で 8.8K 字に、付録に「この本の約束事」（符号・単位・ギリシャ文字・記号の衝突）。6 節 約1.2万字→4.6万字、小図 28 枚、たとえ話 15。
 - 新部品 holzer（残留トルク曲線とモード形、3〜5 慣性）・motor-start-torsion（同期電動機始動の 2·s·f_line 掃引と RK4 応答）。アイコン +12（計 72：towel-wring, bottle-cap, piston, electric-motor, coupling, tuning-peg, compass, bookmark, torsion-pendulum, pulley-belt, flywheel, slinky）。
 - Codex レビュー 10+30=40 件、全件採用。**RunupHero（序章の昇速デモ）で重い点を変位の φ 遅れ側に描いていた逆符号を修正**（本の規約＝変位は重い点より φ 遅れる）。Holzer の拡張は Den Hartog & Li 1946 に帰属、離隔余裕は「交点から ±10%、外せなければ応答解析」に、VFD 高調波は 6 パルス形に限定。symbols.json：I_t・k_t・theta・T_res・f_line・s_slip を追加（計 46）。
-- これで第2版化は 4 回とも完了（全 12 章・64 節）。残課題：ねじりの実測例（テレメトリ付き軸・クランクプーリダンパの実写）、章をまたぐ総括節（翼振動章の blade-summary 相当）を他章にも置くか。
+- これで第2版化は 4 回とも完了（全 12 章・58 節）。
+
+## 2026-10-11 仕上げ：横断整合レビュー・全体総括節・オフライン対応
+- **横断整合レビュー**：機械チェック（`scratchpad/digest_book.py`：画像の重複、たとえ話の「限界」文、式と「言葉にすると」の数、前後節の参照、章番号表記、アイコンの使い回し、どこからも参照されない節）86 件＋Codex 横断レビュー 33 件（概念の矛盾 10・記号ドリフト・アイコン不一致 10・リンク・構造・用語）。翼振動章のたとえ話 34 個に限界文を追加、自励＝亜同期の言い過ぎ、キーフェイザで向きは分からない、X–Y は ±45°、回転系の ζ→z̃、ν（非整数次）、Z（歯数・転動体）、ミスアライメント初出定義、橋リンク 4 本。アイコン +12（handrail, soup-spoon, tug-of-war, shower-knobs, metal-detector, bus-strap, bent-wire, escalator, chain-links, camera-exposure, log-river, metronome。計 84）で比喩と絵の不一致 12 か所を付け替え。
+- **全体総括節** `book-summary`（新章「おわりに」、付録の直前）：数式ゼロ、十の要点・設計者と現場の順番・よくある誤解 12・機械の顔ぶれ・この先の地図・道しるべ 18 行。
+- **オフライン対応（PWA）**：vite-plugin-pwa（Workbox）。precache 177 件 3.9MB（本体・KaTeX woff2・全節 md・outline/symbols・アイコン）、写真は runtime cache、「図もオフラインに保存」ピル。検証は headless **Edge** で（Chrome headless はこの PC で CacheStorage が内部エラー）。
+- 残：長い節 7（sensors・blade-excitation・mistuning・blade-damping・blade-hcf・turbopump-exercise・book-summary が 1.1〜1.3 万字）、Codex の利用上限に当たったため本日の再レビューは無し。残課題：ねじりの実測例（テレメトリ付き軸・クランクプーリダンパの実写）、章をまたぐ総括節（翼振動章の blade-summary 相当）を他章にも置くか。

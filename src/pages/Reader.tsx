@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchJson, fetchText, type Outline, type SectionRef } from "../lib/data";
 import { Markdown, extractHeadings } from "../lib/markdown";
+import { OfflineButton } from "../components/OfflineButton";
 import { markVisited } from "../lib/progress";
 import { SymbolsContext, type Sym } from "../lib/symbols";
 import { MathFoldContext } from "../lib/Math";
@@ -255,6 +256,7 @@ export default function Reader() {
           >
             {foldMath ? "数式をたたんでいます（開く）" : "数式をたたむ"}
           </button>
+          <OfflineButton bookDir={BOOK_DIR} />
         </div>
 
         {/* スマホ用：この節の流れ（見出しへ飛ぶ。PC は左目次に出る） */}

@@ -378,6 +378,17 @@
       ]
     },
     {
+      "id": "ch-epilogue",
+      "title": "おわりに",
+      "sections": [
+        {
+          "id": "book-summary",
+          "title": "ロータダイナミクスの総括——数式抜きで、何が大切で何を考えるべきか",
+          "file": "sections/book-summary.md"
+        }
+      ]
+    },
+    {
       "id": "ch-appendix",
       "title": "付録",
       "sections": [
