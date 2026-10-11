@@ -200,14 +200,14 @@ export default function Reader() {
               <path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
             </svg>
           </button>
-          <div className="min-w-0 text-sm">
+          <div className="flex min-w-0 items-center text-sm">
             {currentChapter ? (
-              <span className="text-mut">{currentChapter.title}</span>
+              <span className="shrink-0 text-mut">{currentChapter.title}</span>
             ) : null}
             {current ? (
               <>
-                <span className="mx-1 text-mut">▸</span>
-                <span className="truncate text-ink">{current.title}</span>
+                <span className="mx-1 shrink-0 text-mut">▸</span>
+                <span className="min-w-0 truncate text-ink">{current.title}</span>
               </>
             ) : null}
           </div>

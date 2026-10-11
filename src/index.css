@@ -145,3 +145,32 @@ h3 {
 .aa-deep[open] > summary .aa-deep-tri {
   transform: rotate(90deg);
 }
+
+/* ---- スマホ対策（2026-10-11） ----
+   ・ピンチ拡大は使わない前提（拡大すると横スクロールが生まれ、読みにくくなる）。touch-action で二本指の拡大と
+     ダブルタップ拡大を止める。iOS Safari の実機では main.tsx の gesturestart 抑止も併用。
+   ・横方向のはみ出しは html/body で clip（hidden と違い position: sticky を壊さない）。
+   ・根本原因も潰す：長い数式は横スクロール、長い URL は折返し。 */
+html {
+  overflow-x: clip;
+  touch-action: pan-x pan-y;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  overflow-x: clip;
+}
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.15rem 0 0.35rem;
+  -webkit-overflow-scrolling: touch;
+}
+.katex-display > .katex {
+  padding: 0 0.25rem;
+}
+article p,
+article li,
+article figcaption {
+  overflow-wrap: anywhere;
+}

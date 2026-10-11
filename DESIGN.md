@@ -86,6 +86,14 @@
 - **小図**（2026-10-10）：末尾に `{right}` を付けると PC（md 以上）で本文の右に回り込む幅 270px の小図、スマホでは中央寄せ（最大 340px）。`{small}` は常に中央寄せ（最大 360px）。キャプションは `text-xs`。見出し・ブロック・囲み（aside/details）には `clear-both` が入っているので、回り込みはそこで必ず切れる。**{right} は直後に通常段落が 2〜3 つ続く場所にだけ置く**（直後が見出しや囲みだと右に空白が残る）。小図は幅 800px・JPEG q80（50〜120KB）。「大きい図を少なく」ではなく「小さい図を頻繁に」が翼振動章の方針。
 - 生成画像（imagegen）は**「イメージ図（生成画像・模式）」とキャプションに明記**し、事実を担う図には使わない。保存は `public/data/books/<book>/images/`、幅 1400px・JPEG q82（250KB 前後）に落としてから置く。様式＝中世紀 NASA 技術マニュアル調の線画、紺×生成り×臙脂の二色刷り（翼振動章の `turbopump-hero.jpg` / `nozzle-wakes.jpg`）。
 
+### スマホの横はみ出しと拡大（2026-10-11、ユーザー要望「拡大縮小は不要」）
+- **拡大は使わない前提**：`index.html` の viewport に `maximum-scale=1, user-scalable=no, viewport-fit=cover`（iOS Safari は無視するが PWA と Android には効く）、`html { touch-action: pan-x pan-y }`（二本指とダブルタップの拡大を抑止）、`main.tsx` で `gesturestart`/`gesturechange` と二本指 `touchmove`（`scale !== 1`）を `preventDefault`（iOS Safari 実機向け）。
+- **横はみ出しの根絶**：`html, body { overflow-x: clip }`（`hidden` と違い sticky を壊さない）。根本原因側＝`.katex-display` は横スクロール、`article p/li/figcaption` は `overflow-wrap: anywhere`（長い URL）、Reader ヘッダーの節名は flex＋`min-w-0 truncate`。閉じたドロワーは描画しない（transform で画面外に置くと scrollWidth に乗る）。
+- **測り方**：headless Edge＋CDP で `Emulation.setDeviceMetricsOverride({width:390, mobile:true})` し、`getBoundingClientRect().right > clientWidth` の要素と `documentElement.scrollWidth` を見る（`scratchpad/overflow_check.mjs`）。幅 520px を要する部品（`min-w-[520px]`）は親の `overflow-x-auto` の中で横スクロールする設計で、ページ幅には乗らない。
+
+### ホーム地図のラベル配置（2026-10-11 更新）
+- 章が 12 を超えたら文字を 18.5px→16px。候補位置は 上→下→右→左→右上→左上→右下→左下 の順で、置いたラベル・ピン・START・旗と重ならない最初の位置を採る（`Home.tsx`）。16 章で重なりなしを確認。
+
 ### オフライン対応（PWA、2026-10-11）
 - `vite-plugin-pwa`（Workbox、`registerType: "autoUpdate"`、manifest は `public/manifest.webmanifest` をそのまま使用）。**precache**＝アプリ本体・KaTeX の woff2・節の本文 md・outline/symbols・たとえ話アイコン（約 4MB）。**写真と小図（`data/books/**/images/`、約 15MB）は precache しない**で、見た節のぶんだけ runtime cache `aa-images`（CacheFirst、600 件・180 日）に残す。フォントは `aa-fonts`。
 - 「図もオフラインに保存」ピル（`components/OfflineButton.tsx`、`lib/offline.ts`）：Reader の道具行の右端、「数式をたたむ」の隣。全節の md から画像パスを集めて 4 並列で fetch し runtime cache を温める。進捗は「図を保存中 n/N」、完了は localStorage `aa-offline-images`=1 で「保存済み（再保存）」。service worker が無い環境では描画しない。

@@ -88,8 +88,11 @@ export default function Home() {
     // ラベルの自動配置：上→下→右→左の順に試し、置いたラベルやピン本体と重ならない最初の位置を採る。
     // 章が増えて経路上でピンが詰まっても、手で座標を調整せずに済む。
     type Box = { x: number; y: number; w: number; h: number };
+    type LabelPos = "above" | "below" | "right" | "left" | "above-right" | "above-left" | "below-right" | "below-left";
     const hit = (a: Box, b: Box) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
-    const textW = (t: string) => [...t].reduce((w, c) => w + (c.charCodeAt(0) < 0x2e80 ? 10 : 18.5), 0);
+    // 章が 12 を超えたら文字を 18.5px → 16px に落として詰まりをほぐす
+    const fs = n > 12 ? 16 : 18.5;
+    const textW = (t: string) => [...t].reduce((w, c) => w + (c.charCodeAt(0) < 0x2e80 ? fs * 0.54 : fs), 0);
     const obstacles: Box[] = base.map((p) => ({ x: p.x - 16, y: p.y - 46, w: 32, h: 52 }));
     // 先頭ピンの足元には START バッジがある
     if (base[0]) obstacles.push({ x: base[0].x - 36, y: base[0].y + 4, w: 72, h: 34 });
@@ -101,11 +104,16 @@ export default function Home() {
       const w = Math.max(textW(p.ch.title), 60);
       const h = 40;
       const headY = p.y - 30;
-      const cands: { pos: "above" | "below" | "right" | "left"; box: Box }[] = [
+      // 候補は 上→下→右→左→右上→左上→右下→左下 の順（斜めは章が詰まったときの逃げ場）
+      const cands: { pos: LabelPos; box: Box }[] = [
         { pos: "above", box: { x: p.x - w / 2, y: headY - 52, w, h } },
         { pos: "below", box: { x: p.x - w / 2, y: p.y + 8, w, h } },
         { pos: "right", box: { x: p.x + 20, y: headY - 22, w, h } },
         { pos: "left", box: { x: p.x - 20 - w, y: headY - 22, w, h } },
+        { pos: "above-right", box: { x: p.x + 12, y: headY - 52, w, h } },
+        { pos: "above-left", box: { x: p.x - 12 - w, y: headY - 52, w, h } },
+        { pos: "below-right", box: { x: p.x + 12, y: p.y + 8, w, h } },
+        { pos: "below-left", box: { x: p.x - 12 - w, y: p.y + 8, w, h } },
       ];
       const ok = cands.find(
         (c) =>
@@ -116,7 +124,7 @@ export default function Home() {
       );
       const pick = ok ?? cands[0];
       placed.push(pick.box);
-      return { ...p, label: pick.pos, labelBox: pick.box };
+      return { ...p, label: pick.pos, labelBox: pick.box, fs };
     });
     return { routeD, pins };
   }, [outline, visited]);
@@ -189,9 +197,11 @@ export default function Home() {
             // ラベルはピンの真上/真下に中央揃え。章が増えて同じ区間に並ぶ隣同士が
             // 重ならないよう、偶数は頭の上・奇数は足元の下と帯を分ける。
             const L = pin.label;
-            const labelX = L === "right" ? pin.x + 20 : L === "left" ? pin.x - 20 : pin.x;
-            const anchor = L === "right" ? "start" : L === "left" ? "end" : "middle";
-            const titleY = L === "above" ? headY - 36 : L === "below" ? pin.y + 24 : headY - 4;
+            const right = L === "right" || L.endsWith("-right");
+            const left = L === "left" || L.endsWith("-left");
+            const labelX = L === "right" ? pin.x + 20 : L === "left" ? pin.x - 20 : right ? pin.x + 12 : left ? pin.x - 12 : pin.x;
+            const anchor = right ? "start" : left ? "end" : "middle";
+            const titleY = L.startsWith("above") ? headY - 36 : L.startsWith("below") ? pin.y + 24 : headY - 4;
             const subY = titleY + 18;
             return (
               <g
@@ -214,7 +224,7 @@ export default function Home() {
                 <rect className="aa-pin-text" x={pin.labelBox.x} y={pin.labelBox.y} width={pin.labelBox.w} height={pin.labelBox.h} fill="transparent" />
 
                 {/* ラベル（スマホでは非表示→地図下のチップ一覧が代役） */}
-                <text className="aa-pin-text aa-pin-label font-serif" x={labelX} y={titleY} fontSize="18.5" fill="var(--ink)" textAnchor={anchor}>
+                <text className="aa-pin-text aa-pin-label font-serif" x={labelX} y={titleY} fontSize={pin.fs} fill="var(--ink)" textAnchor={anchor}>
                   {pin.ch.title}
                 </text>
                 <text x={labelX} y={subY} fontSize="13" fill="var(--mut)" textAnchor={anchor} className="aa-pin-text font-ui">
