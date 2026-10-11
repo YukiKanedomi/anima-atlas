@@ -244,6 +244,21 @@
           "id": "torsional-intro",
           "title": "ねじり振動——軸のもう一つの揺れ方",
           "file": "sections/torsional-intro.md"
+        },
+        {
+          "id": "torsional-modes",
+          "title": "慣性が三つ以上並ぶと——Holzer 法と固有モード",
+          "file": "sections/torsional-modes.md"
+        },
+        {
+          "id": "torsional-excitation",
+          "title": "誰が軸をねじるのか——往復機関・歯車・電動機",
+          "file": "sections/torsional-excitation.md"
+        },
+        {
+          "id": "torsional-practice",
+          "title": "ねじりを測り、抑える——計測・カップリング・ダンパ",
+          "file": "sections/torsional-practice.md"
         }
       ]
     },

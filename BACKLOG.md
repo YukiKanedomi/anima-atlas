@@ -84,3 +84,9 @@ ISO評価ゲージ → G等級セレクタ → 安定性チャート。本文で
 - 新部品 sensor-bands（変位・速度・加速度の傾き、100 Hz 基準の比）・fault-spectra（故障 7 種の典型スペクトルを本物の FFT で）。アイコン +12（計 60：piano, prism, mixing-bowl, film-strip, curtain-window, stethoscope, fingerprint, magnifier, speedometer, stopwatch, tire-weight, lighthouse）。
 - Codex 章別レビュー 39+31+30=100 件、全件採用（Leakage の段差判定バグ、SyncAverage の非同期トーンは 1/M、Aliasing の fs=2f 境界、SensorBands の次元混在、ISO 20816 の一般化、e_per の単位、N_b→Z、翼通過周波数の静止側/回転側）。symbols.json：f_nyq・f_mesh・BPFO・AF を追加、Delta_f・Q・alpha を更新。
 - 次：第4回＝ねじり振動の 3〜4 節化＋序章・付録。残課題：sensors が 1.1 万字とやや長い、キーフェイザ切り欠きと歯車箱開放の実写は未入手。
+
+## 2026-10-11 第2版化 第4回（最終）：ねじり振動 4 節・序章・付録
+- ねじり振動の章を 1 節→4 節（入口の増強、「Holzer 法と固有モード」「誰が軸をねじるのか——往復機関・歯車・電動機」「ねじりを測り、抑える」）。序章を題材の顔ぶれ・歴史・読み方・全章の案内・読む道筋で 8.8K 字に、付録に「この本の約束事」（符号・単位・ギリシャ文字・記号の衝突）。6 節 約1.2万字→4.6万字、小図 28 枚、たとえ話 15。
+- 新部品 holzer（残留トルク曲線とモード形、3〜5 慣性）・motor-start-torsion（同期電動機始動の 2·s·f_line 掃引と RK4 応答）。アイコン +12（計 72：towel-wring, bottle-cap, piston, electric-motor, coupling, tuning-peg, compass, bookmark, torsion-pendulum, pulley-belt, flywheel, slinky）。
+- Codex レビュー 10+30=40 件、全件採用。**RunupHero（序章の昇速デモ）で重い点を変位の φ 遅れ側に描いていた逆符号を修正**（本の規約＝変位は重い点より φ 遅れる）。Holzer の拡張は Den Hartog & Li 1946 に帰属、離隔余裕は「交点から ±10%、外せなければ応答解析」に、VFD 高調波は 6 パルス形に限定。symbols.json：I_t・k_t・theta・T_res・f_line・s_slip を追加（計 46）。
+- これで第2版化は 4 回とも完了（全 12 章・64 節）。残課題：ねじりの実測例（テレメトリ付き軸・クランクプーリダンパの実写）、章をまたぐ総括節（翼振動章の blade-summary 相当）を他章にも置くか。

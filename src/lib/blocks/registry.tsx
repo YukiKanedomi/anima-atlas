@@ -40,6 +40,8 @@ import NodalDiameter from "./NodalDiameter";
 import TravelingWave from "./TravelingWave";
 import SensorBands from "./SensorBands";
 import FaultSpectra from "./FaultSpectra";
+import Holzer from "./Holzer";
+import MotorStartTorsion from "./MotorStartTorsion";
 import FamilyCurves from "./FamilyCurves";
 import EoFolding from "./EoFolding";
 import Zzenf from "./Zzenf";
@@ -83,7 +85,7 @@ export const blocks: BlockDef[] = [
     title: "昇速デモ（序章の顔）",
     status: "stable",
     summary:
-      "回転数を上げ下げすると、振れ回りが危険速度で膨らみ通過するとしぼむ。Jeffcottの不釣り合い応答 A=r²/√((1−r²)²+(2ζr)²) を自動再生。本書の主題を一発体感。",
+      "回転数を上げ下げすると、振れ回りが危険速度で膨らみ通過するとしぼむ。Jeffcottの不釣り合い応答 A=r²/√((1−r²)²+(2ζr)²) を自動再生。位相 φ：軸心は重い点より φ 遅れる（描画は重い点を変位の φ 先に置く）。本書の主題を一発体感。",
     component: RunupHero,
     sample: {
       title: "ためし：回せば揺れる、ある速度でいちばん暴れる",
@@ -709,6 +711,22 @@ export const blocks: BlockDef[] = [
     summary: "故障の種類（不釣り合い／ミスアライメント／機械的な緩み／ラビング／オイルホワール／転がり軸受外輪傷／歯車かみ合い）をボタンで切り替えると、教科書的な典型成分で合成した信号を Hann 窓＋本物の FFT（NF=2048・32 回転・分解能 1/32 次）でスペクトルと時間波形に描く。緩み・ラビングは波形のクリップで非線形を模式化、軸受は 6205 の BPFO≈3.58× とその倍数、歯車は 20× と ±1×・±2× の側帯波。縦軸は正規化、直流分は除去。成分の配合は模式。",
     component: FaultSpectra,
     sample: {"title": "ためし：故障の種類を切り替える", "faultDefault": "bearing", "caption": "整数倍にならない 3.58× の列が転がり軸受の指紋。ボタンで他の故障と見比べてください。縦軸は正規化、成分の配合は模式です。"},
+  },
+  {
+    name: "holzer",
+    title: "多慣性ねじり系の Holzer 法（残留トルク曲線とモード形）",
+    status: "stable",
+    summary: "慣性 I₁…Iₙ（3〜5 個、ボタンで切替）と軸剛性 k₁…kₙ₋₁ の直列系で、試しの ω を仮定し θ₁=1 から Tᵢ=Tᵢ₋₁+Iᵢω²θᵢ、θᵢ₊₁=θᵢ−Tᵢ/kᵢ と渡って右端の残留トルクを描く。ゼロ交差（二分法で詰める）＝固有角振動数（金丸）、モードのボタンで根へ飛ぶと下段の折れ線がモード形になり節を金で示す。スライダーで ω を外すと残留の矢印が残る。慣性・剛性は相対値、ω は √(k₀/I₀) 単位、残留の縦軸は圧縮表示。",
+    component: Holzer,
+    sample: {"title": "ためし：慣性を増やすと、モードも増える", "nDefault": 3, "caption": "上段の金の丸が残留トルクのゼロ交差＝固有角振動数。慣性の数を 4、5 にすると根が増え、モードのボタンで節の数が 1、2、3 と増えるのが見えます。スライダーで ω を根から外すと、右端に残留トルクが残ります。"},
+  },
+  {
+    name: "motor-start-torsion",
+    title: "同期電動機の起動とねじり共振（2×すべり周波数の掃引）",
+    status: "stable",
+    summary: "突極形同期電動機の始動中の脈動トルク周波数 f_e = 2·s·f_line が 2 f_line から 0 へ一直線に下がり、ねじり固有振動数 f_n を横切る（上段、交点を臙脂で表示）。下段は 1 自由度ねじり系 θ̈+2ζωnθ̇+ωn²θ=ωn² sin φ(t) を RK4 で数値積分した応答の包絡線（静的ねじれ角＝1）。起動時間を長くすると山が定常値 1/(2ζ) に近づき、短いと低いまま通過。電源 50/60 Hz 切替。脈動トルク一定・一様加速の模式。",
+    component: MotorStartTorsion,
+    sample: {"title": "ためし：起動の途中で、必ず一度は共振を横切る", "tStartDefault": 8, "fnDefault": 25, "zetaDefault": 0.02, "fLineDefault": 50, "caption": "上段の斜線が脈動トルクの周波数、金の破線がねじり固有振動数、臙脂の点が横切る瞬間。下段はそのときのねじれ角の包絡線。起動時間を 2 秒と 20 秒で比べてください。"},
   },
 ];
 

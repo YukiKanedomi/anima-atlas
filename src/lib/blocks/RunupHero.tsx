@@ -5,7 +5,8 @@ import { PlayPause } from "../../components/PlayPause";
 // ドメイン部品：序章の「顔」。回転数を上げ下げすると、ロータの振れ回りが
 // 危険速度（固有振動数との共振）で大きく膨らみ、通過するとしぼむ——本書の主題を一発体感。
 //   振幅 A(r) = r² / √((1−r²)² + (2ζr)²)、r = Ω/ωn。r=1（危険速度）で最大 1/(2ζ)。
-//   位相 φ = atan2(2ζr, 1−r²)：r>1 で重い点が内側へ回り込む（自動調心）。
+//   位相 φ = atan2(2ζr, 1−r²)：変位（軸心）は重い点（遠心力の向き）より φ 遅れる。
+//   描画は theta＝軸心変位の角度なので、重い点は theta + φ（回転の進む側）に置く。r>1 で φ→180°、重い点が内側へ回り込む（自動調心）。
 // ※ Jeffcott の不釣り合い応答そのもの。式どおりに描画。
 
 export type RunupHeroConfig = {
@@ -82,13 +83,13 @@ export default function RunupHero({ config }: { config: RunupHeroConfig }) {
   const crit = Math.abs(r - 1) < 0.1;
   const col = crit ? RED : "var(--accent)";
 
-  // 軸中心（振れ回り）と重い点（自動調心で内へ回り込む）
+  // 軸中心（振れ回り）と重い点（変位より φ 進んだ向き。自動調心で内へ回り込む）
   const cx = OX + dispR * Math.cos(theta);
   const cy = OY + dispR * Math.sin(theta);
   const rd = 17; // 円板半径
   const E = rd * 0.78;
-  const hx = cx + E * Math.cos(theta - phi);
-  const hy = cy + E * Math.sin(theta - phi);
+  const hx = cx + E * Math.cos(theta + phi);
+  const hy = cy + E * Math.sin(theta + phi);
 
   // 共振曲線
   const sxR = (rr: number) => CL + (rr / rMax) * (CR - CL);
