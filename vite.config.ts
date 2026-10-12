@@ -11,6 +11,7 @@ export default defineConfig({
     react(),
     // オフライン対応（Workbox）。manifest は public/manifest.webmanifest をそのまま使う。
     // precache：アプリ本体・KaTeX の woff2・節の本文 md・outline/symbols・たとえ話アイコン（合計 5MB 前後）。
+    // 和文 Web フォント（BIZ UDPGothic・Shippori Mincho）は 120 分割×ウェイトで数百ファイルあるため precache せず、使った分だけ runtime cache に残す。
     // 写真と小図（images/、約 15MB）は precache せず、見た節のぶんだけ runtime cache（CacheFirst）に残す。
     VitePWA({
       registerType: "autoUpdate",
@@ -18,7 +19,7 @@ export default defineConfig({
       includeAssets: ["favicon.svg", "favicon.ico", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "icon-maskable.png"],
       workbox: {
         globPatterns: ["**/*.{js,css,html,woff2,json,md,webmanifest}", "data/icons/*.png"],
-        globIgnores: ["**/data/books/**/images/**"],
+        globIgnores: ["**/data/books/**/images/**", "**/assets/biz-udpgothic-*", "**/assets/shippori-mincho-*"],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         runtimeCaching: [
           {
@@ -33,7 +34,7 @@ export default defineConfig({
           {
             urlPattern: ({ request }) => request.destination === "font",
             handler: "CacheFirst",
-            options: { cacheName: "aa-fonts", expiration: { maxEntries: 60, maxAgeSeconds: 365 * 24 * 60 * 60 } },
+            options: { cacheName: "aa-fonts", expiration: { maxEntries: 400, maxAgeSeconds: 365 * 24 * 60 * 60 } },
           },
         ],
       },

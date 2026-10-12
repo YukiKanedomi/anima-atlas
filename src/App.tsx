@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Reader from "./pages/Reader";
 import Gallery from "./pages/Gallery";
 import { LightboxHost } from "./components/Lightbox";
+import { ThemeToggle } from "./components/ThemeToggle";
 
 function NavItem({ to, children }: { to: string; children: React.ReactNode }) {
   return (
@@ -36,6 +37,7 @@ export default function App() {
               <NavItem to="/">ホーム</NavItem>
               <NavItem to="/read">読む</NavItem>
               <NavItem to="/gallery">お試し場</NavItem>
+              <ThemeToggle className="ml-1" />
             </nav>
           </div>
         </header>

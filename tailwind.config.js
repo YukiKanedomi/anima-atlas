@@ -17,8 +17,8 @@ export default {
       },
       fontFamily: {
         // 見出し＝セリフ（A案）、UI/ラベル＝サンセリフ
-        serif: ['"Hiragino Mincho ProN"', '"Yu Mincho"', "Georgia", "serif"],
-        ui: ['"Yu Gothic UI"', "system-ui", "sans-serif"],
+        serif: ['"Shippori Mincho"', '"Hiragino Mincho ProN"', '"Yu Mincho"', "Georgia", "serif"],
+        ui: ['"BIZ UDPGothic"', '"Hiragino Sans"', '"Yu Gothic UI"', "system-ui", "sans-serif"],
       },
       maxWidth: { content: "760px" },
       boxShadow: {

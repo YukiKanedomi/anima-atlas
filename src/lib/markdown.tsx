@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getBlock, UnknownBlock } from "./blocks/registry";
 import { BlockMath, InlineMath } from "./Math";
 import { BlockBoundary } from "../components/BlockBoundary";
+import { BlockFrame } from "../components/BlockFrame";
 import { TermPop } from "../components/TermPop";
 import { useLightbox } from "../components/Lightbox";
 import { asset } from "./data";
@@ -301,10 +302,10 @@ function renderNodes(nodes: Node[], top = false): ReactNode {
           case "h": {
             const cls =
               n.level === 1
-                ? "mt-2 mb-3 text-3xl text-ink"
+                ? "aa-h1 mt-2 mb-4 text-[26px] leading-snug text-ink sm:text-3xl"
                 : n.level === 2
-                ? "mt-8 mb-2 clear-both scroll-mt-20 text-2xl text-ink"
-                : "mt-6 mb-2 clear-both text-xl text-ink";
+                ? "aa-h2 mt-12 mb-3 clear-both scroll-mt-20 text-[22px] leading-snug text-ink sm:text-2xl"
+                : "mt-7 mb-2 clear-both text-lg leading-snug text-ink sm:text-xl";
             if (n.level === 1) return <h1 key={idx} className={cls}>{inline(n.text)}</h1>;
             if (n.level === 2) {
               // 最上位の h2 だけ id を振る（囲みの中の見出しは節内ナビに出さない）
@@ -313,12 +314,15 @@ function renderNodes(nodes: Node[], top = false): ReactNode {
             }
             return <h3 key={idx} className={cls}>{inline(n.text)}</h3>;
           }
-          case "p":
+          case "p": {
+            // 節の冒頭（h1 直後）の段落はリード：少し大きく、やや薄い墨で導入らしく
+            const lead = top && idx > 0 && nodes[idx - 1].kind === "h" && (nodes[idx - 1] as { level: number }).level === 1;
             return (
-              <p key={idx} className="my-3 leading-8 text-ink/90">
+              <p key={idx} className={lead ? "aa-lead my-4 text-[17px] leading-8 text-ink/85 sm:text-lg sm:leading-9" : "my-3 leading-8 text-ink/90"}>
                 {inline(n.text)}
               </p>
             );
+          }
           case "ul":
             return (
               <ul key={idx} className="my-3 list-disc space-y-1 pl-6 text-ink/90">
@@ -336,11 +340,15 @@ function renderNodes(nodes: Node[], top = false): ReactNode {
             if (!def) return <UnknownBlock key={idx} name={n.name} />;
             const C = def.component;
             return (
-              <div key={idx} className="clear-both">
-                <BlockBoundary name={n.name}>
-                  <C config={n.config} />
-                </BlockBoundary>
-              </div>
+              <BlockFrame
+                key={idx}
+                name={n.name}
+                render={() => (
+                  <BlockBoundary name={n.name}>
+                    <C config={n.config} />
+                  </BlockBoundary>
+                )}
+              />
             );
           }
           case "block-error":

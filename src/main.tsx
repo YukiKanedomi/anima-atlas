@@ -3,11 +3,17 @@ import ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
 import App from "./App";
 import "katex/dist/katex.min.css";
+import "@fontsource/biz-udpgothic/400.css";
+import "@fontsource/biz-udpgothic/700.css";
+import "@fontsource/shippori-mincho/500.css";
 import "./index.css";
+import { setupTheme } from "./lib/theme";
 import { setupOffline } from "./lib/offline";
 
 // オフライン対応：service worker を登録（本文と部品は一度開けば圏外でも読める）
 setupOffline();
+// 配色テーマ（昼／夜）：描画前に反映してちらつきを避ける
+setupTheme();
 
 // iOS Safari は viewport の user-scalable=no を無視するので、ピンチ操作そのものを止める（拡大しない前提の本）。
 // gesturestart/gesturechange は Safari 独自、touchmove の scale は二本指のときだけ 1 以外になる。

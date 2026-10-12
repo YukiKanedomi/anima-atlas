@@ -175,7 +175,7 @@ export default function Home() {
         <svg
           viewBox={`0 0 ${W} ${H}`}
           className="block w-full"
-          style={{ background: "linear-gradient(160deg, var(--soft) 0%, #fff 60%)" }}
+          style={{ background: "linear-gradient(160deg, var(--soft) 0%, var(--card) 60%)" }}
           role="img"
           aria-label="ロータダイナミクスの章を辿る探検地図"
         >

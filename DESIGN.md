@@ -26,6 +26,12 @@
 - カードや図の地は**白 `#fff`**（`bg-white`）。地の `--bg` とわずかに差をつけて浮かせる。
 - 透明度つきは Tailwind の `/` 記法で：選択バッジ＝`bg-accent/10 text-accent`、フォーカスリング＝`rgba(31,58,95,.18)`。
 
+### 夜の配色（`html[data-theme="dark"]`、2026-10-12）
+- 切替はヘッダー右端の太陽／月ボタン（`components/ThemeToggle.tsx`）。既定は端末の `prefers-color-scheme`、手で選んだら `localStorage: aa-theme` に記憶（`lib/theme.ts`、描画前に `setupTheme()`）。
+- 値は `index.css` の `html[data-theme="dark"]` ブロックで CSS 変数ごと差し替える（墨紙 `#121722`、文字 `#e6e9ef`、紺アクセントは明るく `#9dbbe3`）。
+- **「白」の読み替え規則**：夜は `.bg-white` と SVG の `fill/stroke="#fff"` を `--card`（`#171d2a`）に CSS で振り替える。部品側に手を入れずに暗くするための仕組みなので、**部品で白を使うときは `#fff` と書く**（他の表記や inline style だと夜に白く残る）。図の写真は `brightness(.86)`。
+- 新しいトークンを足すときは昼・夜の両方と RGB 三つ組を書く。
+
 ### 副アクセント：臙脂 `#9b2d3a`
 図中で「もう一方／後ろ向き／注意」を表す**第2の色**として臙脂を使う（前向き=紺 / 後ろ向き=臙脂、振幅=紺 / 位相=臙脂 など）。
 - ⚠ **未トークン化**：現状は各ブロックに `#9b2d3a` を直書き（`HEAVY` 定数）。テーマ差し替えに備え、いずれ `--heavy` 変数化したい。新規ブロックでもこの値で揃える。
@@ -39,9 +45,13 @@
 | 見出し `h1〜h3`・ワードマーク・図タイトル | 明朝（セリフ） | `font-serif` |
 | UI・ラベル・本文 | ゴシック（サンセリフ） | `font-ui`（本文の既定） |
 
-- セリフ＝`"Hiragino Mincho ProN", "Yu Mincho", Georgia, serif`。学術・王道の品を出す。**見出しと図のタイトルはセリフ**で統一。
-- サンセリフ＝`"Yu Gothic UI", system-ui, sans-serif`。
-- 見出しサイズ：`h1` = `text-3xl`、`h2` = `text-2xl`、`h3` = `text-xl`（`src/lib/markdown.tsx`）。
+- **Web フォントを決め打ち**（2026-10-12。端末任せだと iPhone・Windows・Android で別の顔になるため）。`@fontsource` で自前配信、`main.tsx` で読み込む。
+  - セリフ＝**Shippori Mincho 500**（`"Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif`）。学術・王道の品。**見出しと図のタイトルはセリフ**で統一。
+  - サンセリフ＝**BIZ UDPGothic 400/700**（`"BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", system-ui, sans-serif`）。UD 設計でスマホの小さい字でも読みやすい。
+  - 和文フォントは 120 分割の unicode-range 配信なので、使った字の分だけ落ちてくる。PWA の precache からは除外（`vite.config.ts` の `globIgnores`）し、runtime cache（`aa-fonts`、最大 400 件）に残す。
+- **字組みの細部**（`index.css`）：見出しは `palt`（和文の字詰め）＋ `letter-spacing: .02em` ＋ `text-wrap: balance`（2 行見出しの改行位置が整う）。本文は `hanging-punctuation: first allow-end`（Safari で行頭の括弧・行末の句読点をぶら下げる）。数値の読み出しは `.tabular-nums` に `tnum` を要求。
+- **紙面のリズム**：節冒頭（h1 直後）の段落は**リード**（`aa-lead`：17〜18px・墨 85%）。`## ` 見出し（`aa-h2`）の前に短い紺の罫（2.25rem × 2px、55%）＝紙の本の節の切れ目。囲みの中の見出しには付かない。
+- 見出しサイズ：`h1` = 26px／`sm:text-3xl`、`h2` = 22px／`sm:text-2xl`、`h3` = `text-lg`／`sm:text-xl`、いずれも `leading-snug`・ウェイト 500（`src/lib/markdown.tsx`）。
 - 本文：`leading-8 text-ink/90`。数値表示は **`tabular-nums`**（桁が揺れない）。
 - 数式は KaTeX（`$…$` インライン / `$$…$$` ブロック）。長い日本語の"標語"は数式にせず**太字の文**にする（ディスプレイ数式は折り返さず溢れるため）。
 - **ワードマーク**：`Anima · Atlas`。語間の中黒だけ `text-accent`（軌道の点＝動きのニュアンス）。`components/Wordmark.tsx`。
@@ -140,6 +150,10 @@
 ---
 
 ## 5. ブロック図（figure）の共通レイアウト
+
+### 部品の足元（`components/BlockFrame.tsx`、2026-10-12）
+- 本文に埋めた動く部品には、右下に小さく「↺ 初期値に戻す」「⤢ 大きく見る」（後者は `sm` 以上のみ）。戻すは `key` の付け替えで部品を作り直す、大きく見るは `max-w-5xl` の全画面オーバーレイに同じ部品を別インスタンスで描く。部品側の対応は不要。
+- 読み物寄りの部品（`predict`・`nomenclature`・`standards-map`）には付けない（`NO_TOOLS`）。
 
 動く図の部品は、外見を必ず揃える：
 

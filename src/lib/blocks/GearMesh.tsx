@@ -25,7 +25,7 @@ export type GearMeshConfig = {
 };
 
 const W = 640;
-const GEAR_H = 230;
+const GEAR_H = 250;
 const K_H = 130;
 const SPEC_H = 170;
 const H = GEAR_H + K_H + SPEC_H + 30;
@@ -98,11 +98,12 @@ export default function GearMesh({ config }: { config: GearMeshConfig }) {
 
   // 歯車の寸法（画面に収まるようモジュールを決める）
   const geo = useMemo(() => {
-    const mod = Math.min(9, 560 / (z1 + z2));
+    // 大きい歯車の歯先が上段（GEAR_H）からはみ出さないよう、モジュールに上限を付ける
+    const mod = Math.min(9, 560 / (z1 + z2), (2 * (GEAR_H / 2 - 25)) / (z2 + 2.5));
     const r1 = (mod * z1) / 2;
     const r2 = (mod * z2) / 2;
     const a = r1 + r2;
-    const cy = GEAR_H / 2 + 6;
+    const cy = GEAR_H / 2 - 1;
     const cx1 = W / 2 - a / 2;
     const cx2 = cx1 + a;
     return { mod, r1, r2, a, cx1, cx2, cy, p1: gearPath(z1, r1, mod), p2: gearPath(z2, r2, mod) };
@@ -188,13 +189,15 @@ export default function GearMesh({ config }: { config: GearMeshConfig }) {
           <circle cx={geo.cx2} cy={geo.cy} r={geo.r2} fill="none" stroke="var(--mut)" strokeDasharray="3 3" opacity={0.5} />
           {/* かみ合い点 */}
           <circle cx={geo.cx1 + geo.r1} cy={geo.cy} r={4} fill={HEAVY} />
-          <text x={geo.cx1 + geo.r1} y={geo.cy + geo.r1 + geo.mod + 16} fontSize="11" fill={HEAVY} textAnchor="middle">
+          {/* 凡例は歯車と重ならない上段の下端に */}
+          <circle cx={16} cy={GEAR_H - 11} r={3.5} fill={HEAVY} />
+          <text x={24} y={GEAR_H - 7} fontSize="11" fill={HEAVY}>
             かみ合い点（1 回転に Z₁ 回、歯が入れ替わる）
           </text>
 
           {/* 中段：かみ合い剛性と伝達誤差 */}
           <text x={10} y={kTop + 4} fontSize="11" fill="var(--mut)">
-            かみ合い剛性 k（紺）と、一定トルクで押したときのたわみ＝伝達誤差 TE ∝ 1/k（臙脂、見やすさのため縦に拡大）。横軸は歯 1 枚ぶん × 3
+            かみ合い剛性 k（紺）と伝達誤差 TE ∝ 1/k（臙脂、縦に拡大）。横軸＝歯 1 枚ぶん × 3
           </text>
           <line x1={kX(0)} y1={kBottom} x2={kX(3)} y2={kBottom} stroke="var(--line)" />
           {[0, 1, 2, 3].map((u) => (
@@ -230,7 +233,7 @@ export default function GearMesh({ config }: { config: GearMeshConfig }) {
 
           {/* 下段：スペクトル */}
           <text x={10} y={sTop - 6} fontSize="11" fill="var(--mut)">
-            伝達誤差のスペクトル（ピニオン 32 回転ぶんを Hann 窓＋FFT、縦軸は条件によらず共通の尺度）。横軸＝ピニオンの次数
+            TE のスペクトル（32 回転ぶんを Hann 窓＋FFT、縦軸は共通の尺度）。横軸＝ピニオンの次数
           </text>
           <line x1={sX(0)} y1={sBottom} x2={sX(spec.xmax)} y2={sBottom} stroke="var(--line)" />
           {ticks.map((o) => (

@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== 配色テーマ：紺（学術・王道）。後で臙脂等に差し替えやすいよう CSS変数に集約 ===== */
+/* ===== 配色テーマ：紺（学術・王道）。昼／夜は <html data-theme> で切り替え、値は CSS 変数に集約 ===== */
 :root {
   --bg: #f6f7f9;       /* 紙の地 */
   --ink: #1b2433;      /* 本文の墨（やや紺寄り） */
@@ -12,6 +12,7 @@
   --line: #e1e5ec;     /* 罫線 */
   --soft: #eef1f6;     /* うすい面 */
   --soft2: #e7ebf2;
+  --card: #ffffff;     /* カード・図の地（昼は白） */
   /* 同じ色の RGB 三つ組（Tailwind の透明度修飾 bg-accent/10 等に必要。上の値を変えたらここも揃える） */
   --bg-rgb: 246 247 249;
   --ink-rgb: 27 36 51;
@@ -21,6 +22,48 @@
   --line-rgb: 225 229 236;
   --soft-rgb: 238 241 246;
   --soft2-rgb: 231 235 242;
+  --card-rgb: 255 255 255;
+  color-scheme: light;
+}
+/* 夜：墨紙に淡い紺。紺アクセントは明るく振って文字のコントラストを確保 */
+html[data-theme="dark"] {
+  --bg: #121722;
+  --ink: #e6e9ef;
+  --mut: #9aa3b2;
+  --accent: #9dbbe3;
+  --accent-d: #c3d6ef;
+  --line: #2a3344;
+  --soft: #1a2130;
+  --soft2: #232c3d;
+  --card: #171d2a;
+  --bg-rgb: 18 23 34;
+  --ink-rgb: 230 233 239;
+  --mut-rgb: 154 163 178;
+  --accent-rgb: 157 187 227;
+  --accent-d-rgb: 195 214 239;
+  --line-rgb: 42 51 68;
+  --soft-rgb: 26 33 48;
+  --soft2-rgb: 35 44 61;
+  --card-rgb: 23 29 42;
+  color-scheme: dark;
+}
+/* 夜は「白」をカード色に読み替える（Tailwind の bg-white と、図の中の fill/stroke="#fff"）。
+   部品側に手を入れず全体を暗くするための規則。白い文字（text-white）はそのまま。 */
+html[data-theme="dark"] .bg-white {
+  background-color: var(--card);
+}
+html[data-theme="dark"] svg [fill="#fff"],
+html[data-theme="dark"] svg [fill="#ffffff"],
+html[data-theme="dark"] svg [fill="white"] {
+  fill: var(--card);
+}
+html[data-theme="dark"] svg [stroke="#fff"],
+html[data-theme="dark"] svg [stroke="#ffffff"] {
+  stroke: var(--card);
+}
+html[data-theme="dark"] figure img,
+html[data-theme="dark"] .aa-analogy img {
+  filter: brightness(0.86);
 }
 
 html,
@@ -33,15 +76,35 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: "Yu Gothic UI", system-ui, sans-serif;
+  font-family: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: "palt" 0;
+  hanging-punctuation: first allow-end; /* Safari：行頭の括弧・行末の句読点をぶら下げる */
 }
 
-/* 見出しはセリフ（A案ワードマークと揃える） */
+/* 見出しはセリフ（A案ワードマークと揃える）。和文は字詰め（palt）とゆるい字間、改行位置はバランス */
 h1,
 h2,
 h3 {
-  font-family: "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
+  font-family: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
+  font-weight: 500;
+  font-feature-settings: "palt" 1;
+  letter-spacing: 0.02em;
+  text-wrap: balance;
+}
+/* 節見出し（h2）の前に短い紺の罫：紙の本の「節の切れ目」。囲みの中の見出しには付かない */
+article > h2.aa-h2::before {
+  content: "";
+  display: block;
+  width: 2.25rem;
+  height: 2px;
+  margin-bottom: 0.7rem;
+  background: var(--accent);
+  opacity: 0.55;
+}
+/* 数値の桁揃え：BIZ UDPGothic の数字は等幅ではないので、読み出しは tnum を要求 */
+.tabular-nums {
+  font-feature-settings: "tnum" 1;
 }
 
 /* ===== スライダー（塗り進む紺トラック＋上品なつまみ） ===== */
