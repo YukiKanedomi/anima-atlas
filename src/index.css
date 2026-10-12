@@ -205,16 +205,20 @@ article > h2.aa-h2::before {
 }
 
 /* 深掘り（折りたたみ）：既定の三角マーカーを消し、開くと自前の三角を回す */
-.aa-deep > summary {
+.aa-deep > summary,
+.aa-src > summary {
   list-style: none;
 }
-.aa-deep > summary::-webkit-details-marker {
+.aa-deep > summary::-webkit-details-marker,
+.aa-src > summary::-webkit-details-marker {
   display: none;
 }
-.aa-deep > summary .aa-deep-tri {
+.aa-deep > summary .aa-deep-tri,
+.aa-src > summary .aa-deep-tri {
   transition: transform 0.15s ease;
 }
-.aa-deep[open] > summary .aa-deep-tri {
+.aa-deep[open] > summary .aa-deep-tri,
+.aa-src[open] > summary .aa-deep-tri {
   transform: rotate(90deg);
 }
 

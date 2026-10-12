@@ -315,6 +315,11 @@ function renderNodes(nodes: Node[], top = false): ReactNode {
             return <h3 key={idx} className={cls}>{inline(n.text)}</h3>;
           }
           case "p": {
+            // 節末の「模式・出典について」は小さく畳む。直後の URL リストも中に入れる（下の ul 側で読み飛ばす）
+            if (top && isSources(n)) {
+              const next = nodes[idx + 1];
+              return <Sources key={idx} text={n.text} urls={next && next.kind === "ul" ? next.items : []} />;
+            }
             // 節の冒頭（h1 直後）の段落はリード：少し大きく、やや薄い墨で導入らしく
             const lead = top && idx > 0 && nodes[idx - 1].kind === "h" && (nodes[idx - 1] as { level: number }).level === 1;
             return (
@@ -324,6 +329,7 @@ function renderNodes(nodes: Node[], top = false): ReactNode {
             );
           }
           case "ul":
+            if (top && idx > 0 && isSources(nodes[idx - 1])) return null;
             return (
               <ul key={idx} className="my-3 list-disc space-y-1 pl-6 text-ink/90">
                 {n.items.map((it, j) => (
@@ -369,6 +375,43 @@ function renderNodes(nodes: Node[], top = false): ReactNode {
         }
       })}
     </>
+  );
+}
+
+// 節末の「模式・出典について」。本文と同じ太さで並ぶと読み物の終わりが締まらないので、
+// 細い罫の下に小さな <details> で畳む。中は注記の段落と、続くリスト（項目中の URL はリンク）。全 71 節が同じ書き出しで揃っている。
+const SOURCES_LEAD = /^\*\*模式・出典について\*\*\s*[：:]?\s*/;
+function isSources(n: Node): boolean {
+  return n.kind === "p" && SOURCES_LEAD.test(n.text);
+}
+function Sources({ text, urls }: { text: string; urls: string[] }) {
+  return (
+    <details className="aa-src mt-10 clear-both border-t border-line pt-3 text-xs leading-6 text-mut">
+      <summary className="flex cursor-pointer select-none items-center gap-1.5 hover:text-ink">
+        <svg className="aa-deep-tri shrink-0" width="9" height="9" viewBox="0 0 11 11" aria-hidden="true">
+          <path d="M3 1.5l5 4-5 4z" fill="currentColor" />
+        </svg>
+        模式・出典について
+      </summary>
+      <p className="mt-2">{inline(text.replace(SOURCES_LEAD, ""))}</p>
+      {urls.length ? (
+        <ul className="mt-2 list-disc space-y-0.5 pl-5 [overflow-wrap:anywhere]">
+          {urls.map((u, j) => (
+            <li key={j}>
+              {u.split(/(https?:\/\/\S+)/g).map((part, k) =>
+                /^https?:\/\//.test(part) ? (
+                  <a key={k} href={part} target="_blank" rel="noopener noreferrer" className="underline decoration-line underline-offset-2 hover:text-accent">
+                    {part}
+                  </a>
+                ) : (
+                  <Fragment key={k}>{inline(part)}</Fragment>
+                ),
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </details>
   );
 }
 
